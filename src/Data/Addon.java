@@ -26,7 +26,6 @@ public class Addon {
             tags.add(tagList.getString(counter));
             counter++;
         }
-        System.out.println(this);
     }
     protected final String getStringFromObject(String key,javax.json.JsonObject data) {
         String value="";

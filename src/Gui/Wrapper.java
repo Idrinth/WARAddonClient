@@ -29,6 +29,18 @@ public class Wrapper extends javax.swing.JFrame {
         Description.setText(defaultDescription);
         InstallButton.setEnabled(false);
         RemoveButton.setEnabled(false);
+        String errors = "";
+        if(!new java.io.File("./WAR.exe").exists()) {
+            errors+="Missing WAR.exe here, please put this file in the Warhammer Online directory.";
+        }
+        if(!new java.io.File("./RoRLauncher.exe").exists()) {
+            errors+="Missing RoRLauncher.exe here, please put this file in the Warhammer Online directory.";
+        }
+        if(errors.length()>0) {
+            javax.swing.JOptionPane.showMessageDialog(this,errors);
+            this.dispose();
+            System.exit(0);
+        }
     }
     class tableListener implements javax.swing.event.ListSelectionListener {
         public void valueChanged(javax.swing.event.ListSelectionEvent event) {
