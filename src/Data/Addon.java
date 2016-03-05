@@ -15,7 +15,7 @@ public class Addon {
     private String slug;
     private String name;
     private java.util.ArrayList tags=new java.util.ArrayList();
-    public Addon Addon(javax.json.JsonObject addon) {
+    public Addon(javax.json.JsonObject addon) {
         description=addon.getString("description");
         version=addon.getString("version");
         slug=addon.getString("slug");
@@ -26,6 +26,5 @@ public class Addon {
             tags.add(tagList.getString(counter));
             counter++;
         }
-        return this;
     }
 }
