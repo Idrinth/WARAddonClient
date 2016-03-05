@@ -10,5 +10,7 @@ package Data;
  * @author BJ
  */
 public class AddonList extends java.util.ArrayList{
-
+    public Addon get(int i) {
+        return (Addon) super.get(i);
+    }
 }

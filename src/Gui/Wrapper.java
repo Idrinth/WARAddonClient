@@ -11,6 +11,7 @@ package Gui;
  */
 public class Wrapper extends javax.swing.JFrame {
     Data.AddonList addons=new Data.AddonList();
+    String defaultDescription="<html><h1>Welcome to the client.</h1><p>To get something more useful here, select an addon to the right</p>";
     /**
      * Creates new form Wrapper
      */
@@ -18,13 +19,24 @@ public class Wrapper extends javax.swing.JFrame {
         initComponents();
         javax.json.JsonArray parse = request.getAddonList();
         int counter=0;
+        javax.swing.table.DefaultTableModel model=(javax.swing.table.DefaultTableModel) this.AddonList.getModel();
         while(parse.size()>counter) {
             addons.add(new Data.Addon(parse.getJsonObject(counter)));
+            model.addRow(addons.get(counter).getTableRow());
             counter++;
-            System.out.println(counter+" of "+parse.size());
+        }
+        this.AddonList.getSelectionModel().addListSelectionListener(new tableListener());
+        Description.setText(defaultDescription);
+        InstallButton.setEnabled(false);
+        RemoveButton.setEnabled(false);
+    }
+    class tableListener implements javax.swing.event.ListSelectionListener {
+        public void valueChanged(javax.swing.event.ListSelectionEvent event) {
+            Description.setText(addons.get(AddonList.getSelectedRow()).getDescription());
+            InstallButton.setEnabled(true);
+            RemoveButton.setEnabled(true);
         }
     }
-
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -40,14 +52,11 @@ public class Wrapper extends javax.swing.JFrame {
         jScrollPane2 = new javax.swing.JScrollPane();
         AddonList = new javax.swing.JTable();
         rightSide = new javax.swing.JTabbedPane();
-        Settings = new javax.swing.JPanel();
-        jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
-        jButton3 = new javax.swing.JButton();
-        jCheckBox1 = new javax.swing.JCheckBox();
-        jTextField3 = new javax.swing.JTextField();
+        jPanel1 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         Description = new javax.swing.JLabel();
+        InstallButton = new javax.swing.JButton();
+        RemoveButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -56,20 +65,43 @@ public class Wrapper extends javax.swing.JFrame {
         jSplitPane2.setMinimumSize(new java.awt.Dimension(300, 200));
         jSplitPane2.setName(""); // NOI18N
 
-        Search.setText("jTextField1");
+        Search.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                SearchActionPerformed(evt);
+            }
+        });
 
         AddonList.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
+
             },
             new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
+                "Name", "Version", "Installed"
             }
-        ));
+        ) {
+            Class[] types = new Class [] {
+                java.lang.String.class, java.lang.String.class, java.lang.String.class
+            };
+            boolean[] canEdit = new boolean [] {
+                false, false, false
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        AddonList.getTableHeader().setReorderingAllowed(false);
         jScrollPane2.setViewportView(AddonList);
+        AddonList.getColumnModel().getSelectionModel().setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        if (AddonList.getColumnModel().getColumnCount() > 0) {
+            AddonList.getColumnModel().getColumn(0).setResizable(false);
+            AddonList.getColumnModel().getColumn(1).setResizable(false);
+            AddonList.getColumnModel().getColumn(2).setResizable(false);
+        }
 
         javax.swing.GroupLayout leftSideLayout = new javax.swing.GroupLayout(leftSide);
         leftSide.setLayout(leftSideLayout);
@@ -83,85 +115,53 @@ public class Wrapper extends javax.swing.JFrame {
             .addGroup(leftSideLayout.createSequentialGroup()
                 .addComponent(Search, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 471, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 444, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 12, Short.MAX_VALUE))
         );
 
         jSplitPane2.setLeftComponent(leftSide);
 
-        jButton1.setText("Install");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
-            }
-        });
-
-        jButton2.setText("Update");
-        jButton2.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton2ActionPerformed(evt);
-            }
-        });
-
-        jButton3.setText("Remove");
-
-        jCheckBox1.setText("Allow the Addon to Upload Data to:");
-        jCheckBox1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jCheckBox1ActionPerformed(evt);
-            }
-        });
-
-        jTextField3.setText("tools.idrinth.de");
-        jTextField3.setToolTipText("");
-        jTextField3.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField3ActionPerformed(evt);
-            }
-        });
-
-        javax.swing.GroupLayout SettingsLayout = new javax.swing.GroupLayout(Settings);
-        Settings.setLayout(SettingsLayout);
-        SettingsLayout.setHorizontalGroup(
-            SettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(SettingsLayout.createSequentialGroup()
-                .addGroup(SettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(SettingsLayout.createSequentialGroup()
-                        .addComponent(jButton1)
-                        .addGap(46, 46, 46)
-                        .addComponent(jButton2)
-                        .addGap(42, 42, 42)
-                        .addComponent(jButton3))
-                    .addGroup(SettingsLayout.createSequentialGroup()
-                        .addComponent(jCheckBox1)
-                        .addGap(18, 18, 18)
-                        .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(0, 0, Short.MAX_VALUE))
-        );
-        SettingsLayout.setVerticalGroup(
-            SettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(SettingsLayout.createSequentialGroup()
-                .addGroup(SettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton1)
-                    .addComponent(jButton2)
-                    .addComponent(jButton3))
-                .addGap(18, 18, 18)
-                .addGroup(SettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jCheckBox1)
-                    .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(0, 1151, Short.MAX_VALUE))
-        );
-
-        rightSide.addTab("settings", Settings);
-
         Description.setBackground(new java.awt.Color(255, 255, 255));
-        Description.setText("<html>Plan , Build , Share<br /><br />This addon lets you build ,share and view ability speccs on anny Career.<br /><br /><br /><img alt=\"Image\" src=\"http://imgur.com/MJwUhJ5.png\" style=\"  border: 0px; max-width: 100%; color: rgb(204, 204, 204); font-family: 'Lucida Grande', 'Trebuchet MS', Verdana, Helvetica, Arial, sans-serif; font-size: 13px; line-height: 18px; text-align: justify; \" /><br /><br /><br />Plan..<br /><img src=\"http://imgur.com/PaZ9yoo.png\" alt=\"Image\" style=\"  border: 0px; max-width: 100%; color: rgb(204, 204, 204); font-family: 'Lucida Grande', 'Trebuchet MS', Verdana, Helvetica, Arial, sans-serif; font-size: 13px; line-height: 18px; text-align: justify; \" /><br />..your Speccs. See what tactics and how skills scale before investing your Ability points<br /><br /><br />Build..<br /><img src=\"http://imgur.com/EjDCEHS.png\" alt=\"Image\" data-nx68qgczfxo9r7ldi=\"\" style=\"  max-width: 100%; display: inline-block; /><img src=\" http:=\"\" imgur.com=\"\" lmr5bpm.png\"=\"\" /><br />.. and Create your Mastery build with anny carrer<br /><br /><br />Share..<br /><img src=\"http://imgur.com/AASrR8z.png\" alt=\"Image\" style=\"  border: 0px; max-width: 100%; \" />");
         Description.setVerticalAlignment(javax.swing.SwingConstants.TOP);
         Description.setAlignmentX(0.5F);
         Description.setAutoscrolls(true);
         jScrollPane1.setViewportView(Description);
 
-        rightSide.addTab("Description", jScrollPane1);
+        InstallButton.setText("(Re)Install");
+        InstallButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                InstallButtonActionPerformed(evt);
+            }
+        });
+
+        RemoveButton.setText("Remove");
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(21, 21, 21)
+                .addComponent(InstallButton)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(RemoveButton)
+                .addGap(24, 24, 24))
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 470, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(RemoveButton)
+                    .addComponent(InstallButton))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 414, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
+        );
+
+        rightSide.addTab("Main", jPanel1);
 
         jSplitPane2.setRightComponent(rightSide);
 
@@ -169,31 +169,23 @@ public class Wrapper extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jSplitPane2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 681, Short.MAX_VALUE)
+            .addComponent(jSplitPane2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jSplitPane2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 473, Short.MAX_VALUE)
+            .addComponent(jSplitPane2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+    private void InstallButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_InstallButtonActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jButton1ActionPerformed
+    }//GEN-LAST:event_InstallButtonActionPerformed
 
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+    private void SearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SearchActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jButton2ActionPerformed
-
-    private void jCheckBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBox1ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jCheckBox1ActionPerformed
-
-    private void jTextField3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField3ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField3ActionPerformed
+    }//GEN-LAST:event_SearchActionPerformed
 
     /**
      * @param args the command line arguments
@@ -233,16 +225,13 @@ public class Wrapper extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTable AddonList;
     private javax.swing.JLabel Description;
+    private javax.swing.JButton InstallButton;
+    private javax.swing.JButton RemoveButton;
     private javax.swing.JTextField Search;
-    private javax.swing.JPanel Settings;
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton3;
-    private javax.swing.JCheckBox jCheckBox1;
+    private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JSplitPane jSplitPane2;
-    private javax.swing.JTextField jTextField3;
     private javax.swing.JPanel leftSide;
     private javax.swing.JTabbedPane rightSide;
     // End of variables declaration//GEN-END:variables

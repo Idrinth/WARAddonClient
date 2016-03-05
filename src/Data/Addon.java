@@ -35,4 +35,14 @@ public class Addon {
         }
         return value;
     }
+    public String[] getTableRow() {
+        String[] row=new String[3];
+        row[0]=this.name;
+        row[1]=this.version;
+        row[2]="-";
+        return row;
+    }
+    public String getDescription() {
+        return "<html>"+description;
+    }
 }
