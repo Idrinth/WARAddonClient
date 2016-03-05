@@ -14,6 +14,7 @@ public class Addon {
     private String version;
     private String slug;
     private String name;
+    private String installed="-";
     private java.util.ArrayList tags=new java.util.ArrayList();
     public Addon(javax.json.JsonObject addon) {
         description=getStringFromObject("description",addon);
@@ -38,7 +39,7 @@ public class Addon {
         String[] row=new String[3];
         row[0]=this.name;
         row[1]=this.version;
-        row[2]="-";
+        row[2]=this.installed;
         return row;
     }
     public String getDescription() {

@@ -11,12 +11,23 @@ package Gui;
  */
 public class Wrapper extends javax.swing.JFrame {
     Data.AddonList addons=new Data.AddonList();
-    String defaultDescription="<html><h1>Welcome to the client.</h1><p>To get something more useful here, select an addon to the right</p>";
     /**
      * Creates new form Wrapper
      */
     public Wrapper() {
         initComponents();
+        makeAddonList();
+        finishGuiBuilding();
+        processPosition();
+    }
+    protected final void finishGuiBuilding() {
+        this.AddonList.getSelectionModel().addListSelectionListener(new tableListener());
+        Description.setText("<html><h1>Welcome to the client.</h1><p>To get something more useful here, select an addon to the right</p>");
+        InstallButton.setEnabled(false);
+        RemoveButton.setEnabled(false);
+        this.setIconImage(java.awt.Toolkit.getDefaultToolkit().getImage(getClass().getResource("/Images/logo.png")));
+    }
+    protected final void makeAddonList() {
         javax.json.JsonArray parse = request.getAddonList();
         int counter=0;
         javax.swing.table.DefaultTableModel model=(javax.swing.table.DefaultTableModel) this.AddonList.getModel();
@@ -25,10 +36,8 @@ public class Wrapper extends javax.swing.JFrame {
             model.addRow(addons.get(counter).getTableRow());
             counter++;
         }
-        this.AddonList.getSelectionModel().addListSelectionListener(new tableListener());
-        Description.setText(defaultDescription);
-        InstallButton.setEnabled(false);
-        RemoveButton.setEnabled(false);
+    }
+    protected final void processPosition() {
         String errors = "";
         if(!new java.io.File("./WAR.exe").exists()) {
             errors+="Missing WAR.exe here, please put this file in the Warhammer Online directory.";
@@ -36,7 +45,7 @@ public class Wrapper extends javax.swing.JFrame {
         if(!new java.io.File("./RoRLauncher.exe").exists()) {
             errors+="Missing RoRLauncher.exe here, please put this file in the Warhammer Online directory.";
         }
-        if(errors.length()>0) {
+        if(false&&errors.length()>0) {
             javax.swing.JOptionPane.showMessageDialog(this,errors);
             this.dispose();
             System.exit(0);
