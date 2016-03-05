@@ -5,8 +5,6 @@
  */
 package Gui;
 
-import javax.json.stream.JsonParser;
-
 /**
  *
  * @author BJ
@@ -20,9 +18,10 @@ public class Wrapper extends javax.swing.JFrame {
         initComponents();
         javax.json.JsonArray parse = request.getAddonList();
         int counter=0;
-        while(null!=parse.getJsonObject(counter)) {
+        while(parse.size()>counter) {
             addons.add(new Data.Addon(parse.getJsonObject(counter)));
             counter++;
+            System.out.println(counter+" of "+parse.size());
         }
     }
 

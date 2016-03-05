@@ -16,15 +16,23 @@ public class Addon {
     private String name;
     private java.util.ArrayList tags=new java.util.ArrayList();
     public Addon(javax.json.JsonObject addon) {
-        description=addon.getString("description");
-        version=addon.getString("version");
-        slug=addon.getString("slug");
-        name=addon.getString("name");
+        description=getStringFromObject("description",addon);
+        version=getStringFromObject("version",addon);
+        slug=getStringFromObject("slug",addon);
+        name=getStringFromObject("name",addon);
         javax.json.JsonArray tagList=addon.getJsonArray("tags");
         int counter=0;
-        while(null!=tagList.getString(counter)) {
+        while(tagList.size()>counter) {
             tags.add(tagList.getString(counter));
             counter++;
         }
+        System.out.println(this);
+    }
+    protected final String getStringFromObject(String key,javax.json.JsonObject data) {
+        String value="";
+        if(!data.isNull(key)) {
+            value=data.getString(key);
+        }
+        return value;
     }
 }
