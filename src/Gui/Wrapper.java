@@ -121,10 +121,14 @@ public class Wrapper extends javax.swing.JFrame {
 
         jSplitPane2.setLeftComponent(leftSide);
 
+        jScrollPane1.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+
         Description.setBackground(new java.awt.Color(255, 255, 255));
         Description.setVerticalAlignment(javax.swing.SwingConstants.TOP);
         Description.setAlignmentX(0.5F);
         Description.setAutoscrolls(true);
+        Description.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
+        Description.setOpaque(true);
         jScrollPane1.setViewportView(Description);
 
         InstallButton.setText("(Re)Install");
