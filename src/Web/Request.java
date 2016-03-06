@@ -11,10 +11,11 @@ package Web;
  * @author BJ
  */
 public class Request {
+    private final String baseUrl="http://tools.idrinth.de/";
 
     public javax.json.JsonArray getAddonList() {
         try{
-            java.io.InputStream stream =new java.net.URL("http://tools.idrinth.de/addon-api/").openConnection().getInputStream();
+            java.io.InputStream stream =new java.net.URL(baseUrl+"addon-api/").openConnection().getInputStream();
             return javax.json.Json.createReader(stream).readArray();
         }catch (java.net.MalformedURLException exeption) {
             System.out.println(exeption.getMessage());
@@ -26,7 +27,7 @@ public class Request {
 
     public java.io.InputStream getAddonDownload(String url) {
          try{
-            return new java.net.URL(url).openConnection().getInputStream();
+            return new java.net.URL(baseUrl+"addons/"+url).openConnection().getInputStream();
         }catch (java.net.MalformedURLException exeption) {
             System.out.println(exeption.getMessage());
         }catch (java.io.IOException exeption) {

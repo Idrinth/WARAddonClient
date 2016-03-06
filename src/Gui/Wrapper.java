@@ -10,9 +10,11 @@ package Gui;
  * @author BJ
  */
 public class Wrapper extends javax.swing.JFrame {
-    Data.AddonList addons=new Data.AddonList();
+
+    Data.AddonList addons = new Data.AddonList();
     javax.swing.table.TableRowSorter sorter;
-    Data.Addon activeAddon=null;
+    Data.Addon activeAddon = null;
+
     /**
      * Creates new form Wrapper
      */
@@ -22,6 +24,8 @@ public class Wrapper extends javax.swing.JFrame {
         finishGuiBuilding();
         processPosition();
     }
+    java.nio.file.WatchService watcher = null;
+
     protected final void finishGuiBuilding() {
         this.AddonList.getSelectionModel().addListSelectionListener(new tableListener());
         Description.setText("<html><h1>Welcome to the client.</h1><p>To get something more useful here, select an addon to the right</p>");
@@ -32,49 +36,83 @@ public class Wrapper extends javax.swing.JFrame {
         this.AddonList.setRowSorter(sorter);
         this.setTitle("Idrinth's WAR Addon Client");
     }
+
+    protected void initializeWatcher() {
+        try {
+            java.nio.file.Path path = java.nio.file.FileSystems.getDefault().getPath("Interface", "AddOns");
+            watcher = path.getFileSystem().newWatchService();
+            java.nio.file.WatchEvent.Kind[] modes = new java.nio.file.WatchEvent.Kind[3];
+            modes[0] = java.nio.file.StandardWatchEventKinds.ENTRY_CREATE;
+            modes[1] = java.nio.file.StandardWatchEventKinds.ENTRY_CREATE;
+            modes[2] = java.nio.file.StandardWatchEventKinds.ENTRY_CREATE;
+            path.register(
+                    watcher,
+                    modes,
+                    com.sun.nio.file.ExtendedWatchEventModifier.FILE_TREE);
+            java.nio.file.WatchKey watchKey = watcher.take();
+
+            java.util.List<java.nio.file.WatchEvent<?>> events = watchKey.pollEvents();
+            for (java.nio.file.WatchEvent event : events) {
+                if (event.kind() == java.nio.file.StandardWatchEventKinds.ENTRY_CREATE) {
+                    System.out.println("Created: " + event.context().toString());
+                } else if (event.kind() == java.nio.file.StandardWatchEventKinds.ENTRY_DELETE) {
+                    System.out.println("Delete: " + event.context().toString());
+                } else if (event.kind() == java.nio.file.StandardWatchEventKinds.ENTRY_MODIFY) {
+                    System.out.println("Modify: " + event.context().toString());
+                }
+            }
+        } catch (java.lang.InterruptedException | java.io.IOException exception) {
+        }
+    }
+
     private void newFilter() {
         javax.swing.RowFilter rf = null;
         try {
-            rf = javax.swing.RowFilter.regexFilter(java.util.regex.Pattern.quote(Search.getText())+"?i", 0);
+            rf = javax.swing.RowFilter.regexFilter(java.util.regex.Pattern.quote(Search.getText()) + "?i", 0);
         } catch (java.util.regex.PatternSyntaxException e) {
             return;
         }
         sorter.setRowFilter(rf);
     }
+
     protected final void makeAddonList() {
         javax.json.JsonArray parse = request.getAddonList();
-        int counter=0;
-        javax.swing.table.DefaultTableModel model=(javax.swing.table.DefaultTableModel) this.AddonList.getModel();
-        while(parse.size()>counter) {
+        int counter = 0;
+        javax.swing.table.DefaultTableModel model = (javax.swing.table.DefaultTableModel) this.AddonList.getModel();
+        while (parse.size() > counter) {
             addons.add(new Data.Addon(parse.getJsonObject(counter)));
             model.addRow(addons.get(counter).getTableRow());
             counter++;
         }
     }
+
     protected final void processPosition() {
         String errors = "";
-        if(!new java.io.File("./WAR.exe").exists()) {
-            errors+="Missing WAR.exe here, please put this file in the Warhammer Online directory.";
+        if (!new java.io.File("./WAR.exe").exists()) {
+            errors += "Missing WAR.exe here, please put this file in the Warhammer Online directory.";
         }
-        if(!new java.io.File("./RoRLauncher.exe").exists()) {
-            errors+="Missing RoRLauncher.exe here, please put this file in the Warhammer Online directory.";
+        if (!new java.io.File("./RoRLauncher.exe").exists()) {
+            errors += "Missing RoRLauncher.exe here, please put this file in the Warhammer Online directory.";
         }
-        if(errors.length()>0) {
-            javax.swing.JOptionPane.showMessageDialog(this,errors);
+        if (errors.length() > 0) {
+            javax.swing.JOptionPane.showMessageDialog(this, errors);
             this.dispose();
             System.exit(0);
         }
     }
+
     class tableListener implements javax.swing.event.ListSelectionListener {
+
         public void valueChanged(javax.swing.event.ListSelectionEvent event) {
-            activeAddon=addons.get(AddonList.convertRowIndexToModel(AddonList.getSelectedRow()));
+            activeAddon = addons.get(AddonList.convertRowIndexToModel(AddonList.getSelectedRow()));
             Description.setText(activeAddon.getDescription());
             Title.setText(activeAddon.getName());
             InstallButton.setEnabled(true);
             RemoveButton.setEnabled(true);
-            setTitle(activeAddon.getName()+" - Idrinth's WAR Addon Client");
+            setTitle(activeAddon.getName() + " - Idrinth's WAR Addon Client");
         }
     }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -244,13 +282,12 @@ public class Wrapper extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void InstallButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_InstallButtonActionPerformed
-        RemoveAddon(false);        
-        try{
-            new Service.UnzipUtility().unzip(new Web.Request().getAddonDownload(activeAddon.getDownloadLink()),"./Interface/AddOns/");
+        try {
+            activeAddon.install();
             updateList();
-            javax.swing.JOptionPane.showMessageDialog(this,"The requested Addon was installed.");
-        }catch(java.io.IOException exception) {
-            javax.swing.JOptionPane.showMessageDialog(this,"Sadly Installing failed, check if the folder is writeable.");
+            javax.swing.JOptionPane.showMessageDialog(this, "The requested Addon was installed.");
+        } catch (java.io.IOException exception) {
+            javax.swing.JOptionPane.showMessageDialog(this, "Sadly Installing failed, check if the folder is writeable.");
         }
     }//GEN-LAST:event_InstallButtonActionPerformed
 
@@ -263,35 +300,17 @@ public class Wrapper extends javax.swing.JFrame {
     }//GEN-LAST:event_SearchKeyReleased
 
     private void RemoveButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_RemoveButtonActionPerformed
-        RemoveAddon(true);
+        activeAddon.uninstall();
+        updateList();
     }//GEN-LAST:event_RemoveButtonActionPerformed
     protected void updateList() {
-        for(int position=0;position<AddonList.getRowCount();position++) {
-            if(addons.get(AddonList.convertRowIndexToModel(position)).getName()==activeAddon.getName()) {
+        for (int position = 0; position < AddonList.getRowCount(); position++) {
+            if (addons.get(AddonList.convertRowIndexToModel(position)).getName() == activeAddon.getName()) {
                 AddonList.setValueAt(activeAddon.getVersion(), position, 2);
             }
         }
     }
-    protected void RemoveAddon(boolean single) {
-        java.io.File addonFolder = new java.io.File("./Interface/AddOns/"+activeAddon.getName());
-        emptyFolder(addonFolder);
-        addonFolder.delete();
-        if(single) {
-            updateList();
-            javax.swing.JOptionPane.showMessageDialog(this,"The requested Addon was removed.");
-        }
-    }
-    protected void emptyFolder(java.io.File folder) {
-        if(folder==null||!folder.exists()) {
-            return;
-        }
-        for(java.io.File file : folder.listFiles()) {
-            if(file.isDirectory()) {
-                emptyFolder(file);
-            }
-            file.delete();
-        }
-    }
+
     /**
      * @param args the command line arguments
      */
@@ -326,7 +345,7 @@ public class Wrapper extends javax.swing.JFrame {
             }
         });
     }
-    protected Web.Request request=new Web.Request();
+    protected Web.Request request = new Web.Request();
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTable AddonList;
     private javax.swing.JLabel Description;

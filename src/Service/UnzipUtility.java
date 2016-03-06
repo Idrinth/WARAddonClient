@@ -2,32 +2,35 @@ package Service;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
- 
+
 /**
- * This utility extracts files and directories of a standard zip file to
- * a destination directory.
+ * This utility extracts files and directories of a standard zip file to a
+ * destination directory.
+ *
  * @author www.codejava.net
  *
  */
 public class UnzipUtility {
+
     /**
      * Size of the buffer to read/write data
      */
     private static final int BUFFER_SIZE = 4096;
+
     /**
-     * Extracts a zip file specified by the zipFilePath to a directory specified by
-     * destDirectory (will be created if does not exists)
+     * Extracts a zip file specified by the zipFilePath to a directory specified
+     * by destDirectory (will be created if does not exists)
+     *
      * @param source
      * @param destDirectory
      * @throws IOException
      */
     public void unzip(java.io.InputStream source, String destDirectory) throws IOException {
-        if(source==null) {
+        if (source == null) {
             throw new IOException();
         }
         File destDir = new File(destDirectory);
@@ -52,8 +55,10 @@ public class UnzipUtility {
         }
         zipIn.close();
     }
+
     /**
      * Extracts a zip entry (file entry)
+     *
      * @param zipIn
      * @param filePath
      * @throws IOException
