@@ -73,12 +73,26 @@ public class Addon {
                     org.w3c.dom.NodeList list=javax.xml.parsers.DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(fileEntry).getElementsByTagName("UiMod");
                     for(int counter=0;counter<list.getLength();counter++) {
                         this.installed=list.item(counter).getAttributes().getNamedItem("version").getTextContent();
+                        return;
                     }
                 }
                 catch(javax.xml.parsers.ParserConfigurationException | javax.xml.parsers.FactoryConfigurationError | org.xml.sax.SAXException | java.io.IOException exception){
                     System.out.println(exception.getMessage());
                 }
             }
+        }
+        java.io.File file=new java.io.File(folder.getPath()+"/self.idrinth");
+        if(file.exists()) {
+                try{
+                    org.w3c.dom.NodeList list=javax.xml.parsers.DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(file).getElementsByTagName("version");
+                    for(int counter=0;counter<list.getLength();counter++) {
+                        this.installed=list.item(counter).getTextContent();
+                        return;
+                    }
+                }
+                catch(javax.xml.parsers.ParserConfigurationException | javax.xml.parsers.FactoryConfigurationError | org.xml.sax.SAXException | java.io.IOException exception){
+                    System.out.println(exception.getMessage());
+                }
         }
     }
     protected final String getStringFromObject(String key,javax.json.JsonObject data) {

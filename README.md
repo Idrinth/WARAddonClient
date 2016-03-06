@@ -6,3 +6,11 @@ This is meant to be a replacement for the Curse-Client, that no longer supports 
 If you want to use this, the only thing needed is the jar-file in the folder bin, copy that to your Warhammer Online directory and run it.
 
 If you got ideas or requests, just open a ticket here :)
+
+If you find an addon without any .mod file, please add a simple "self.idrinth" textfile before uploading. The content of that should look like:
+
+<?xml version="1.0" encoding="UTF-8"?>
+<UiMod>
+	<name>zTimeLib</name>
+	<version>0.6.0</version>
+</UiMod>
