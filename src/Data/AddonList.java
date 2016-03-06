@@ -13,4 +13,10 @@ public class AddonList extends java.util.ArrayList{
     public Addon get(int i) {
         return (Addon) super.get(i);
     }
+    public boolean add(Addon addon) {
+        return super.add(addon);
+    }
+    public void add(int i,Addon addon) {
+        super.add(i,addon);
+    }
 }

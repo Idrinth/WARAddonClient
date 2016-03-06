@@ -12,6 +12,7 @@ package Gui;
 public class Wrapper extends javax.swing.JFrame {
     Data.AddonList addons=new Data.AddonList();
     javax.swing.table.TableRowSorter sorter;
+    Data.Addon activeAddon=null;
     /**
      * Creates new form Wrapper
      */
@@ -29,12 +30,12 @@ public class Wrapper extends javax.swing.JFrame {
         this.setIconImage(java.awt.Toolkit.getDefaultToolkit().getImage(getClass().getResource("/Images/logo.png")));
         sorter = new javax.swing.table.TableRowSorter(this.AddonList.getModel());
         this.AddonList.setRowSorter(sorter);
+        this.setTitle("Idrinth's WAR Addon Client");
     }
     private void newFilter() {
         javax.swing.RowFilter rf = null;
-        //If current expression doesn't parse, don't update.
         try {
-            rf = javax.swing.RowFilter.regexFilter(Search.getText(), 0);
+            rf = javax.swing.RowFilter.regexFilter(java.util.regex.Pattern.quote(Search.getText())+"?i", 0);
         } catch (java.util.regex.PatternSyntaxException e) {
             return;
         }
@@ -66,10 +67,12 @@ public class Wrapper extends javax.swing.JFrame {
     }
     class tableListener implements javax.swing.event.ListSelectionListener {
         public void valueChanged(javax.swing.event.ListSelectionEvent event) {
-            Description.setText(addons.get(AddonList.getSelectedRow()).getDescription());
-            Title.setText(addons.get(AddonList.getSelectedRow()).getName());
+            activeAddon=addons.get(AddonList.convertRowIndexToModel(AddonList.getSelectedRow()));
+            Description.setText(activeAddon.getDescription());
+            Title.setText(activeAddon.getName());
             InstallButton.setEnabled(true);
             RemoveButton.setEnabled(true);
+            setTitle(activeAddon.getName()+" - Idrinth's WAR Addon Client");
         }
     }
     /**
@@ -112,6 +115,8 @@ public class Wrapper extends javax.swing.JFrame {
             }
         });
 
+        jScrollPane2.setMaximumSize(null);
+
         AddonList.setAutoCreateRowSorter(true);
         AddonList.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -136,6 +141,7 @@ public class Wrapper extends javax.swing.JFrame {
                 return canEdit [columnIndex];
             }
         });
+        AddonList.setMaximumSize(null);
         AddonList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         AddonList.getTableHeader().setReorderingAllowed(false);
         jScrollPane2.setViewportView(AddonList);
@@ -165,6 +171,7 @@ public class Wrapper extends javax.swing.JFrame {
         jSplitPane2.setLeftComponent(leftSide);
 
         jScrollPane1.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        jScrollPane1.setMaximumSize(null);
 
         Description.setBackground(new java.awt.Color(255, 255, 255));
         Description.setVerticalAlignment(javax.swing.SwingConstants.TOP);
@@ -232,7 +239,14 @@ public class Wrapper extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void InstallButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_InstallButtonActionPerformed
-        // TODO add your handling code here:
+        RemoveAddon(false);        
+        try{
+            new Service.UnzipUtility().unzip(new Web.Request().getAddonDownload(activeAddon.getDownloadLink()),"./Interface/AddOns/");
+            activeAddon.findInstalled();
+            javax.swing.JOptionPane.showMessageDialog(this,"The requested Addon was installed.");
+        }catch(java.io.IOException exception) {
+            javax.swing.JOptionPane.showMessageDialog(this,"Sadly Installing failed, check if the folder is writeable.");
+        }
     }//GEN-LAST:event_InstallButtonActionPerformed
 
     private void SearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SearchActionPerformed
@@ -242,7 +256,23 @@ public class Wrapper extends javax.swing.JFrame {
     private void SearchKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_SearchKeyReleased
         newFilter();
     }//GEN-LAST:event_SearchKeyReleased
-
+    protected void RemoveAddon(boolean showSuccess) {
+        java.io.File addonFolder = new java.io.File("./Interface/AddOns/"+activeAddon.getName());
+        emptyFolder(addonFolder);
+        addonFolder.delete();
+        activeAddon.findInstalled();
+        if(showSuccess) {
+            javax.swing.JOptionPane.showMessageDialog(this,"The requested Addon was removed.");
+        }
+    }
+    protected void emptyFolder(java.io.File folder) {
+        for(java.io.File file : folder.listFiles()) {
+            if(file.isDirectory()) {
+                emptyFolder(file);
+            }
+            file.delete();
+        }
+    }
     /**
      * @param args the command line arguments
      */

@@ -54,7 +54,7 @@ public class Addon {
         }
         return folder;
     }
-    protected final void findInstalled() {
+    public final void findInstalled() {
         java.io.File folder=getAddonFolder();
         if(folder==null||!folder.exists()) {
             return;
@@ -95,5 +95,8 @@ public class Addon {
     }
     public String getName() {
         return name;
+    }
+    public String getDownloadLink() {
+        return "http://tools.idrinth.de/addons/"+slug+"/download/"+version.replace(".", "-")+"/";
     }
 }

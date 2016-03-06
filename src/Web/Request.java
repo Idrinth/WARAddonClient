@@ -24,8 +24,14 @@ public class Request {
         return null;
     }
 
-    public void getAddonDownload(int id) {
- 
-
+    public java.io.InputStream getAddonDownload(String url) {
+         try{
+            return new java.net.URL(url).openConnection().getInputStream();
+        }catch (java.net.MalformedURLException exeption) {
+            System.out.println(exeption.getMessage());
+        }catch (java.io.IOException exeption) {
+            System.out.println(exeption.getMessage());
+        }
+        return null;
     }
 }
