@@ -68,7 +68,11 @@ public class Wrapper extends javax.swing.JFrame {
     private void newFilter() {
         javax.swing.RowFilter rf = null;
         try {
-            rf = javax.swing.RowFilter.regexFilter(java.util.regex.Pattern.quote(Search.getText()) + "?i", 0);
+            rf = javax.swing.RowFilter.regexFilter(
+                "(?i)" +java.util.regex.Pattern.quote(
+                    Search.getText()
+                )
+            );
         } catch (java.util.regex.PatternSyntaxException e) {
             return;
         }
@@ -104,7 +108,11 @@ public class Wrapper extends javax.swing.JFrame {
     class tableListener implements javax.swing.event.ListSelectionListener {
 
         public void valueChanged(javax.swing.event.ListSelectionEvent event) {
-            activeAddon = addons.get(AddonList.convertRowIndexToModel(AddonList.getSelectedRow()));
+            try {
+                activeAddon = addons.get(AddonList.convertRowIndexToModel(AddonList.getSelectedRow()));
+            } catch(java.lang.ArrayIndexOutOfBoundsException exception) {
+                return;
+            }
             Description.setText(activeAddon.getDescription());
             Title.setText(activeAddon.getName());
             InstallButton.setEnabled(true);
