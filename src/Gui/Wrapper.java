@@ -189,6 +189,11 @@ public class Wrapper extends javax.swing.JFrame {
         });
 
         RemoveButton.setText("Remove");
+        RemoveButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                RemoveButtonActionPerformed(evt);
+            }
+        });
 
         Title.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
 
@@ -242,7 +247,7 @@ public class Wrapper extends javax.swing.JFrame {
         RemoveAddon(false);        
         try{
             new Service.UnzipUtility().unzip(new Web.Request().getAddonDownload(activeAddon.getDownloadLink()),"./Interface/AddOns/");
-            activeAddon.findInstalled();
+            updateList();
             javax.swing.JOptionPane.showMessageDialog(this,"The requested Addon was installed.");
         }catch(java.io.IOException exception) {
             javax.swing.JOptionPane.showMessageDialog(this,"Sadly Installing failed, check if the folder is writeable.");
@@ -256,16 +261,30 @@ public class Wrapper extends javax.swing.JFrame {
     private void SearchKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_SearchKeyReleased
         newFilter();
     }//GEN-LAST:event_SearchKeyReleased
-    protected void RemoveAddon(boolean showSuccess) {
+
+    private void RemoveButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_RemoveButtonActionPerformed
+        RemoveAddon(true);
+    }//GEN-LAST:event_RemoveButtonActionPerformed
+    protected void updateList() {
+        for(int position=0;position<AddonList.getRowCount();position++) {
+            if(addons.get(AddonList.convertRowIndexToModel(position)).getName()==activeAddon.getName()) {
+                AddonList.setValueAt(activeAddon.getVersion(), position, 2);
+            }
+        }
+    }
+    protected void RemoveAddon(boolean single) {
         java.io.File addonFolder = new java.io.File("./Interface/AddOns/"+activeAddon.getName());
         emptyFolder(addonFolder);
         addonFolder.delete();
-        activeAddon.findInstalled();
-        if(showSuccess) {
+        if(single) {
+            updateList();
             javax.swing.JOptionPane.showMessageDialog(this,"The requested Addon was removed.");
         }
     }
     protected void emptyFolder(java.io.File folder) {
+        if(folder==null||!folder.exists()) {
+            return;
+        }
         for(java.io.File file : folder.listFiles()) {
             if(file.isDirectory()) {
                 emptyFolder(file);

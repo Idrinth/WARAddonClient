@@ -29,6 +29,10 @@ public class Addon {
         }
         findInstalled();
     }
+    public String getVersion() {
+        findInstalled();
+        return installed;
+    }
     protected java.io.File findMatch(java.io.File folder,String search) {
             if(!folder.exists()) {
                 return null;
@@ -54,7 +58,8 @@ public class Addon {
         }
         return folder;
     }
-    public final void findInstalled() {
+    protected final void findInstalled() {
+        installed="-";
         java.io.File folder=getAddonFolder();
         if(folder==null||!folder.exists()) {
             return;
