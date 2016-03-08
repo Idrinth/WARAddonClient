@@ -1,7 +1,6 @@
 /.nbproject
 /nbproject
 /build
-build.xml
 /dist/README.TXT
 /dist/lib
 /dist/AddonClient.jar
