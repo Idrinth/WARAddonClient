@@ -7,7 +7,7 @@ If you got ideas or requests, just open a ticket here :)
 ## Users
 
 This is a java-Application, so you'll need to be able to run .jar files on the system you desire to use this on.
-The only file you need is the <a href="">jar-file in the folder bin</a>.
+The only file you need is the <a href="https://github.com/Idrinth/WARAddonClient/raw/master/bin/AddonClient.jar">jar-file in the folder bin</a>.
 After downloading it, copy it to your Warhammer Online directory and run it.
 
 ## Addon Authors
