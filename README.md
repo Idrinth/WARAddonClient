@@ -1,13 +1,19 @@
 # WARAddonClient
+
 A Client to recieve Addon-Data for Warhammer Online and handle the installation, removal and updating of them
-
 This is meant to be a replacement for the Curse-Client, that no longer supports Warhammer Online. The website-version is at http://tools.idrinth.de/addons/ .
-
-If you want to use this, the only thing needed is the jar-file in the folder bin, copy that to your Warhammer Online directory and run it.
-
 If you got ideas or requests, just open a ticket here :)
 
-For Addon-Authors there is now an option to let data be uploaded automatically - if the user so choses. this requires an upload.idrinth file in the addon's main dire, that looks somewhat like the following:
+## Users
+
+This is a java-Application, so you'll need to be able to run .jar files on the system you desire to use this on.
+The only file you need is the <a href="">jar-file in the folder bin</a>.
+After downloading it, copy it to your Warhammer Online directory and run it.
+
+## Addon Authors
+
+There is now an option to let data be uploaded automatically - if the user so choses.
+This requires an "upload.idrinth" file in the addon's main directory, for example:
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -18,4 +24,7 @@ For Addon-Authors there is now an option to let data be uploaded automatically -
 </Upload>
 ```
 
-This example would grab all files that turn up newly or are changed within the subtree of user/settings and upload them to the given Url - if the user opted in. The Reason is displayed above the OptIn and should contain information about what and why you want to upload the given file.
+This example would grab all files that are named "demo.xml" in the /user/settings.
+If the user allowed the related addon to automatically upload files, the found file will be attached as a body to a post request to the configured URL.
+The Reason-tag wrapps your own text, that is shown to users when they have the option of allowing automatic uploads or not.
+Obviously, it would be helpful to provide a short explanation to the readers, so they'll recall why they should opt in.
