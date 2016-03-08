@@ -24,7 +24,7 @@ This requires an "upload.idrinth" file in the addon's main directory, for exampl
 </Upload>
 ```
 
-This example would grab all files that are named "demo.xml" in the /user/settings.
+This example would grab all files that are named "demo.xml" in /user/settings and subfolders.
 If the user allowed the related addon to automatically upload files, the found file will be attached as a body to a post request to the configured URL.
 The Reason-tag wrapps your own text, that is shown to users when they have the option of allowing automatic uploads or not.
 Obviously, it would be helpful to provide a short explanation to the readers, so they'll recall why they should opt in.
