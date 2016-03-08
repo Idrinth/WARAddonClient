@@ -11,9 +11,11 @@ package Gui;
  */
 public class Wrapper extends javax.swing.JFrame {
 
-    Data.AddonList addons = new Data.AddonList();
+    Data.AddonList addons = null;
     javax.swing.table.TableRowSorter sorter;
     Data.Addon activeAddon = null;
+    Data.User user = new Data.User();
+    Service.FileWatcher watcher;
 
     /**
      * Creates new form Wrapper
@@ -24,45 +26,17 @@ public class Wrapper extends javax.swing.JFrame {
         finishGuiBuilding();
         processPosition();
     }
-    java.nio.file.WatchService watcher = null;
 
     protected final void finishGuiBuilding() {
         this.AddonList.getSelectionModel().addListSelectionListener(new tableListener());
-        Description.setText("<html><h1>Welcome to the client.</h1><p>To get something more useful here, select an addon to the right</p>");
+        Description.setText("<html><h1>Welcome to the client.</h1><p>To get something more useful here, select an addon to the left.</p>");
         InstallButton.setEnabled(false);
         RemoveButton.setEnabled(false);
         this.setIconImage(java.awt.Toolkit.getDefaultToolkit().getImage(getClass().getResource("/Images/logo.png")));
         sorter = new javax.swing.table.TableRowSorter(this.AddonList.getModel());
         this.AddonList.setRowSorter(sorter);
         this.setTitle("Idrinth's WAR Addon Client");
-    }
-
-    protected void initializeWatcher() {
-        try {
-            java.nio.file.Path path = java.nio.file.FileSystems.getDefault().getPath("Interface", "AddOns");
-            watcher = path.getFileSystem().newWatchService();
-            java.nio.file.WatchEvent.Kind[] modes = new java.nio.file.WatchEvent.Kind[3];
-            modes[0] = java.nio.file.StandardWatchEventKinds.ENTRY_CREATE;
-            modes[1] = java.nio.file.StandardWatchEventKinds.ENTRY_CREATE;
-            modes[2] = java.nio.file.StandardWatchEventKinds.ENTRY_CREATE;
-            path.register(
-                    watcher,
-                    modes,
-                    com.sun.nio.file.ExtendedWatchEventModifier.FILE_TREE);
-            java.nio.file.WatchKey watchKey = watcher.take();
-
-            java.util.List<java.nio.file.WatchEvent<?>> events = watchKey.pollEvents();
-            for (java.nio.file.WatchEvent event : events) {
-                if (event.kind() == java.nio.file.StandardWatchEventKinds.ENTRY_CREATE) {
-                    System.out.println("Created: " + event.context().toString());
-                } else if (event.kind() == java.nio.file.StandardWatchEventKinds.ENTRY_DELETE) {
-                    System.out.println("Delete: " + event.context().toString());
-                } else if (event.kind() == java.nio.file.StandardWatchEventKinds.ENTRY_MODIFY) {
-                    System.out.println("Modify: " + event.context().toString());
-                }
-            }
-        } catch (java.lang.InterruptedException | java.io.IOException exception) {
-        }
+        rightSide.setEnabledAt(1,false);
     }
 
     private void newFilter() {
@@ -80,14 +54,10 @@ public class Wrapper extends javax.swing.JFrame {
     }
 
     protected final void makeAddonList() {
-        javax.json.JsonArray parse = request.getAddonList();
-        int counter = 0;
-        javax.swing.table.DefaultTableModel model = (javax.swing.table.DefaultTableModel) this.AddonList.getModel();
-        while (parse.size() > counter) {
-            addons.add(new Data.Addon(parse.getJsonObject(counter)));
-            model.addRow(addons.get(counter).getTableRow());
-            counter++;
-        }
+        addons=new Data.AddonList(AddonList,user);
+        watcher=new Service.FileWatcher(addons);
+        new java.lang.Thread(watcher).start();
+        new java.lang.Thread(addons).start();
     }
 
     protected final void processPosition() {
@@ -114,10 +84,17 @@ public class Wrapper extends javax.swing.JFrame {
                 return;
             }
             Description.setText(activeAddon.getDescription());
+            Description.setText(activeAddon.getDescription());
             Title.setText(activeAddon.getName());
             InstallButton.setEnabled(true);
             RemoveButton.setEnabled(true);
             setTitle(activeAddon.getName() + " - Idrinth's WAR Addon Client");
+            Data.AddonSettings settings = activeAddon.getUploadData();
+            rightSide.setEnabledAt(1,settings.showSettings());
+            UploadReason.setText(settings.getReason());
+            UploadUrl.setText(settings.getUrl());
+            UploadFile.setText(settings.getFile());
+            UploadEnable.setSelected(settings.isEnabled());
         }
     }
 
@@ -138,10 +115,18 @@ public class Wrapper extends javax.swing.JFrame {
         rightSide = new javax.swing.JTabbedPane();
         jPanel1 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        Description = new javax.swing.JLabel();
+        Description = new javax.swing.JEditorPane();
         InstallButton = new javax.swing.JButton();
         RemoveButton = new javax.swing.JButton();
         Title = new javax.swing.JLabel();
+        jPanel2 = new javax.swing.JPanel();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        UploadReason = new javax.swing.JTextArea();
+        UploadUrl = new javax.swing.JTextField();
+        jLabel1 = new javax.swing.JLabel();
+        UploadEnable = new javax.swing.JCheckBox();
+        label1 = new java.awt.Label();
+        UploadFile = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -202,16 +187,15 @@ public class Wrapper extends javax.swing.JFrame {
         leftSide.setLayout(leftSideLayout);
         leftSideLayout.setHorizontalGroup(
             leftSideLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(Search, javax.swing.GroupLayout.DEFAULT_SIZE, 199, Short.MAX_VALUE)
-            .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+            .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 199, Short.MAX_VALUE)
+            .addComponent(Search)
         );
         leftSideLayout.setVerticalGroup(
             leftSideLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(leftSideLayout.createSequentialGroup()
                 .addComponent(Search, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 444, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 12, Short.MAX_VALUE))
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 412, Short.MAX_VALUE))
         );
 
         jSplitPane2.setLeftComponent(leftSide);
@@ -219,13 +203,10 @@ public class Wrapper extends javax.swing.JFrame {
         jScrollPane1.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
         jScrollPane1.setMaximumSize(null);
 
-        Description.setBackground(new java.awt.Color(255, 255, 255));
-        Description.setVerticalAlignment(javax.swing.SwingConstants.TOP);
-        Description.setAlignmentX(0.5F);
-        Description.setAutoscrolls(true);
-        Description.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
-        Description.setOpaque(true);
+        Description.setEditable(false);
+        Description.setContentType("text/html"); // NOI18N
         jScrollPane1.setViewportView(Description);
+        Description.getAccessibleContext().setAccessibleDescription("text/html");
 
         InstallButton.setText("(Re)Install");
         InstallButton.addActionListener(new java.awt.event.ActionListener() {
@@ -267,11 +248,81 @@ public class Wrapper extends javax.swing.JFrame {
                     .addComponent(InstallButton)
                     .addComponent(Title))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 414, Short.MAX_VALUE)
-                .addContainerGap())
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 381, Short.MAX_VALUE))
         );
 
         rightSide.addTab("Main", jPanel1);
+
+        UploadReason.setEditable(false);
+        UploadReason.setColumns(20);
+        UploadReason.setRows(5);
+        jScrollPane3.setViewportView(UploadReason);
+
+        UploadUrl.setEditable(false);
+        UploadUrl.setToolTipText("");
+        UploadUrl.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                UploadUrlActionPerformed(evt);
+            }
+        });
+
+        jLabel1.setText("Upload URL");
+
+        UploadEnable.setText("Allow Upload");
+        UploadEnable.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                UploadEnableActionPerformed(evt);
+            }
+        });
+
+        label1.setText("File to Upload");
+
+        UploadFile.setEditable(false);
+        UploadFile.setToolTipText("");
+        UploadFile.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                UploadFileActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
+        jPanel2.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jScrollPane3)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addComponent(UploadEnable)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(UploadUrl, javax.swing.GroupLayout.PREFERRED_SIZE, 265, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addComponent(label1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 115, Short.MAX_VALUE)
+                        .addComponent(UploadFile, javax.swing.GroupLayout.PREFERRED_SIZE, 265, javax.swing.GroupLayout.PREFERRED_SIZE))))
+        );
+        jPanel2Layout.setVerticalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 247, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(UploadUrl, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(7, 7, 7)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(label1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(UploadFile, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(UploadEnable)
+                .addContainerGap(77, Short.MAX_VALUE))
+        );
+
+        rightSide.addTab("Settings", jPanel2);
 
         jSplitPane2.setRightComponent(rightSide);
 
@@ -311,6 +362,18 @@ public class Wrapper extends javax.swing.JFrame {
         activeAddon.uninstall();
         updateList();
     }//GEN-LAST:event_RemoveButtonActionPerformed
+
+    private void UploadUrlActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_UploadUrlActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_UploadUrlActionPerformed
+
+    private void UploadEnableActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_UploadEnableActionPerformed
+        activeAddon.getUploadData().setEnabled(UploadEnable.isSelected());
+    }//GEN-LAST:event_UploadEnableActionPerformed
+
+    private void UploadFileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_UploadFileActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_UploadFileActionPerformed
     protected void updateList() {
         for (int position = 0; position < AddonList.getRowCount(); position++) {
             if (addons.get(AddonList.convertRowIndexToModel(position)).getName() == activeAddon.getName()) {
@@ -353,18 +416,25 @@ public class Wrapper extends javax.swing.JFrame {
             }
         });
     }
-    protected Web.Request request = new Web.Request();
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTable AddonList;
-    private javax.swing.JLabel Description;
+    private javax.swing.JEditorPane Description;
     private javax.swing.JButton InstallButton;
     private javax.swing.JButton RemoveButton;
     private javax.swing.JTextField Search;
     private javax.swing.JLabel Title;
+    private javax.swing.JCheckBox UploadEnable;
+    private javax.swing.JTextField UploadFile;
+    private javax.swing.JTextArea UploadReason;
+    private javax.swing.JTextField UploadUrl;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JSplitPane jSplitPane2;
+    private java.awt.Label label1;
     private javax.swing.JPanel leftSide;
     private javax.swing.JTabbedPane rightSide;
     // End of variables declaration//GEN-END:variables

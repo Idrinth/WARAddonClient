@@ -1,7 +1,5 @@
 /.nbproject
 /nbproject
 /build
-/dist/README.TXT
-/dist/lib
-/dist/AddonClient.jar
+/dist
 /manifest.mf
