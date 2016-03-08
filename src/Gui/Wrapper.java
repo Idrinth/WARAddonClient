@@ -1,13 +1,24 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * Copyright (C) 2016 Björn Büttner
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package Gui;
 
 /**
  *
- * @author BJ
+ * @author Björn Büttner
  */
 public class Wrapper extends javax.swing.JFrame {
 
@@ -36,16 +47,16 @@ public class Wrapper extends javax.swing.JFrame {
         sorter = new javax.swing.table.TableRowSorter(this.AddonList.getModel());
         this.AddonList.setRowSorter(sorter);
         this.setTitle("Idrinth's WAR Addon Client");
-        rightSide.setEnabledAt(1,false);
+        rightSide.setEnabledAt(1, false);
     }
 
     private void newFilter() {
         javax.swing.RowFilter rf = null;
         try {
             rf = javax.swing.RowFilter.regexFilter(
-                "(?i)" +java.util.regex.Pattern.quote(
-                    Search.getText()
-                )
+                    "(?i)" + java.util.regex.Pattern.quote(
+                            Search.getText()
+                    )
             );
         } catch (java.util.regex.PatternSyntaxException e) {
             return;
@@ -54,8 +65,8 @@ public class Wrapper extends javax.swing.JFrame {
     }
 
     protected final void makeAddonList() {
-        addons=new Data.AddonList(AddonList,user);
-        watcher=new Service.FileWatcher(addons);
+        addons = new Data.AddonList(AddonList, user);
+        watcher = new Service.FileWatcher(addons);
         new java.lang.Thread(watcher).start();
         new java.lang.Thread(addons).start();
     }
@@ -80,7 +91,7 @@ public class Wrapper extends javax.swing.JFrame {
         public void valueChanged(javax.swing.event.ListSelectionEvent event) {
             try {
                 activeAddon = addons.get(AddonList.convertRowIndexToModel(AddonList.getSelectedRow()));
-            } catch(java.lang.ArrayIndexOutOfBoundsException exception) {
+            } catch (java.lang.ArrayIndexOutOfBoundsException exception) {
                 return;
             }
             Description.setText(activeAddon.getDescription());
@@ -90,7 +101,7 @@ public class Wrapper extends javax.swing.JFrame {
             RemoveButton.setEnabled(true);
             setTitle(activeAddon.getName() + " - Idrinth's WAR Addon Client");
             Data.AddonSettings settings = activeAddon.getUploadData();
-            rightSide.setEnabledAt(1,settings.showSettings());
+            rightSide.setEnabledAt(1, settings.showSettings());
             UploadReason.setText(settings.getReason());
             UploadUrl.setText(settings.getUrl());
             UploadFile.setText(settings.getFile());
@@ -374,6 +385,7 @@ public class Wrapper extends javax.swing.JFrame {
     private void UploadFileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_UploadFileActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_UploadFileActionPerformed
+
     protected void updateList() {
         for (int position = 0; position < AddonList.getRowCount(); position++) {
             if (addons.get(AddonList.convertRowIndexToModel(position)).getName() == activeAddon.getName()) {
@@ -389,7 +401,7 @@ public class Wrapper extends javax.swing.JFrame {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
+         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html
          */
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {

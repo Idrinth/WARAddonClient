@@ -1,60 +1,78 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * Copyright (C) 2016 Björn Büttner
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package Data;
 
 /**
  *
- * @author BJ
+ * @author Björn Büttner
  */
 public class User {
-    private org.w3c.dom.Document xml=null;
+
+    private org.w3c.dom.Document xml = null;
+
     public User() {
-        java.io.File file=new java.io.File("./idrinth.xml");
-        try{
-            if(file.exists()) {
+        java.io.File file = new java.io.File("./idrinth.xml");
+        try {
+            if (file.exists()) {
                 xml = javax.xml.parsers.DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(file);
             }
-        } catch(java.io.IOException|javax.xml.parsers.ParserConfigurationException|org.xml.sax.SAXException exception) {}
-        try{
-        if(xml==null){
-            xml = javax.xml.parsers.DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
-            xml.appendChild(xml.createElement("AddOns"));
+        } catch (java.io.IOException | javax.xml.parsers.ParserConfigurationException | org.xml.sax.SAXException exception) {
         }
-        } catch(javax.xml.parsers.ParserConfigurationException exception) {}
+        try {
+            if (xml == null) {
+                xml = javax.xml.parsers.DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
+                xml.appendChild(xml.createElement("AddOns"));
+            }
+        } catch (javax.xml.parsers.ParserConfigurationException exception) {
+        }
     }
+
     public boolean getEnabled(String name) {
-        org.w3c.dom.NodeList list=xml.getElementsByTagName("AddOn");
-        for(int counter=0;counter<list.getLength();counter++) {
-            if(name.equalsIgnoreCase(list.item(counter).getTextContent())) {
+        org.w3c.dom.NodeList list = xml.getElementsByTagName("AddOn");
+        for (int counter = 0; counter < list.getLength(); counter++) {
+            if (name.equalsIgnoreCase(list.item(counter).getTextContent())) {
                 return list.item(counter).getAttributes().item(0).getTextContent().equalsIgnoreCase("true");
             }
         }
         return false;
     }
+
     protected void writeDocument() {
-        try{
+        try {
             javax.xml.transform.TransformerFactory.newInstance().newTransformer().transform(
                     new javax.xml.transform.dom.DOMSource(xml),
                     new javax.xml.transform.stream.StreamResult(new java.io.File("./idrinth.xml"))
             );
-        } catch(javax.xml.transform.TransformerException exception) {
+        } catch (javax.xml.transform.TransformerException exception) {
             System.out.println(exception);
         }
     }
-    public void setEnabled(String name,boolean isEnabled) {
-        org.w3c.dom.NodeList list=xml.getElementsByTagName("AddOn");
-        for(int counter=0;counter<list.getLength();counter++) {
-            if(name.equalsIgnoreCase(list.item(counter).getTextContent())) {
-                list.item(counter).getAttributes().item(0).setNodeValue(isEnabled?"true":"false");
+
+    public void setEnabled(String name, boolean isEnabled) {
+        org.w3c.dom.NodeList list = xml.getElementsByTagName("AddOn");
+        for (int counter = 0; counter < list.getLength(); counter++) {
+            if (name.equalsIgnoreCase(list.item(counter).getTextContent())) {
+                list.item(counter).getAttributes().item(0).setNodeValue(isEnabled ? "true" : "false");
                 writeDocument();
                 return;
             }
         }
         org.w3c.dom.Element node = xml.createElement("AddOn");
-        node.setAttribute("enabled", isEnabled?"true":"false");
+        node.setAttribute("enabled", isEnabled ? "true" : "false");
         node.setTextContent(name);
         xml.getFirstChild().appendChild(node);
         writeDocument();

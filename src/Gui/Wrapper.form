@@ -198,9 +198,6 @@
                         <Property name="editable" type="boolean" value="false"/>
                         <Property name="contentType" type="java.lang.String" value="text/html" noResource="true"/>
                       </Properties>
-                      <AccessibilityProperties>
-                        <Property name="AccessibleContext.accessibleDescription" type="java.lang.String" value="text/html"/>
-                      </AccessibilityProperties>
                     </Component>
                   </SubComponents>
                 </Container>

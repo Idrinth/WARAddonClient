@@ -1,22 +1,33 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * Copyright (C) 2016 Björn Büttner
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package Data;
 
 /**
  *
- * @author BJ
+ * @author Björn Büttner
  */
 public class AddonSettings {
 
-    protected String file="";
-    protected boolean enabled=false;
-    protected String reason="";
-    protected String url="";
+    protected String file = "";
+    protected boolean enabled = false;
+    protected String reason = "";
+    protected String url = "";
     protected String name;
-    protected boolean hasSettings=false;
+    protected boolean hasSettings = false;
     protected User user;
 
     public String getFile() {
@@ -39,21 +50,23 @@ public class AddonSettings {
     public String getUrl() {
         return url;
     }
-    
-    AddonSettings(String name,User user) {
-        this.name=name;
-        this.user=user;
-        this.enabled=user.getEnabled(name);
+
+    AddonSettings(String name, User user) {
+        this.name = name;
+        this.user = user;
+        this.enabled = user.getEnabled(name);
         refresh();
     }
+
     public boolean showSettings() {
         return hasSettings;
     }
+
     final public void refresh() {
-        file="";
-        reason="";
-        url="";
-        hasSettings=false;
+        file = "";
+        reason = "";
+        url = "";
+        hasSettings = false;
         java.io.File folder = new Service.FindAddonFolder().find(name);
         if (folder == null || !folder.exists()) {
             return;
@@ -63,20 +76,20 @@ public class AddonSettings {
                     && fileEntry.getName().equalsIgnoreCase("upload.idrinth")) {
                 try {
                     org.w3c.dom.NodeList list = javax.xml.parsers.DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(fileEntry).getFirstChild().getChildNodes();
-                    for(int counter=0;counter<list.getLength();counter++) {
-                        switch(list.item(counter).getNodeName().toLowerCase()){
+                    for (int counter = 0; counter < list.getLength(); counter++) {
+                        switch (list.item(counter).getNodeName().toLowerCase()) {
                             case "file":
-                                file=list.item(counter).getTextContent();
+                                file = list.item(counter).getTextContent();
                                 break;
                             case "url":
-                                url=list.item(counter).getTextContent();
+                                url = list.item(counter).getTextContent();
                                 break;
                             case "reason":
-                                reason=list.item(counter).getTextContent();
+                                reason = list.item(counter).getTextContent();
                                 break;
                         }
                     }
-                    hasSettings=true;
+                    hasSettings = true;
                     return;
                 } catch (javax.xml.parsers.ParserConfigurationException | javax.xml.parsers.FactoryConfigurationError | org.xml.sax.SAXException | java.io.IOException exception) {
                     System.out.println(exception.getMessage());

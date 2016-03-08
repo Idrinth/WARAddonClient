@@ -1,13 +1,24 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * Copyright (C) 2016 Björn Büttner
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package Data;
 
 /**
  *
- * @author BJ
+ * @author Björn Büttner
  */
 public class Addon {
 
@@ -16,12 +27,12 @@ public class Addon {
     private String slug;
     private String name;
     private String installed = "-";
-    private Web.Request request;
+    private Service.Request request;
     private java.util.ArrayList tags = new java.util.ArrayList();
-    private AddonSettings addonSettings=null;
+    private AddonSettings addonSettings = null;
 
-    public Addon(javax.json.JsonObject addon,User user,Web.Request request) {
-        this.request=request;
+    public Addon(javax.json.JsonObject addon, User user, Service.Request request) {
+        this.request = request;
         description = getStringFromObject("description", addon);
         version = getStringFromObject("version", addon);
         slug = getStringFromObject("slug", addon);
@@ -33,7 +44,7 @@ public class Addon {
             counter++;
         }
         findInstalled();
-        addonSettings = new AddonSettings(name,user);
+        addonSettings = new AddonSettings(name, user);
     }
 
     public String getVersion() {
@@ -97,10 +108,10 @@ public class Addon {
     }
 
     public String getDescription() {
-        if(description.isEmpty()) {
-            return "<html><p><strong>There is currently no Description for "+name+".</strong></p>"
-                    +"<p>You can help by adding one at <a href=\"http://tools.idrinth.de/addons/"+slug
-                    +"/\">http://tools.idrinth.de/addons/"+slug+"/</a>.</p>";
+        if (description.isEmpty()) {
+            return "<html><p><strong>There is currently no Description for " + name + ".</strong></p>"
+                    + "<p>You can help by adding one at <a href=\"http://tools.idrinth.de/addons/" + slug
+                    + "/\">http://tools.idrinth.de/addons/" + slug + "/</a>.</p>";
         }
         return "<html>" + description;
     }
@@ -112,7 +123,7 @@ public class Addon {
     public void install() throws java.io.IOException {
         uninstall();
         java.io.InputStream file = request.getAddonDownload(slug + "/download/" + version.replace(".", "-") + "/");
-        new Service.UnzipUtility().unzip(
+        new Externals.UnzipUtility().unzip(
                 file,
                 "./Interface/AddOns/");
         file.close();
@@ -122,8 +133,8 @@ public class Addon {
                 + "    <name>" + name + "</name>\n"
                 + "    <version>" + version + "(sys)</version>\n"
                 + "</UiMod>");
-        versionWriter.close();        
-        if(installed.equals("-")) {
+        versionWriter.close();
+        if (installed.equals("-")) {
             addonSettings.refresh();
         }
     }
@@ -135,11 +146,13 @@ public class Addon {
         addonSettings.refresh();
         addonSettings.setEnabled(false);
     }
+
     public void fileWasChanged(java.io.File file) {
-        if(addonSettings.isEnabled()&&file.isFile()&&file.getName().equalsIgnoreCase(addonSettings.getFile())) {
+        if (addonSettings.isEnabled() && file.isFile() && file.getName().equalsIgnoreCase(addonSettings.getFile())) {
             request.upload(addonSettings.getUrl(), file);
         }
     }
+
     protected void emptyFolder(java.io.File folder) {
         if (folder == null || !folder.exists()) {
             return;
