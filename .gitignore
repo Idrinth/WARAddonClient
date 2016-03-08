@@ -1,14 +1,8 @@
 /.nbproject
 /nbproject
 /build
-/build.xml
+build.xml
 /dist/README.TXT
 /dist/lib
 /dist/AddonClient.jar
 /manifest.mf
-/Interface
-/interface
-WAR.exe
-RoRLauncher.exe
-/idrinth.xml
-/user
