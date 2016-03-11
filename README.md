@@ -10,7 +10,7 @@ This is a java-Application, so you'll need to be able to run .jar files on the s
 The only file you need is the <a href="https://github.com/Idrinth/WARAddonClient/releases/latest">jar-file in the latest Release</a>.
 After downloading it, copy it to your Warhammer Online directory and run it.
 
-Java is avaible at https://www.java.com and is pretty much able to run on any system.
+Java is avaible at <a href="https://www.java.com" target="_blank">java.com</a> and is pretty much able to run on any system.
 
 ## Addon Authors
 
