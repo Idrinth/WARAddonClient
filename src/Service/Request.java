@@ -58,9 +58,9 @@ public class Request {
         return null;
     }
 
-    protected org.apache.http.HttpResponse executionHandler(org.apache.http.client.methods.HttpRequestBase uri) {
+    protected synchronized org.apache.http.HttpResponse executionHandler(org.apache.http.client.methods.HttpRequestBase uri) {
         uri.setConfig(org.apache.http.client.config.RequestConfig.DEFAULT);
-        uri.setHeader("User-Agent", "IdrinthAddonClient");
+        uri.setHeader("User-Agent", "IdrinthAddonClient/" + Service.Version.version);
         uri.setHeader("Cache-Control", "no-cache");
         while (requestActive) {
             try {
@@ -94,5 +94,21 @@ public class Request {
             System.out.println(exception.getMessage());
         }
         return wasSuccess;
+    }
+
+    public String getVersion() {
+        org.apache.http.client.methods.HttpGet request = new org.apache.http.client.methods.HttpGet("https://api.github.com/repos/Idrinth/WARAddonClient/releases/latest");
+        org.apache.http.HttpResponse response = executionHandler(request);
+        String version = "";
+        try {
+            if (response != null) {
+                javax.json.JsonObject data = javax.json.Json.createReader(response.getEntity().getContent()).readObject();
+                version = data.getString("tag_name");
+            }
+            client.close();
+        } catch (java.io.IOException exception) {
+            System.out.println(exception.getMessage());
+        }
+        return version;
     }
 }

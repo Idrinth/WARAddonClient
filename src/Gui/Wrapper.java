@@ -16,17 +16,23 @@
  */
 package Gui;
 
+import java.io.IOException;
+import java.net.URISyntaxException;
+
 /**
  *
  * @author Björn Büttner
  */
 public class Wrapper extends javax.swing.JFrame {
 
-    Data.AddonList addons = null;
-    javax.swing.table.TableRowSorter sorter;
-    Data.Addon activeAddon = null;
-    Data.User user = new Data.User();
-    Service.FileWatcher watcher;
+    public static Service.Version version;
+    private Data.AddonList addons = null;
+    private javax.swing.table.TableRowSorter sorter;
+    private Data.Addon activeAddon = null;
+    private Data.User user = new Data.User();
+    private Service.FileWatcher watcher;
+    private Service.Request request = new Service.Request();
+    private String language = "en";
 
     /**
      * Creates new form Wrapper
@@ -48,6 +54,7 @@ public class Wrapper extends javax.swing.JFrame {
         this.AddonList.setRowSorter(sorter);
         this.setTitle("Idrinth's WAR Addon Client");
         rightSide.setEnabledAt(1, false);
+        Description.addHyperlinkListener(new hyperlinkListener());
     }
 
     private void newFilter() {
@@ -65,10 +72,12 @@ public class Wrapper extends javax.swing.JFrame {
     }
 
     protected final void makeAddonList() {
-        addons = new Data.AddonList(AddonList, user);
+        addons = new Data.AddonList(AddonList, user, request);
         watcher = new Service.FileWatcher(addons);
+        version = new Service.Version(request, localVersion, remoteVersion);
         new java.lang.Thread(watcher).start();
         new java.lang.Thread(addons).start();
+        new java.lang.Thread(version).start();
     }
 
     protected final void processPosition() {
@@ -86,16 +95,33 @@ public class Wrapper extends javax.swing.JFrame {
         }
     }
 
+    class hyperlinkListener implements javax.swing.event.HyperlinkListener {
+
+        public void hyperlinkUpdate(javax.swing.event.HyperlinkEvent event) {
+            if (javax.swing.event.HyperlinkEvent.EventType.ACTIVATED.equals(event.getEventType())) {
+                try {
+                    java.awt.Desktop.getDesktop().browse(event.getURL().toURI());
+                } catch (URISyntaxException | IOException exception) {
+                    System.out.println(exception.getMessage());
+                }
+            }
+
+        }
+    }
+
     class tableListener implements javax.swing.event.ListSelectionListener {
 
         public void valueChanged(javax.swing.event.ListSelectionEvent event) {
             try {
                 activeAddon = addons.get(AddonList.convertRowIndexToModel(AddonList.getSelectedRow()));
             } catch (java.lang.ArrayIndexOutOfBoundsException exception) {
+                System.out.println(exception.getMessage());
                 return;
             }
-            Description.setText(activeAddon.getDescription());
-            Description.setText(activeAddon.getDescription());
+            if (activeAddon == null) {
+                return;
+            }
+            Description.setText(activeAddon.getDescription(language));
             Title.setText(activeAddon.getName());
             InstallButton.setEnabled(true);
             RemoveButton.setEnabled(true);
@@ -118,6 +144,7 @@ public class Wrapper extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jMenuItem1 = new javax.swing.JMenuItem();
         jSplitPane2 = new javax.swing.JSplitPane();
         leftSide = new javax.swing.JPanel();
         Search = new javax.swing.JTextField();
@@ -130,6 +157,9 @@ public class Wrapper extends javax.swing.JFrame {
         InstallButton = new javax.swing.JButton();
         RemoveButton = new javax.swing.JButton();
         Title = new javax.swing.JLabel();
+        localVersion = new javax.swing.JLabel();
+        remoteVersion = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         jScrollPane3 = new javax.swing.JScrollPane();
         UploadReason = new javax.swing.JTextArea();
@@ -138,6 +168,21 @@ public class Wrapper extends javax.swing.JFrame {
         UploadEnable = new javax.swing.JCheckBox();
         label1 = new java.awt.Label();
         UploadFile = new javax.swing.JTextField();
+        jMenuBar1 = new javax.swing.JMenuBar();
+        jMenu3 = new javax.swing.JMenu();
+        jMenu1 = new javax.swing.JMenu();
+        English = new javax.swing.JRadioButtonMenuItem();
+        Deutsch = new javax.swing.JRadioButtonMenuItem();
+        Francais = new javax.swing.JRadioButtonMenuItem();
+        jMenu2 = new javax.swing.JMenu();
+        Refresh1 = new javax.swing.JCheckBoxMenuItem();
+        Refresh2 = new javax.swing.JCheckBoxMenuItem();
+        Refresh3 = new javax.swing.JCheckBoxMenuItem();
+        Refresh4 = new javax.swing.JCheckBoxMenuItem();
+        jSeparator1 = new javax.swing.JPopupMenu.Separator();
+        About = new javax.swing.JMenuItem();
+
+        jMenuItem1.setText("jMenuItem1");
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -206,7 +251,7 @@ public class Wrapper extends javax.swing.JFrame {
             .addGroup(leftSideLayout.createSequentialGroup()
                 .addComponent(Search, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 412, Short.MAX_VALUE))
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 391, Short.MAX_VALUE))
         );
 
         jSplitPane2.setLeftComponent(leftSide);
@@ -217,7 +262,6 @@ public class Wrapper extends javax.swing.JFrame {
         Description.setEditable(false);
         Description.setContentType("text/html"); // NOI18N
         jScrollPane1.setViewportView(Description);
-        Description.getAccessibleContext().setAccessibleDescription("text/html");
 
         InstallButton.setText("(Re)Install");
         InstallButton.addActionListener(new java.awt.event.ActionListener() {
@@ -235,6 +279,14 @@ public class Wrapper extends javax.swing.JFrame {
 
         Title.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
 
+        localVersion.setText("0.0.0");
+        localVersion.setToolTipText("Local Version");
+
+        remoteVersion.setText("0.0.0");
+        remoteVersion.setToolTipText("Remote Version");
+
+        jLabel3.setText("/");
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -248,7 +300,14 @@ public class Wrapper extends javax.swing.JFrame {
                 .addComponent(RemoveButton)
                 .addGap(24, 24, 24))
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 470, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 470, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(localVersion)
+                        .addGap(1, 1, 1)
+                        .addComponent(jLabel3)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(remoteVersion)))
                 .addGap(0, 0, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
@@ -259,7 +318,12 @@ public class Wrapper extends javax.swing.JFrame {
                     .addComponent(InstallButton)
                     .addComponent(Title))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 381, Short.MAX_VALUE))
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 340, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(localVersion)
+                    .addComponent(remoteVersion)
+                    .addComponent(jLabel3)))
         );
 
         rightSide.addTab("Main", jPanel1);
@@ -271,11 +335,6 @@ public class Wrapper extends javax.swing.JFrame {
 
         UploadUrl.setEditable(false);
         UploadUrl.setToolTipText("");
-        UploadUrl.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                UploadUrlActionPerformed(evt);
-            }
-        });
 
         jLabel1.setText("Upload URL");
 
@@ -290,11 +349,6 @@ public class Wrapper extends javax.swing.JFrame {
 
         UploadFile.setEditable(false);
         UploadFile.setToolTipText("");
-        UploadFile.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                UploadFileActionPerformed(evt);
-            }
-        });
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -330,12 +384,94 @@ public class Wrapper extends javax.swing.JFrame {
                     .addComponent(UploadFile, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(UploadEnable)
-                .addContainerGap(77, Short.MAX_VALUE))
+                .addContainerGap(56, Short.MAX_VALUE))
         );
 
         rightSide.addTab("Settings", jPanel2);
 
         jSplitPane2.setRightComponent(rightSide);
+
+        jMenu3.setText("Settings");
+
+        jMenu1.setText("Language");
+
+        English.setSelected(true);
+        English.setText("English");
+        English.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                EnglishActionPerformed(evt);
+            }
+        });
+        jMenu1.add(English);
+
+        Deutsch.setText("Deutsch");
+        Deutsch.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                DeutschActionPerformed(evt);
+            }
+        });
+        jMenu1.add(Deutsch);
+
+        Francais.setText("Francais");
+        Francais.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                FrancaisActionPerformed(evt);
+            }
+        });
+        jMenu1.add(Francais);
+
+        jMenu3.add(jMenu1);
+
+        jMenu2.setText("Auto-Refresh");
+
+        Refresh1.setText("15min");
+        Refresh1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                Refresh1ActionPerformed(evt);
+            }
+        });
+        jMenu2.add(Refresh1);
+
+        Refresh2.setText("30min");
+        Refresh2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                Refresh2ActionPerformed(evt);
+            }
+        });
+        jMenu2.add(Refresh2);
+
+        Refresh3.setText("1h");
+        Refresh3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                Refresh3ActionPerformed(evt);
+            }
+        });
+        jMenu2.add(Refresh3);
+
+        Refresh4.setSelected(true);
+        Refresh4.setText("3h");
+        Refresh4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                Refresh4ActionPerformed(evt);
+            }
+        });
+        jMenu2.add(Refresh4);
+
+        jMenu3.add(jMenu2);
+        jMenu3.add(jSeparator1);
+
+        About.setText("About");
+        About.setToolTipText("");
+        About.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                AboutActionPerformed(evt);
+            }
+        });
+        jMenu3.add(About);
+
+        jMenuBar1.add(jMenu3);
+
+        setJMenuBar(jMenuBar1);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -374,17 +510,62 @@ public class Wrapper extends javax.swing.JFrame {
         updateList();
     }//GEN-LAST:event_RemoveButtonActionPerformed
 
-    private void UploadUrlActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_UploadUrlActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_UploadUrlActionPerformed
-
     private void UploadEnableActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_UploadEnableActionPerformed
         activeAddon.getUploadData().setEnabled(UploadEnable.isSelected());
     }//GEN-LAST:event_UploadEnableActionPerformed
 
-    private void UploadFileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_UploadFileActionPerformed
+    private void EnglishActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_EnglishActionPerformed
+        changeLanguageTo("fr");
+    }//GEN-LAST:event_EnglishActionPerformed
+
+    private void AboutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_AboutActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_UploadFileActionPerformed
+    }//GEN-LAST:event_AboutActionPerformed
+
+    private void DeutschActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_DeutschActionPerformed
+        changeLanguageTo("de");
+    }//GEN-LAST:event_DeutschActionPerformed
+
+    private void FrancaisActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_FrancaisActionPerformed
+        changeLanguageTo("fr");
+    }//GEN-LAST:event_FrancaisActionPerformed
+
+    private void Refresh1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Refresh1ActionPerformed
+        changeRefreshTo(15);
+    }//GEN-LAST:event_Refresh1ActionPerformed
+
+    private void Refresh2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Refresh2ActionPerformed
+        changeRefreshTo(30);
+    }//GEN-LAST:event_Refresh2ActionPerformed
+
+    private void Refresh3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Refresh3ActionPerformed
+        changeRefreshTo(60);
+    }//GEN-LAST:event_Refresh3ActionPerformed
+
+    private void Refresh4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Refresh4ActionPerformed
+        changeRefreshTo(180);
+    }//GEN-LAST:event_Refresh4ActionPerformed
+
+    protected void changeLanguageTo(String lang) {
+        if (lang.equals(language)) {
+            return;
+        }
+        English.setSelected(lang.equals("en"));
+        Deutsch.setSelected(lang.equals("de"));
+        Francais.setSelected(lang.equals("fr"));
+        language = lang;
+        if (activeAddon != null) {
+            Description.setText(activeAddon.getDescription(language));
+        }
+    }
+
+    protected void changeRefreshTo(int dur) {
+        Refresh1.setSelected(dur == 15);
+        Refresh2.setSelected(dur == 30);
+        Refresh3.setSelected(dur == 60);
+        Refresh4.setSelected(dur == 180);
+        addons.setDuration(dur);
+    }
 
     protected void updateList() {
         for (int position = 0; position < AddonList.getRowCount(); position++) {
@@ -429,9 +610,17 @@ public class Wrapper extends javax.swing.JFrame {
         });
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JMenuItem About;
     private javax.swing.JTable AddonList;
     private javax.swing.JEditorPane Description;
+    private javax.swing.JRadioButtonMenuItem Deutsch;
+    private javax.swing.JRadioButtonMenuItem English;
+    private javax.swing.JRadioButtonMenuItem Francais;
     private javax.swing.JButton InstallButton;
+    private javax.swing.JCheckBoxMenuItem Refresh1;
+    private javax.swing.JCheckBoxMenuItem Refresh2;
+    private javax.swing.JCheckBoxMenuItem Refresh3;
+    private javax.swing.JCheckBoxMenuItem Refresh4;
     private javax.swing.JButton RemoveButton;
     private javax.swing.JTextField Search;
     private javax.swing.JLabel Title;
@@ -440,14 +629,23 @@ public class Wrapper extends javax.swing.JFrame {
     private javax.swing.JTextArea UploadReason;
     private javax.swing.JTextField UploadUrl;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JMenu jMenu1;
+    private javax.swing.JMenu jMenu2;
+    private javax.swing.JMenu jMenu3;
+    private javax.swing.JMenuBar jMenuBar1;
+    private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
+    private javax.swing.JPopupMenu.Separator jSeparator1;
     private javax.swing.JSplitPane jSplitPane2;
     private java.awt.Label label1;
     private javax.swing.JPanel leftSide;
+    private javax.swing.JLabel localVersion;
+    private javax.swing.JLabel remoteVersion;
     private javax.swing.JTabbedPane rightSide;
     // End of variables declaration//GEN-END:variables
 }

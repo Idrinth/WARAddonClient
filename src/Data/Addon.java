@@ -22,18 +22,20 @@ package Data;
  */
 public class Addon {
 
-    private String description;
+    private java.util.Hashtable<String, String> descriptions = new java.util.Hashtable();
     private String version;
     private String slug;
     private String name;
     private String installed = "-";
     private Service.Request request;
-    private java.util.ArrayList tags = new java.util.ArrayList();
+    private java.util.ArrayList<String> tags = new java.util.ArrayList();
     private AddonSettings addonSettings = null;
 
     public Addon(javax.json.JsonObject addon, User user, Service.Request request) {
         this.request = request;
-        description = getStringFromObject("description", addon);
+        descriptions.put("en", getStringFromObject("description", addon));
+        descriptions.put("fr", getStringFromObject("description_fr", addon));
+        descriptions.put("de", getStringFromObject("description_de", addon));
         version = getStringFromObject("version", addon);
         slug = getStringFromObject("slug", addon);
         name = getStringFromObject("name", addon);
@@ -45,6 +47,16 @@ public class Addon {
         }
         findInstalled();
         addonSettings = new AddonSettings(name, user);
+    }
+
+    public java.util.ArrayList<String> getTags() {
+        return tags;
+    }
+
+    public void update(Addon addon) {
+        version = addon.getVersion();
+        tags = addon.getTags();
+        descriptions = addon.getDescriptions();
     }
 
     public String getVersion() {
@@ -93,8 +105,8 @@ public class Addon {
 
     protected final String getStringFromObject(String key, javax.json.JsonObject data) {
         String value = "";
-        if (!data.isNull(key)) {
-            value = data.getString(key);
+        if (key != null && data != null && data.containsKey(key) && !data.isNull(key)) {
+            value = data.get(key).toString();
         }
         return value;
     }
@@ -107,13 +119,20 @@ public class Addon {
         return row;
     }
 
-    public String getDescription() {
-        if (description.isEmpty()) {
-            return "<html><p><strong>There is currently no Description for " + name + ".</strong></p>"
-                    + "<p>You can help by adding one at <a href=\"http://tools.idrinth.de/addons/" + slug
-                    + "/\">http://tools.idrinth.de/addons/" + slug + "/</a>.</p>";
+    public String getDescription(String language) {
+        if (descriptions.containsKey(language) && !descriptions.get(language).isEmpty()) {
+            return "<html>" + descriptions.get(language);
         }
-        return "<html>" + description;
+        if (!descriptions.get("en").isEmpty()) {
+            return "<html>" + descriptions.get("en");
+        }
+        return "<html><p><strong>There is currently no Description for " + name + ".</strong></p>"
+                + "<p>You can help by adding one at <a href=\"http://tools.idrinth.de/addons/" + slug
+                + "/\">http://tools.idrinth.de/addons/" + slug + "/</a>.</p>";
+    }
+
+    public java.util.Hashtable<String, String> getDescriptions() {
+        return descriptions;
     }
 
     public String getName() {

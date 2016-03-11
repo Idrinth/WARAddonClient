@@ -24,14 +24,22 @@ public class AddonList implements java.lang.Runnable {
 
     protected javax.swing.JTable AddonList;
     protected Service.FileWatcher watcher;
-    protected java.util.ArrayList list = new java.util.ArrayList();
+    protected java.util.HashMap<String, Addon> list = new java.util.HashMap();
+    protected java.util.ArrayList<Addon> rows = new java.util.ArrayList();
     protected User user;
     protected java.util.Hashtable<String, watchedFile> watchedFilesMap = new java.util.Hashtable();
-    Service.Request request = new Service.Request();
+    protected Service.Request request;
+    private int duration = 15;
+    private long lastRefreshed = 0;
 
-    public AddonList(javax.swing.JTable AddonList, User user) {
+    public AddonList(javax.swing.JTable AddonList, User user, Service.Request request) {
         this.AddonList = AddonList;
         this.user = user;
+        this.request = request;
+    }
+
+    public void setDuration(int dur) {
+        duration = dur;
     }
 
     public void setWatcher(Service.FileWatcher watch) {
@@ -41,15 +49,20 @@ public class AddonList implements java.lang.Runnable {
     }
 
     public Addon get(int i) {
-        return (Addon) list.get(i);
+        return (Addon) rows.get(i);
+    }
+
+    public Addon get(String name) {
+        return (Addon) list.get(name);
     }
 
     public int size() {
         return list.size();
     }
 
-    public boolean add(Addon addon) {
-        return list.add(addon);
+    public void add(Addon addon) {
+        list.put(addon.getName(), addon);
+        rows.add(addon);
     }
 
     public java.util.Hashtable<String, watchedFile> getWatchedFiles() {
@@ -57,27 +70,43 @@ public class AddonList implements java.lang.Runnable {
     }
 
     public void run() {
-        javax.json.JsonArray parse = request.getAddonList();
-        int counter = 0;
-        javax.swing.table.DefaultTableModel model = (javax.swing.table.DefaultTableModel) this.AddonList.getModel();
-        if (parse == null) {
-            try {
-                Thread.sleep(250);
-            } catch (java.lang.InterruptedException e) {
-                System.out.println(e.getMessage());
+        while (true) {
+            while (System.currentTimeMillis() < lastRefreshed + duration * 60000) {
+                try {
+                    Thread.sleep(250);
+                } catch (java.lang.InterruptedException e) {
+                    System.out.println(e.getMessage());
+                }
             }
-            new java.lang.Thread(this).start();
-            return;
+            System.out.println("Updating...");
+            javax.json.JsonArray parse = request.getAddonList();
+            if (parse != null) {
+                parseJsonResult(parse);
+            }
+            lastRefreshed = System.currentTimeMillis();
         }
+    }
+
+    protected void parseJsonResult(javax.json.JsonArray parse) {
+        javax.swing.table.DefaultTableModel model = (javax.swing.table.DefaultTableModel) this.AddonList.getModel();
+        int counter = 0;
         while (parse.size() > counter) {
             Data.Addon addon = new Data.Addon(parse.getJsonObject(counter), user, request);
-            list.add(addon);
-            model.addRow(addon.getTableRow());
-            if (!addon.getUploadData().getFile().isEmpty()) {
-                if (!watchedFilesMap.containsKey(addon.getUploadData().getFile().toLowerCase())) {
-                    watchedFilesMap.put(addon.getUploadData().getFile().toLowerCase(), new watchedFile());
+            if (list.containsKey(addon.getName())) {
+                list.get(addon.getName()).update(addon);
+                String[] data = list.get(addon.getName()).getTableRow();
+                model.setValueAt(data[0], rows.indexOf(list.get(addon.getName())), 0);
+                model.setValueAt(data[1], rows.indexOf(list.get(addon.getName())), 1);
+                model.setValueAt(data[2], rows.indexOf(list.get(addon.getName())), 2);
+            } else {
+                this.add(addon);
+                model.addRow(addon.getTableRow());
+                if (!addon.getUploadData().getFile().isEmpty()) {
+                    if (!watchedFilesMap.containsKey(addon.getUploadData().getFile().toLowerCase())) {
+                        watchedFilesMap.put(addon.getUploadData().getFile().toLowerCase(), new watchedFile());
+                    }
+                    watchedFilesMap.get(addon.getUploadData().getFile().toLowerCase()).addAddon(addon);
                 }
-                watchedFilesMap.get(addon.getUploadData().getFile().toLowerCase()).addAddon(addon);
             }
             counter++;
         }
