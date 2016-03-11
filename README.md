@@ -10,6 +10,8 @@ This is a java-Application, so you'll need to be able to run .jar files on the s
 The only file you need is the <a href="https://github.com/Idrinth/WARAddonClient/releases/latest">jar-file in the latest Release</a>.
 After downloading it, copy it to your Warhammer Online directory and run it.
 
+Java is avaible at https://www.java.com and is pretty much able to run on any system.
+
 ## Addon Authors
 
 There is now an option to let data be uploaded automatically - if the user so choses.
