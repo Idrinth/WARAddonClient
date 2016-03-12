@@ -70,14 +70,17 @@ public class Wrapper extends javax.swing.JFrame {
         }
         sorter.setRowFilter(rf);
     }
+    Data.TagList tagList;
 
     protected final void makeAddonList() {
         addons = new Data.AddonList(AddonList, user, request);
         watcher = new Service.FileWatcher(addons);
+        tagList = new Data.TagList(Tags, addons);
         version = new Service.Version(request, localVersion, remoteVersion);
         new java.lang.Thread(watcher).start();
         new java.lang.Thread(addons).start();
         new java.lang.Thread(version).start();
+        new java.lang.Thread(tagList).start();
     }
 
     protected final void processPosition() {
@@ -132,6 +135,11 @@ public class Wrapper extends javax.swing.JFrame {
             UploadUrl.setText(settings.getUrl());
             UploadFile.setText(settings.getFile());
             UploadEnable.setSelected(settings.isEnabled());
+            String taglist = "Tagged: ";
+            for (String tagname : activeAddon.getTags()) {
+                taglist += tagname + ", ";
+            }
+            CurTags.setText(taglist.substring(0, taglist.length() - 2));
         }
     }
 
@@ -160,6 +168,7 @@ public class Wrapper extends javax.swing.JFrame {
         localVersion = new javax.swing.JLabel();
         remoteVersion = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
+        CurTags = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         jScrollPane3 = new javax.swing.JScrollPane();
         UploadReason = new javax.swing.JTextArea();
@@ -179,6 +188,7 @@ public class Wrapper extends javax.swing.JFrame {
         Refresh2 = new javax.swing.JCheckBoxMenuItem();
         Refresh3 = new javax.swing.JCheckBoxMenuItem();
         Refresh4 = new javax.swing.JCheckBoxMenuItem();
+        Tags = new javax.swing.JMenu();
         jSeparator1 = new javax.swing.JPopupMenu.Separator();
         About = new javax.swing.JMenuItem();
 
@@ -299,16 +309,18 @@ public class Wrapper extends javax.swing.JFrame {
                 .addGap(18, 18, 18)
                 .addComponent(RemoveButton)
                 .addGap(24, 24, 24))
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanel1Layout.createSequentialGroup()
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 470, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(localVersion)
-                        .addGap(1, 1, 1)
-                        .addComponent(jLabel3)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(remoteVersion)))
-                .addGap(0, 0, Short.MAX_VALUE))
+                    .addGap(0, 0, Short.MAX_VALUE))
+                .addGroup(jPanel1Layout.createSequentialGroup()
+                    .addComponent(localVersion)
+                    .addGap(1, 1, 1)
+                    .addComponent(jLabel3)
+                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                    .addComponent(remoteVersion)
+                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                    .addComponent(CurTags, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -318,12 +330,14 @@ public class Wrapper extends javax.swing.JFrame {
                     .addComponent(InstallButton)
                     .addComponent(Title))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 340, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 334, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(localVersion)
                     .addComponent(remoteVersion)
-                    .addComponent(jLabel3)))
+                    .addComponent(jLabel3)
+                    .addComponent(CurTags))
+                .addGap(6, 6, 6))
         );
 
         rightSide.addTab("Main", jPanel1);
@@ -458,6 +472,9 @@ public class Wrapper extends javax.swing.JFrame {
         jMenu2.add(Refresh4);
 
         jMenu3.add(jMenu2);
+
+        Tags.setText("Tags");
+        jMenu3.add(Tags);
         jMenu3.add(jSeparator1);
 
         About.setText("About");
@@ -612,6 +629,7 @@ public class Wrapper extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuItem About;
     private javax.swing.JTable AddonList;
+    private javax.swing.JLabel CurTags;
     private javax.swing.JEditorPane Description;
     private javax.swing.JRadioButtonMenuItem Deutsch;
     private javax.swing.JRadioButtonMenuItem English;
@@ -623,6 +641,7 @@ public class Wrapper extends javax.swing.JFrame {
     private javax.swing.JCheckBoxMenuItem Refresh4;
     private javax.swing.JButton RemoveButton;
     private javax.swing.JTextField Search;
+    private javax.swing.JMenu Tags;
     private javax.swing.JLabel Title;
     private javax.swing.JCheckBox UploadEnable;
     private javax.swing.JTextField UploadFile;
