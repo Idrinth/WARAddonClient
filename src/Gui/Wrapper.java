@@ -587,7 +587,7 @@ public class Wrapper extends javax.swing.JFrame {
     protected void updateList() {
         for (int position = 0; position < AddonList.getRowCount(); position++) {
             if (addons.get(AddonList.convertRowIndexToModel(position)).getName() == activeAddon.getName()) {
-                AddonList.setValueAt(activeAddon.getVersion(), position, 2);
+                AddonList.setValueAt(activeAddon.getInstalled(), position, 2);
             }
         }
     }

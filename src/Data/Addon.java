@@ -60,6 +60,10 @@ public class Addon {
     }
 
     public String getVersion() {
+        return version;
+    }
+
+    public String getInstalled() {
         findInstalled();
         return installed;
     }

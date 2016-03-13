@@ -49,7 +49,8 @@ public class TagList implements java.lang.Runnable {
     }
 
     public void run() {
-        while (true) {
+        return;
+        /*while (true) {
             //while (System.currentTimeMillis() < lastRefreshed + duration * 60000) {
             try {
                 Thread.sleep(1000);
@@ -59,6 +60,6 @@ public class TagList implements java.lang.Runnable {
             //}
             processAddons();
             processTags();
-        }
+        }*/
     }
 }

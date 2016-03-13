@@ -78,7 +78,6 @@ public class AddonList implements java.lang.Runnable {
                     System.out.println(e.getMessage());
                 }
             }
-            System.out.println("Updating...");
             javax.json.JsonArray parse = request.getAddonList();
             if (parse != null) {
                 parseJsonResult(parse);
