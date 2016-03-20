@@ -32,7 +32,7 @@ public class Unzip {
     public void unzip(java.io.InputStream zipFilePath, String destDirectory) throws IOException {
         File destDir = new File(destDirectory);
         if (!destDir.exists()) {
-            destDir.mkdir();
+            destDir.mkdirs();
         }
         ZipInputStream zipIn = new ZipInputStream(zipFilePath);
         ZipEntry entry = zipIn.getNextEntry();

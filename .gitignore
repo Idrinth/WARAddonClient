@@ -5,7 +5,8 @@
 /manifest.mf
 /bin
 /logs
-/interface
+/Interface
 /WAR.exe
 /RoRLauncher.exe
 /idrinth.xml
+/AddonClient.jar
