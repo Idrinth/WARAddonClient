@@ -1,4 +1,4 @@
-package Externals;
+package net.codejava.utility;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -14,7 +14,7 @@ import java.util.zip.ZipInputStream;
  * @author www.codejava.net
  *
  */
-public class UnzipUtility {
+public class Unzip {
 
     /**
      * Size of the buffer to read/write data
@@ -25,19 +25,16 @@ public class UnzipUtility {
      * Extracts a zip file specified by the zipFilePath to a directory specified
      * by destDirectory (will be created if does not exists)
      *
-     * @param source
+     * @param zipFilePath
      * @param destDirectory
      * @throws IOException
      */
-    public void unzip(java.io.InputStream source, String destDirectory) throws IOException {
-        if (source == null) {
-            throw new IOException();
-        }
+    public void unzip(java.io.InputStream zipFilePath, String destDirectory) throws IOException {
         File destDir = new File(destDirectory);
         if (!destDir.exists()) {
             destDir.mkdir();
         }
-        ZipInputStream zipIn = new ZipInputStream(source);
+        ZipInputStream zipIn = new ZipInputStream(zipFilePath);
         ZipEntry entry = zipIn.getNextEntry();
         // iterates over entries in the zip file
         while (entry != null) {

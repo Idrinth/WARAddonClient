@@ -14,12 +14,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package Data;
+package de.idrinth.waraddonclient.implementation.model;
 
-/**
- *
- * @author Björn Büttner
- */
 public class Addon {
 
     private java.util.Hashtable<String, String> descriptions = new java.util.Hashtable();
@@ -27,12 +23,10 @@ public class Addon {
     private String slug;
     private String name;
     private String installed = "-";
-    private Service.Request request;
     private java.util.ArrayList<String> tags = new java.util.ArrayList();
     private AddonSettings addonSettings = null;
 
-    public Addon(javax.json.JsonObject addon, User user, Service.Request request) {
-        this.request = request;
+    public Addon(javax.json.JsonObject addon) {
         descriptions.put("en", getStringFromObject("description", addon));
         descriptions.put("fr", getStringFromObject("description_fr", addon));
         descriptions.put("de", getStringFromObject("description_de", addon));
@@ -46,11 +40,20 @@ public class Addon {
             counter++;
         }
         findInstalled();
-        addonSettings = new AddonSettings(name, user);
+        addonSettings = new AddonSettings(name);
     }
 
     public java.util.ArrayList<String> getTags() {
         return tags;
+    }
+
+    public boolean hasTag(String tag) {
+        for (String hasTag : tags) {
+            if (tag.equalsIgnoreCase(hasTag)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public void update(Addon addon) {
@@ -74,7 +77,7 @@ public class Addon {
 
     protected final void findInstalled() {
         installed = "-";
-        java.io.File folder = new Service.FindAddonFolder().find(name);
+        java.io.File folder = new de.idrinth.waraddonclient.implementation.service.FindAddonFolder().find(name);
         if (folder == null || !folder.exists()) {
             return;
         }
@@ -145,8 +148,8 @@ public class Addon {
 
     public void install() throws java.io.IOException {
         uninstall();
-        java.io.InputStream file = request.getAddonDownload(slug + "/download/" + version.replace(".", "-") + "/");
-        new Externals.UnzipUtility().unzip(
+        java.io.InputStream file = de.idrinth.waraddonclient.factory.RemoteRequest.build().getAddonDownload(slug + "/download/" + version.replace(".", "-") + "/");
+        new net.codejava.utility.Unzip().unzip(
                 file,
                 "./Interface/AddOns/");
         file.close();
@@ -172,7 +175,7 @@ public class Addon {
 
     public void fileWasChanged(java.io.File file) {
         if (addonSettings.isEnabled() && file.isFile() && file.getName().equalsIgnoreCase(addonSettings.getFile())) {
-            request.upload(addonSettings.getUrl(), file);
+            de.idrinth.waraddonclient.factory.RemoteRequest.build().upload(addonSettings.getUrl(), file);
         }
     }
 

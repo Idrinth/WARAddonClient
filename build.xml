@@ -86,7 +86,7 @@
           <zipfileset src="dist/lib/jna-4.1.0.jar" excludes="META-INF/*" />
           <zipfileset src="dist/lib/jna-platform-4.1.0.jar" excludes="META-INF/*" />
           <manifest>
-              <attribute name="Main-Class" value="Gui.Wrapper"/>
+              <attribute name="Main-Class" value="de.idrinth.waraddonclient.Main"/>
           </manifest>
       </jar>
   </target>

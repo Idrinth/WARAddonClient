@@ -14,21 +14,19 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package Service;
+package de.idrinth.waraddonclient.implementation.service;
 
-/**
- *
- * @author Björn Büttner
- */
 public class FileWatcher implements java.lang.Runnable {
 
-    java.nio.file.WatchService watcher = null;
-    Data.AddonList addons = null;
+    protected java.nio.file.WatchService watcher = null;
 
     @Override
     public void run() {
         try {
-            java.nio.file.Path path = java.nio.file.FileSystems.getDefault().getPath("user", "settings");
+            java.nio.file.Path path = java.nio.file.FileSystems.getDefault().getPath("logs");
+            if (!path.toFile().exists()) {
+                path.toFile().mkdirs();
+            }
             watcher = path.getFileSystem().newWatchService();
             java.nio.file.WatchEvent.Kind[] modes = new java.nio.file.WatchEvent.Kind[2];
             modes[0] = java.nio.file.StandardWatchEventKinds.ENTRY_CREATE;
@@ -49,18 +47,13 @@ public class FileWatcher implements java.lang.Runnable {
             for (java.nio.file.WatchEvent event : key.pollEvents()) {
                 if (event.kind() == java.nio.file.StandardWatchEventKinds.ENTRY_CREATE
                         || event.kind() == java.nio.file.StandardWatchEventKinds.ENTRY_MODIFY) {
-                    java.io.File file = new java.io.File("./user/settings/" + event.context().toString());
-                    if (this.addons.getWatchedFiles().containsKey(file.getName().toLowerCase())) {
-                        this.addons.getWatchedFiles().get(file.getName().toLowerCase()).setFileToProcess(file);
+                    java.io.File file = new java.io.File("./logs/" + event.context().toString());
+                    if (de.idrinth.waraddonclient.factory.AddonList.build().getWatchedFiles().containsKey(file.getName().toLowerCase())) {
+                        de.idrinth.waraddonclient.factory.AddonList.build().getWatchedFiles().get(file.getName().toLowerCase()).setFileToProcess(file);
                     }
                 }
             }
             key.reset();
         }
-    }
-
-    public FileWatcher(Data.AddonList addons) {
-        this.addons = addons;
-        addons.setWatcher(this);
     }
 }

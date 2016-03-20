@@ -14,53 +14,33 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package Data;
+package de.idrinth.waraddonclient.implementation.list;
 
-/**
- *
- * @author Björn Büttner
- */
-public class AddonList implements java.lang.Runnable {
+public class Addon implements java.lang.Runnable {
 
-    protected javax.swing.JTable AddonList;
-    protected Service.FileWatcher watcher;
-    protected java.util.HashMap<String, Addon> list = new java.util.HashMap();
-    protected java.util.ArrayList<Addon> rows = new java.util.ArrayList();
-    protected User user;
+    protected java.util.HashMap<String, de.idrinth.waraddonclient.implementation.model.Addon> list = new java.util.HashMap();
+    protected java.util.ArrayList<de.idrinth.waraddonclient.implementation.model.Addon> rows = new java.util.ArrayList();
     protected java.util.Hashtable<String, watchedFile> watchedFilesMap = new java.util.Hashtable();
-    protected Service.Request request;
     private int duration = 15;
     private long lastRefreshed = 0;
-
-    public AddonList(javax.swing.JTable AddonList, User user, Service.Request request) {
-        this.AddonList = AddonList;
-        this.user = user;
-        this.request = request;
-    }
 
     public void setDuration(int dur) {
         duration = dur;
     }
 
-    public void setWatcher(Service.FileWatcher watch) {
-        if (watcher == null) {
-            watcher = watch;
-        }
+    public de.idrinth.waraddonclient.implementation.model.Addon get(int i) {
+        return (de.idrinth.waraddonclient.implementation.model.Addon) rows.get(i);
     }
 
-    public Addon get(int i) {
-        return (Addon) rows.get(i);
-    }
-
-    public Addon get(String name) {
-        return (Addon) list.get(name);
+    public de.idrinth.waraddonclient.implementation.model.Addon get(String name) {
+        return (de.idrinth.waraddonclient.implementation.model.Addon) list.get(name);
     }
 
     public int size() {
         return list.size();
     }
 
-    public void add(Addon addon) {
+    public void add(de.idrinth.waraddonclient.implementation.model.Addon addon) {
         list.put(addon.getName(), addon);
         rows.add(addon);
     }
@@ -78,7 +58,7 @@ public class AddonList implements java.lang.Runnable {
                     System.out.println(e.getMessage());
                 }
             }
-            javax.json.JsonArray parse = request.getAddonList();
+            javax.json.JsonArray parse = de.idrinth.waraddonclient.factory.RemoteRequest.build().getAddonList();
             if (parse != null) {
                 parseJsonResult(parse);
             }
@@ -87,10 +67,10 @@ public class AddonList implements java.lang.Runnable {
     }
 
     protected void parseJsonResult(javax.json.JsonArray parse) {
-        javax.swing.table.DefaultTableModel model = (javax.swing.table.DefaultTableModel) this.AddonList.getModel();
+        javax.swing.table.DefaultTableModel model = (javax.swing.table.DefaultTableModel) de.idrinth.waraddonclient.factory.Interface.build().getAddonTable().getModel();
         int counter = 0;
         while (parse.size() > counter) {
-            Data.Addon addon = new Data.Addon(parse.getJsonObject(counter), user, request);
+            de.idrinth.waraddonclient.implementation.model.Addon addon = new de.idrinth.waraddonclient.implementation.model.Addon(parse.getJsonObject(counter));
             if (list.containsKey(addon.getName())) {
                 list.get(addon.getName()).update(addon);
                 String[] data = list.get(addon.getName()).getTableRow();
@@ -115,9 +95,9 @@ public class AddonList implements java.lang.Runnable {
 
         boolean active = false;
         java.io.File file;
-        java.util.ArrayList<Data.Addon> list = new java.util.ArrayList();
+        java.util.ArrayList<de.idrinth.waraddonclient.implementation.model.Addon> list = new java.util.ArrayList();
 
-        public void addAddon(Data.Addon addon) {
+        public void addAddon(de.idrinth.waraddonclient.implementation.model.Addon addon) {
             list.add(addon);
         }
 
@@ -139,7 +119,7 @@ public class AddonList implements java.lang.Runnable {
                 active = false;
                 return;
             }
-            for (Data.Addon addon : list) {
+            for (de.idrinth.waraddonclient.implementation.model.Addon addon : list) {
                 addon.fileWasChanged(file);
             }
             active = false;

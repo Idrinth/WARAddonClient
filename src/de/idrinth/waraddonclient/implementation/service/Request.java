@@ -14,12 +14,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package Service;
+package de.idrinth.waraddonclient.implementation.service;
 
-/**
- *
- * @author Björn Büttner
- */
 public class Request {
 
     private final String baseUrl = "http://tools.idrinth.de/";
@@ -60,7 +56,7 @@ public class Request {
 
     protected synchronized org.apache.http.HttpResponse executionHandler(org.apache.http.client.methods.HttpRequestBase uri) {
         uri.setConfig(org.apache.http.client.config.RequestConfig.DEFAULT);
-        uri.setHeader("User-Agent", "IdrinthAddonClient/" + Service.Version.version);
+        uri.setHeader("User-Agent", "IdrinthAddonClient/" + de.idrinth.waraddonclient.factory.Version.build().getLocalVersion());
         uri.setHeader("Cache-Control", "no-cache");
         while (requestActive) {
             try {

@@ -14,12 +14,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package Data;
+package de.idrinth.waraddonclient.implementation.model;
 
-/**
- *
- * @author Björn Büttner
- */
 public class AddonSettings {
 
     protected String file = "";
@@ -28,7 +24,6 @@ public class AddonSettings {
     protected String url = "";
     protected String name;
     protected boolean hasSettings = false;
-    protected User user;
 
     public String getFile() {
         return file;
@@ -40,7 +35,7 @@ public class AddonSettings {
 
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
-        user.setEnabled(name, enabled);
+        de.idrinth.waraddonclient.factory.User.build().setEnabled(name, enabled);
     }
 
     public String getReason() {
@@ -51,10 +46,9 @@ public class AddonSettings {
         return url;
     }
 
-    AddonSettings(String name, User user) {
+    AddonSettings(String name) {
         this.name = name;
-        this.user = user;
-        this.enabled = user.getEnabled(name);
+        this.enabled = de.idrinth.waraddonclient.factory.User.build().getEnabled(name);
         refresh();
     }
 
@@ -67,7 +61,7 @@ public class AddonSettings {
         reason = "";
         url = "";
         hasSettings = false;
-        java.io.File folder = new Service.FindAddonFolder().find(name);
+        java.io.File folder = new de.idrinth.waraddonclient.implementation.service.FindAddonFolder().find(name);
         if (folder == null || !folder.exists()) {
             return;
         }

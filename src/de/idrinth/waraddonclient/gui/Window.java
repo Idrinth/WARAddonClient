@@ -14,73 +14,52 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package Gui;
+package de.idrinth.waraddonclient.gui;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
+public class Window extends javax.swing.JFrame {
 
-/**
- *
- * @author Björn Büttner
- */
-public class Wrapper extends javax.swing.JFrame {
-
-    public static Service.Version version;
-    private Data.AddonList addons = null;
     private javax.swing.table.TableRowSorter sorter;
-    private Data.Addon activeAddon = null;
-    private Data.User user = new Data.User();
-    private Service.FileWatcher watcher;
-    private Service.Request request = new Service.Request();
+    private de.idrinth.waraddonclient.implementation.model.Addon activeAddon = null;
     private String language = "en";
+    de.idrinth.waraddonclient.implementation.list.Tag tagList;
 
     /**
      * Creates new form Wrapper
      */
-    public Wrapper() {
+    public Window() {
         initComponents();
-        makeAddonList();
         finishGuiBuilding();
         processPosition();
     }
 
+    public javax.swing.JTable getAddonTable() {
+        return AddonList;
+    }
+
     protected final void finishGuiBuilding() {
-        this.AddonList.getSelectionModel().addListSelectionListener(new tableListener());
+        AddonList.getSelectionModel().addListSelectionListener(new tableListener());
         Description.setText("<html><h1>Welcome to the client.</h1><p>To get something more useful here, select an addon to the left.</p>");
         InstallButton.setEnabled(false);
         RemoveButton.setEnabled(false);
-        this.setIconImage(java.awt.Toolkit.getDefaultToolkit().getImage(getClass().getResource("/Images/logo.png")));
-        sorter = new javax.swing.table.TableRowSorter(this.AddonList.getModel());
-        this.AddonList.setRowSorter(sorter);
-        this.setTitle("Idrinth's WAR Addon Client");
+        setIconImage(java.awt.Toolkit.getDefaultToolkit().getImage(getClass().getResource("/Resources/Images/logo.png")));
+        sorter = new javax.swing.table.TableRowSorter(AddonList.getModel());
+        AddonList.setRowSorter(sorter);
+        setTitle("Idrinth's WAR Addon Client");
         rightSide.setEnabledAt(1, false);
         Description.addHyperlinkListener(new hyperlinkListener());
-    }
+        localVersion.setText(de.idrinth.waraddonclient.factory.Version.build().getLocalVersion());
 
-    private void newFilter() {
-        javax.swing.RowFilter rf = null;
-        try {
-            rf = javax.swing.RowFilter.regexFilter(
-                    "(?i)" + java.util.regex.Pattern.quote(
-                            Search.getText()
-                    )
-            );
-        } catch (java.util.regex.PatternSyntaxException e) {
-            return;
-        }
-        sorter.setRowFilter(rf);
-    }
-    Data.TagList tagList;
-
-    protected final void makeAddonList() {
-        addons = new Data.AddonList(AddonList, user, request);
-        watcher = new Service.FileWatcher(addons);
-        tagList = new Data.TagList(Tags, addons);
-        version = new Service.Version(request, localVersion, remoteVersion);
-        new java.lang.Thread(watcher).start();
-        new java.lang.Thread(addons).start();
-        new java.lang.Thread(version).start();
+        tagList = new de.idrinth.waraddonclient.implementation.list.Tag(Tags);
         new java.lang.Thread(tagList).start();
+    }
+
+    public void newFilter() {
+        try {
+            javax.swing.RowFilter rf = new de.idrinth.waraddonclient.gui.tablefilter.TextCategory(Search.getText(), tagList.getActiveTags());
+            sorter.setRowFilter(rf);
+        } catch (java.util.regex.PatternSyntaxException e) {
+            System.out.println(e.getMessage());
+        }
     }
 
     protected final void processPosition() {
@@ -104,7 +83,7 @@ public class Wrapper extends javax.swing.JFrame {
             if (javax.swing.event.HyperlinkEvent.EventType.ACTIVATED.equals(event.getEventType())) {
                 try {
                     java.awt.Desktop.getDesktop().browse(event.getURL().toURI());
-                } catch (URISyntaxException | IOException exception) {
+                } catch (java.net.URISyntaxException | java.io.IOException exception) {
                     System.out.println(exception.getMessage());
                 }
             }
@@ -112,11 +91,15 @@ public class Wrapper extends javax.swing.JFrame {
         }
     }
 
+    public javax.swing.JLabel getRemoteVersionLabel() {
+        return remoteVersion;
+    }
+
     class tableListener implements javax.swing.event.ListSelectionListener {
 
         public void valueChanged(javax.swing.event.ListSelectionEvent event) {
             try {
-                activeAddon = addons.get(AddonList.convertRowIndexToModel(AddonList.getSelectedRow()));
+                activeAddon = de.idrinth.waraddonclient.factory.AddonList.build().get(AddonList.convertRowIndexToModel(AddonList.getSelectedRow()));
             } catch (java.lang.ArrayIndexOutOfBoundsException exception) {
                 System.out.println(exception.getMessage());
                 return;
@@ -129,7 +112,7 @@ public class Wrapper extends javax.swing.JFrame {
             InstallButton.setEnabled(true);
             RemoveButton.setEnabled(true);
             setTitle(activeAddon.getName() + " - Idrinth's WAR Addon Client");
-            Data.AddonSettings settings = activeAddon.getUploadData();
+            de.idrinth.waraddonclient.implementation.model.AddonSettings settings = activeAddon.getUploadData();
             rightSide.setEnabledAt(1, settings.showSettings());
             UploadReason.setText(settings.getReason());
             UploadUrl.setText(settings.getUrl());
@@ -309,18 +292,17 @@ public class Wrapper extends javax.swing.JFrame {
                 .addGap(18, 18, 18)
                 .addComponent(RemoveButton)
                 .addGap(24, 24, 24))
-            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(jPanel1Layout.createSequentialGroup()
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 470, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGap(0, 0, Short.MAX_VALUE))
-                .addGroup(jPanel1Layout.createSequentialGroup()
-                    .addComponent(localVersion)
-                    .addGap(1, 1, 1)
-                    .addComponent(jLabel3)
-                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                    .addComponent(remoteVersion)
-                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                    .addComponent(CurTags, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 470, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addComponent(localVersion)
+                .addGap(1, 1, 1)
+                .addComponent(jLabel3)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(remoteVersion)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(CurTags, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -510,6 +492,7 @@ public class Wrapper extends javax.swing.JFrame {
             updateList();
             javax.swing.JOptionPane.showMessageDialog(this, "The requested Addon was installed.");
         } catch (java.io.IOException exception) {
+            System.out.println(exception);
             javax.swing.JOptionPane.showMessageDialog(this, "Sadly Installing failed, check if the folder is writeable.");
         }
     }//GEN-LAST:event_InstallButtonActionPerformed
@@ -581,51 +564,17 @@ public class Wrapper extends javax.swing.JFrame {
         Refresh2.setSelected(dur == 30);
         Refresh3.setSelected(dur == 60);
         Refresh4.setSelected(dur == 180);
-        addons.setDuration(dur);
+        de.idrinth.waraddonclient.factory.AddonList.build().setDuration(dur);
     }
 
     protected void updateList() {
         for (int position = 0; position < AddonList.getRowCount(); position++) {
-            if (addons.get(AddonList.convertRowIndexToModel(position)).getName() == activeAddon.getName()) {
+            if (de.idrinth.waraddonclient.factory.AddonList.build().get(AddonList.convertRowIndexToModel(position)).getName().equalsIgnoreCase(activeAddon.getName())) {
                 AddonList.setValueAt(activeAddon.getInstalled(), position, 2);
             }
         }
     }
 
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(Wrapper.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(Wrapper.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(Wrapper.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(Wrapper.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
-
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new Wrapper().setVisible(true);
-            }
-        });
-    }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuItem About;
     private javax.swing.JTable AddonList;

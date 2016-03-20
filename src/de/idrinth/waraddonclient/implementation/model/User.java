@@ -14,12 +14,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package Data;
+package de.idrinth.waraddonclient.implementation.model;
 
-/**
- *
- * @author Björn Büttner
- */
 public class User {
 
     private org.w3c.dom.Document xml = null;
