@@ -111,11 +111,10 @@ public class Addon {
     }
 
     protected final String getStringFromObject(String key, javax.json.JsonObject data) {
-        String value = "";
         if (key != null && data != null && data.containsKey(key) && !data.isNull(key)) {
-            value = data.get(key).toString();
+            return java.util.regex.Pattern.compile("^\"|\"$").matcher(data.get(key).toString()).replaceAll("");
         }
-        return value;
+        return "";
     }
 
     public String[] getTableRow() {

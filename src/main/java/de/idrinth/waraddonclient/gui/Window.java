@@ -41,7 +41,7 @@ public class Window extends javax.swing.JFrame {
         Description.setText("<html><h1>Welcome to the client.</h1><p>To get something more useful here, select an addon to the left.</p>");
         InstallButton.setEnabled(false);
         RemoveButton.setEnabled(false);
-        setIconImage(java.awt.Toolkit.getDefaultToolkit().getImage(getClass().getResource("/Resources/Images/logo.png")));
+        setIconImage(java.awt.Toolkit.getDefaultToolkit().getImage(getClass().getResource("/Images/logo.png")));
         sorter = new javax.swing.table.TableRowSorter(AddonList.getModel());
         AddonList.setRowSorter(sorter);
         setTitle("Idrinth's WAR Addon Client");
