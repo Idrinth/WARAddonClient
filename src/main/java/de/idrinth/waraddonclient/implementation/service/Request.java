@@ -16,9 +16,11 @@
  */
 package de.idrinth.waraddonclient.implementation.service;
 
+import java.security.KeyStore;
+
 public class Request {
 
-    private final String baseUrl = "http://tools.idrinth.de/";
+    private final String baseUrl = "https://tools.idrinth.de/";
     private boolean requestActive = false;
     private org.apache.http.impl.client.CloseableHttpClient client = null;
 
@@ -65,7 +67,19 @@ public class Request {
                 //don't care
             }
         }
-        client = org.apache.http.impl.client.HttpClientBuilder.create().build();
+        try {
+            de.idrinth.ssl.TrustManager manager = new de.idrinth.ssl.TrustManager();
+            client = org.apache.http.impl.client.HttpClientBuilder.create()
+                    .useSystemProperties()
+                    .setSSLContext(
+                            org.apache.http.ssl.SSLContextBuilder.create().loadTrustMaterial(
+                                    manager.keyStore,
+                                    manager
+                            ).build()
+                    )
+                    .build();
+        } catch (Exception e) {
+        }
         requestActive = true;
         org.apache.http.HttpResponse response = null;
         try {
