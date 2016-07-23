@@ -14,15 +14,15 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package de.idrinth;
+package de.idrinth.waraddonclient.implementation.service;
 
-public class Logger {
+public class Sleeper {
 
-    public static int levelInfo = 0;
-    public static int levelWarn = 1;
-    public static int levelError = 2;
-
-    public void log(String message, int severity) {
-
+    public static void sleep(int duration) {
+        try {
+            Thread.sleep(duration);
+        } catch (java.lang.InterruptedException exception) {
+            de.idrinth.factory.Logger.build().log(exception.getMessage(), de.idrinth.Logger.levelInfo);
+        }
     }
 }

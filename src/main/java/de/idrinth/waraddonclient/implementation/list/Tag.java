@@ -72,11 +72,7 @@ public class Tag implements java.lang.Runnable {
         }
         while (true) {
             while (System.currentTimeMillis() < lastRefreshed + 300000) {
-                try {
-                    Thread.sleep(100000);
-                } catch (java.lang.InterruptedException exception) {
-                    de.idrinth.factory.Logger.build().log(exception.getMessage(), de.idrinth.Logger.levelError);
-                }
+                de.idrinth.waraddonclient.implementation.service.Sleeper.sleep(1000000);
             }
             processAddons();
             processTags();

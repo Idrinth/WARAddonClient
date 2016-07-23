@@ -27,11 +27,7 @@ public class Version implements java.lang.Runnable {
      */
     @Override
     public void run() {
-        try {
-            Thread.sleep(2500);
-        } catch (java.lang.InterruptedException exception) {
-            de.idrinth.factory.Logger.build().log(exception.getMessage(), de.idrinth.Logger.levelError);
-        }
+        de.idrinth.waraddonclient.implementation.service.Sleeper.sleep(2500);
         try {
             de.idrinth.waraddonclient.factory.Interface.build().getRemoteVersionLabel().setText(de.idrinth.waraddonclient.factory.RemoteRequest.build().getVersion());
         } catch (java.lang.Exception exception) {

@@ -48,11 +48,7 @@ public class Request {
         uri.setHeader("User-Agent", "IdrinthAddonClient/" + de.idrinth.waraddonclient.configuration.Version.getLocalVersion());
         uri.setHeader("Cache-Control", "no-cache");
         while (requestActive) {
-            try {
-                Thread.sleep(150);
-            } catch (java.lang.InterruptedException exception) {
-                //don't care
-            }
+            de.idrinth.waraddonclient.implementation.service.Sleeper.sleep(150);
         }
         requestActive = true;
         //de.idrinth.ssl.TrustManager manager = new de.idrinth.ssl.TrustManager();

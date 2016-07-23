@@ -53,11 +53,7 @@ public class Addon implements java.lang.Runnable {
         int failuresInARow = 0;
         while (true) {
             while (System.currentTimeMillis() < lastRefreshed + duration * 60000) {
-                try {
-                    Thread.sleep(250);
-                } catch (java.lang.InterruptedException exception) {
-                    de.idrinth.factory.Logger.build().log(exception.getMessage(), de.idrinth.Logger.levelError);
-                }
+                de.idrinth.waraddonclient.implementation.service.Sleeper.sleep(250);
             }
             try {
                 javax.json.JsonArray parse = de.idrinth.waraddonclient.factory.RemoteRequest.build().getAddonList();
@@ -117,11 +113,7 @@ public class Addon implements java.lang.Runnable {
 
         public void setFileToProcess(java.io.File file) {
             while (active) {
-                try {
-                    Thread.sleep(100);
-                } catch (java.lang.InterruptedException exception) {
-                    de.idrinth.factory.Logger.build().log(exception.getMessage(), de.idrinth.Logger.levelError);
-                }
+                de.idrinth.waraddonclient.implementation.service.Sleeper.sleep(100);
             }
             active = true;
             this.file = file;
