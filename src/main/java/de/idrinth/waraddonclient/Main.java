@@ -54,10 +54,8 @@ public class Main {
         //</editor-fold>
 
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new Main();
-            }
+        java.awt.EventQueue.invokeLater(() -> {
+            Main main = new Main();
         });
     }
 }

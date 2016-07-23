@@ -47,10 +47,11 @@ public class Window extends javax.swing.JFrame {
         setTitle("Idrinth's WAR Addon Client");
         rightSide.setEnabledAt(1, false);
         Description.addHyperlinkListener(new hyperlinkListener());
-        localVersion.setText(de.idrinth.waraddonclient.factory.Version.build().getLocalVersion());
+        localVersion.setText(de.idrinth.waraddonclient.configuration.Version.getLocalVersion());
 
         tagList = new de.idrinth.waraddonclient.implementation.list.Tag(Tags);
         new java.lang.Thread(tagList).start();
+        new java.lang.Thread(new de.idrinth.waraddonclient.configuration.Version()).start();
     }
 
     public void newFilter() {

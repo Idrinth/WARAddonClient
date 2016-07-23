@@ -16,19 +16,12 @@
  */
 package de.idrinth.ssl;
 
-import java.io.BufferedInputStream;
-import java.security.KeyStore;
-import java.security.cert.Certificate;
-import java.security.cert.CertificateException;
-import java.security.cert.CertificateFactory;
-import java.security.cert.X509Certificate;
-
 public class TrustManager implements org.apache.http.ssl.TrustStrategy {
 
-    public KeyStore keyStore;
+    public java.security.KeyStore keyStore;
     protected javax.net.ssl.X509TrustManager manager;
 
-    public TrustManager() throws Exception {
+    public TrustManager() throws java.security.GeneralSecurityException, java.io.IOException, java.security.NoSuchAlgorithmException, java.security.cert.CertificateException, java.security.NoSuchAlgorithmException, java.security.KeyStoreException, java.lang.RuntimeException {
         getStore();
         addCertToStore("StartComCertificationAuthority");
         addCertToStore("StartComClass2IVServerCA");
@@ -44,68 +37,56 @@ public class TrustManager implements org.apache.http.ssl.TrustStrategy {
             }
         }
 
-        throw new Exception("Couldn't initialize");
+        throw new java.lang.RuntimeException("Couldn't initialize Trustmanager due to lack of X509TrustManager");
     }
 
-    protected final void getStore() {
+    protected final void getStore() throws java.security.GeneralSecurityException, java.io.IOException, java.security.NoSuchAlgorithmException, java.security.cert.CertificateException {
         String fileSep = System.getProperty("file.separator");
         java.io.File file = new java.io.File(System.getProperty("sun.boot.library.path"));
         while (new java.io.File(file.getAbsoluteFile() + fileSep + "lib").exists() != true) {
             file = file.getParentFile();
         }
-        try {
-            keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
-            System.setProperty("javax.net.ssl.trustStore", KeyStore.getDefaultType());
-            System.setProperty("javax.net.ssl.keyStore", KeyStore.getDefaultType());
-            try {
-                file = new java.io.File(file.getAbsolutePath() + fileSep + "lib" + fileSep + "security");
-                keyStore.load(
-                        new java.io.BufferedInputStream(
-                                new java.io.FileInputStream(
-                                        new java.io.File(
-                                                file.getAbsolutePath() + fileSep + "jssecacerts"
-                                        ).exists()
-                                                ? file.getAbsolutePath() + fileSep + "jssecacerts"
-                                                : file.getAbsolutePath() + fileSep + "cacerts"
-                                )
-                        ),
-                        "changeit".toCharArray()
-                );
-            } catch (Exception e) {
-                keyStore.load(null);//Make an empty store
-            }
-            javax.net.ssl.TrustManagerFactory trustManagerFactory = javax.net.ssl.TrustManagerFactory.getInstance(javax.net.ssl.TrustManagerFactory.getDefaultAlgorithm());
-            trustManagerFactory.init(keyStore);
-            javax.net.ssl.TrustManager[] trustManagers = trustManagerFactory.getTrustManagers();
-            javax.net.ssl.SSLContext sc = javax.net.ssl.SSLContext.getInstance("TLS");
-            sc.init(null, trustManagers, null);
-            javax.net.ssl.SSLContext.setDefault(sc);
-            System.setProperty("javax.net.ssl.trustStorePassword", "changeit");
-        } catch (java.io.IOException | java.security.GeneralSecurityException exception) {
-            System.out.println(exception.getMessage());
-        }
+        keyStore = java.security.KeyStore.getInstance(java.security.KeyStore.getDefaultType());
+        System.setProperty("javax.net.ssl.trustStore", java.security.KeyStore.getDefaultType());
+        System.setProperty("javax.net.ssl.keyStore", java.security.KeyStore.getDefaultType());
+        file = new java.io.File(file.getAbsolutePath() + fileSep + "lib" + fileSep + "security");
+        keyStore.load(
+                new java.io.BufferedInputStream(
+                        new java.io.FileInputStream(
+                                new java.io.File(
+                                        file.getAbsolutePath() + fileSep + "jssecacerts"
+                                ).exists()
+                                        ? file.getAbsolutePath() + fileSep + "jssecacerts"
+                                        : file.getAbsolutePath() + fileSep + "cacerts"
+                        )
+                ),
+                "changeit".toCharArray()
+        );
+        javax.net.ssl.TrustManagerFactory trustManagerFactory = javax.net.ssl.TrustManagerFactory.getInstance(javax.net.ssl.TrustManagerFactory.getDefaultAlgorithm());
+        trustManagerFactory.init(keyStore);
+        javax.net.ssl.TrustManager[] trustManagers = trustManagerFactory.getTrustManagers();
+        javax.net.ssl.SSLContext sc = javax.net.ssl.SSLContext.getInstance("TLS");
+        sc.init(null, trustManagers, null);
+        javax.net.ssl.SSLContext.setDefault(sc);
+        System.setProperty("javax.net.ssl.trustStorePassword", "changeit");
     }
 
-    protected final void addCertToStore(String name) {
-        try {
-            java.net.URL resource = getClass().getResource("/certificates/" + name + ".cer");
-            BufferedInputStream bis = new BufferedInputStream(resource.openStream());
-            Certificate cert = CertificateFactory.getInstance("X.509").generateCertificate(bis);
-            bis.close();
-            keyStore.setCertificateEntry(name, cert);
-        } catch (java.io.IOException | java.security.cert.CertificateException | java.security.KeyStoreException e) {
-            System.out.println(e.getMessage());
-        }
+    protected final void addCertToStore(String name) throws java.io.IOException, java.security.cert.CertificateException, java.security.KeyStoreException {
+        java.net.URL resource = getClass().getResource("/certificates/" + name + ".cer");
+        java.io.BufferedInputStream bis = new java.io.BufferedInputStream(resource.openStream());
+        java.security.cert.Certificate cert = java.security.cert.CertificateFactory.getInstance("X.509").generateCertificate(bis);
+        bis.close();
+        keyStore.setCertificateEntry(name, cert);
     }
 
     @Override
-    public boolean isTrusted(X509Certificate[] chain, String authType) {
+    public boolean isTrusted(java.security.cert.X509Certificate[] chain, String authType) {
         try {
             manager.checkServerTrusted(chain, authType);
             return true;
-        } catch (CertificateException e) {
-            System.out.println(e.getMessage());
+        } catch (java.security.cert.CertificateException e) {
+            de.idrinth.factory.Logger.build().log(e.getMessage(), de.idrinth.Logger.levelWarn);
+            return false;
         }
-        return false;
     }
 }

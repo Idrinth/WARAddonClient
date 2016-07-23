@@ -16,49 +16,36 @@
  */
 package de.idrinth.waraddonclient.implementation.service;
 
-import java.security.KeyStore;
-
 public class Request {
 
     private final String baseUrl = "https://tools.idrinth.de/";
-    private boolean requestActive = false;
+    private volatile boolean requestActive = false;
     private org.apache.http.impl.client.CloseableHttpClient client = null;
+    private javax.net.ssl.SSLContext sslContext = null;
 
-    public javax.json.JsonArray getAddonList() {
-        try {
-            org.apache.http.HttpResponse response = executionHandler(new org.apache.http.client.methods.HttpGet(baseUrl + "addon-api/"));
-            if (response == null) {
-                return null;
-            }
-            javax.json.JsonArray data = javax.json.Json.createReader(response.getEntity().getContent()).readArray();
-            client.close();
-            return data;
-        } catch (java.net.MalformedURLException exeption) {
-            System.out.println(exeption.getMessage());
-        } catch (java.io.IOException exeption) {
-            System.out.println(exeption.getMessage());
-        }
-        return null;
+    public Request() throws java.lang.Exception {
+        de.idrinth.ssl.TrustManager manager = new de.idrinth.ssl.TrustManager();
+        sslContext = org.apache.http.ssl.SSLContextBuilder.create().loadTrustMaterial(
+                manager.keyStore,
+                manager
+        ).build();
     }
 
-    public java.io.InputStream getAddonDownload(String url) {
-        try {
-            org.apache.http.HttpResponse response = executionHandler(new org.apache.http.client.methods.HttpGet(baseUrl + "addons/" + url));
-            if (response == null) {
-                return null;
-            }
-            return response.getEntity().getContent();
-        } catch (java.net.MalformedURLException exeption) {
-            System.out.println(exeption.getMessage());
-        } catch (java.io.IOException exeption) {
-            System.out.println(exeption.getMessage());
-        }
-        return null;
+    public javax.json.JsonArray getAddonList() throws java.lang.Exception {
+        org.apache.http.HttpResponse response = executionHandler(new org.apache.http.client.methods.HttpGet(baseUrl + "addon-api/"));
+        javax.json.JsonArray data = javax.json.Json.createReader(response.getEntity().getContent()).readArray();
+        client.close();
+        return data;
     }
 
-    protected synchronized org.apache.http.HttpResponse executionHandler(org.apache.http.client.methods.HttpRequestBase uri) {
+    public java.io.InputStream getAddonDownload(String url) throws java.lang.Exception {
+        org.apache.http.HttpResponse response = executionHandler(new org.apache.http.client.methods.HttpGet(baseUrl + "addons/" + url));
+        return response.getEntity().getContent();
+    }
+
+    protected synchronized org.apache.http.HttpResponse executionHandler(org.apache.http.client.methods.HttpRequestBase uri) throws java.lang.Exception {
         uri.setConfig(org.apache.http.client.config.RequestConfig.DEFAULT);
-        uri.setHeader("User-Agent", "IdrinthAddonClient/" + de.idrinth.waraddonclient.factory.Version.build().getLocalVersion());
+        uri.setHeader("User-Agent", "IdrinthAddonClient/" + de.idrinth.waraddonclient.configuration.Version.getLocalVersion());
         uri.setHeader("Cache-Control", "no-cache");
         while (requestActive) {
             try {
@@ -67,34 +54,21 @@ public class Request {
                 //don't care
             }
         }
-        try {
-            de.idrinth.ssl.TrustManager manager = new de.idrinth.ssl.TrustManager();
-            client = org.apache.http.impl.client.HttpClientBuilder.create()
-                    .useSystemProperties()
-                    .setSSLContext(
-                            org.apache.http.ssl.SSLContextBuilder.create().loadTrustMaterial(
-                                    manager.keyStore,
-                                    manager
-                            ).build()
-                    )
-                    .build();
-        } catch (Exception e) {
-        }
         requestActive = true;
-        org.apache.http.HttpResponse response = null;
-        try {
-            response = client.execute(uri);
-            if (response.getStatusLine().getStatusCode() < 200 || response.getStatusLine().getStatusCode() > 299) {
-                response = null;
-            }
-        } catch (java.io.IOException exception) {
-            System.out.println(exception.getMessage());
+        //de.idrinth.ssl.TrustManager manager = new de.idrinth.ssl.TrustManager();
+        client = org.apache.http.impl.client.HttpClientBuilder.create()
+                .useSystemProperties()
+                .setSSLContext(sslContext)
+                .build();
+        org.apache.http.HttpResponse response = client.execute(uri);
+        if (response.getStatusLine().getStatusCode() < 200 || response.getStatusLine().getStatusCode() > 299) {
+            throw new java.net.ConnectException(response.getStatusLine().getReasonPhrase());
         }
         requestActive = false;
         return response;
     }
 
-    public boolean upload(String url, java.io.File file) {
+    public boolean upload(String url, java.io.File file) throws java.lang.Exception {
         org.apache.http.client.methods.HttpPost request = new org.apache.http.client.methods.HttpPost(url);
         request.setEntity(new org.apache.http.entity.FileEntity(file));
         boolean wasSuccess = executionHandler(request) == null ? false : true;
@@ -106,7 +80,7 @@ public class Request {
         return wasSuccess;
     }
 
-    public String getVersion() {
+    public String getVersion() throws java.lang.Exception {
         org.apache.http.client.methods.HttpGet request = new org.apache.http.client.methods.HttpGet("https://api.github.com/repos/Idrinth/WARAddonClient/releases/latest");
         org.apache.http.HttpResponse response = executionHandler(request);
         String version = "";

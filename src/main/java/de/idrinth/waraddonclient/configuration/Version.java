@@ -14,17 +14,24 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package de.idrinth.waraddonclient.factory;
+package de.idrinth.waraddonclient.configuration;
 
-public class Version {
+public class Version implements java.lang.Runnable {
 
-    protected static de.idrinth.waraddonclient.implementation.model.Version instance = null;
+    public static String getLocalVersion() {
+        return "1.3.0";
+    }
 
-    public synchronized static de.idrinth.waraddonclient.implementation.model.Version build() {
-        if (instance == null) {
-            instance = new de.idrinth.waraddonclient.implementation.model.Version();
-            new java.lang.Thread(instance).start();
+    /**
+     * gets the newest version from github and ads it to the displayed version
+     */
+    @Override
+    public void run() {
+        try {
+            Thread.sleep(2500);
+        } catch (java.lang.InterruptedException exception) {
+            de.idrinth.factory.Logger.build().log(exception.getMessage(), de.idrinth.Logger.levelError);
         }
-        return instance;
+        de.idrinth.waraddonclient.factory.Interface.build().getRemoteVersionLabel().setText(de.idrinth.waraddonclient.factory.RemoteRequest.build().getVersion());
     }
 }
