@@ -16,18 +16,11 @@
  */
 package de.idrinth;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.util.Calendar;
-
 public class Logger {
 
-    public static int levelInfo = 0;
-    public static int levelWarn = 1;
-    public static int levelError = 2;
+    public final static int levelInfo = 0;
+    public final static int levelWarn = 1;
+    public final static int levelError = 2;
     protected static String[] severityLabel;
     protected java.io.File output = null;
 

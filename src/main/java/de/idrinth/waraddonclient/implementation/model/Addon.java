@@ -145,20 +145,24 @@ public class Addon {
         return name;
     }
 
+    private java.io.File getZip() throws java.lang.Exception {
+        java.io.File file = new java.io.File("./Interface/AddOns/" + slug + ".zip");
+        java.io.InputStream stream = de.idrinth.waraddonclient.factory.RemoteRequest.build().getAddonDownload(slug + "/download/" + version.replace(".", "-") + "/");
+        org.apache.commons.io.FileUtils.copyInputStreamToFile(stream, file);
+        stream.close();
+        return file;
+    }
+
+    private void extractZip() throws java.lang.Exception {
+        java.io.File file = getZip();
+        (new net.lingala.zip4j.core.ZipFile(file)).extractAll("./Interface/AddOns/");
+        org.apache.commons.io.FileUtils.deleteQuietly(file);
+        org.apache.commons.io.FileUtils.writeStringToFile(new java.io.File("./Interface/AddOns/" + name + "/self.idrinth"), "<?xml version=\"1.0\" encoding=\"UTF-8\"?><UiMod><name>" + name + "</name><version>" + version + "(sys)</version></UiMod>");
+    }
+
     public void install() throws java.lang.Exception {
         uninstall();
-        java.io.InputStream file = de.idrinth.waraddonclient.factory.RemoteRequest.build().getAddonDownload(slug + "/download/" + version.replace(".", "-") + "/");
-        new net.codejava.utility.Unzip().unzip(
-                file,
-                "./Interface/AddOns/");
-        file.close();
-        java.io.FileWriter versionWriter = new java.io.FileWriter("./Interface/AddOns/" + name + "/self.idrinth");
-        versionWriter.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
-                + "<UiMod>\n"
-                + "    <name>" + name + "</name>\n"
-                + "    <version>" + version + "(sys)</version>\n"
-                + "</UiMod>");
-        versionWriter.close();
+        extractZip();
         if (installed.equals("-")) {
             addonSettings.refresh();
         }
