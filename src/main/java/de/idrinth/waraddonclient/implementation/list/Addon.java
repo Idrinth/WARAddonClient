@@ -50,17 +50,31 @@ public class Addon implements java.lang.Runnable {
     }
 
     public void run() {
+        int failuresInARow = 0;
         while (true) {
             while (System.currentTimeMillis() < lastRefreshed + duration * 60000) {
                 try {
                     Thread.sleep(250);
-                } catch (java.lang.InterruptedException e) {
-                    System.out.println(e.getMessage());
+                } catch (java.lang.InterruptedException exception) {
+                    de.idrinth.factory.Logger.build().log(exception.getMessage(), de.idrinth.Logger.levelError);
                 }
             }
-            javax.json.JsonArray parse = de.idrinth.waraddonclient.factory.RemoteRequest.build().getAddonList();
-            if (parse != null) {
-                parseJsonResult(parse);
+            try {
+                javax.json.JsonArray parse = de.idrinth.waraddonclient.factory.RemoteRequest.build().getAddonList();
+                if (parse != null) {
+                    parseJsonResult(parse);
+                }
+                failuresInARow = 0;
+            } catch (Exception exception) {
+                de.idrinth.factory.Logger.build().log(exception.getMessage(), de.idrinth.Logger.levelError);
+                failuresInARow++;
+                if (failuresInARow > 5) {
+                    /**
+                     * @todo find a nicer option
+                     */
+                    System.exit(72);
+                    return;
+                }
             }
             lastRefreshed = System.currentTimeMillis();
         }
@@ -106,7 +120,7 @@ public class Addon implements java.lang.Runnable {
                 try {
                     Thread.sleep(100);
                 } catch (java.lang.InterruptedException exception) {
-                    System.out.println(exception.getMessage());
+                    de.idrinth.factory.Logger.build().log(exception.getMessage(), de.idrinth.Logger.levelError);
                 }
             }
             active = true;

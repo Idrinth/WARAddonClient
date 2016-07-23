@@ -92,7 +92,7 @@ public class Addon {
                         return;
                     }
                 } catch (javax.xml.parsers.ParserConfigurationException | javax.xml.parsers.FactoryConfigurationError | org.xml.sax.SAXException | java.io.IOException exception) {
-                    System.out.println(exception.getMessage());
+                    de.idrinth.factory.Logger.build().log(exception.getMessage(), de.idrinth.Logger.levelError);
                 }
             }
         }
@@ -105,7 +105,7 @@ public class Addon {
                     return;
                 }
             } catch (javax.xml.parsers.ParserConfigurationException | javax.xml.parsers.FactoryConfigurationError | org.xml.sax.SAXException | java.io.IOException exception) {
-                System.out.println(exception.getMessage());
+                de.idrinth.factory.Logger.build().log(exception.getMessage(), de.idrinth.Logger.levelError);
             }
         }
     }
@@ -145,7 +145,7 @@ public class Addon {
         return name;
     }
 
-    public void install() throws java.io.IOException {
+    public void install() throws java.lang.Exception {
         uninstall();
         java.io.InputStream file = de.idrinth.waraddonclient.factory.RemoteRequest.build().getAddonDownload(slug + "/download/" + version.replace(".", "-") + "/");
         new net.codejava.utility.Unzip().unzip(
@@ -174,7 +174,11 @@ public class Addon {
 
     public void fileWasChanged(java.io.File file) {
         if (addonSettings.isEnabled() && file.isFile() && file.getName().equalsIgnoreCase(addonSettings.getFile())) {
-            de.idrinth.waraddonclient.factory.RemoteRequest.build().upload(addonSettings.getUrl(), file);
+            try {
+                de.idrinth.waraddonclient.factory.RemoteRequest.build().upload(addonSettings.getUrl(), file);
+            } catch (Exception exception) {
+                de.idrinth.factory.Logger.build().log(exception.getMessage(), de.idrinth.Logger.levelWarn);
+            }
         }
     }
 

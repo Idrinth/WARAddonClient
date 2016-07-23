@@ -20,7 +20,7 @@ public class RemoteRequest {
 
     protected static de.idrinth.waraddonclient.implementation.service.Request instance = null;
 
-    public synchronized static de.idrinth.waraddonclient.implementation.service.Request build() {
+    public synchronized static de.idrinth.waraddonclient.implementation.service.Request build() throws java.lang.Exception {
         if (instance == null) {
             instance = new de.idrinth.waraddonclient.implementation.service.Request();
         }

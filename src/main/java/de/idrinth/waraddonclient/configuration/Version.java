@@ -32,6 +32,10 @@ public class Version implements java.lang.Runnable {
         } catch (java.lang.InterruptedException exception) {
             de.idrinth.factory.Logger.build().log(exception.getMessage(), de.idrinth.Logger.levelError);
         }
-        de.idrinth.waraddonclient.factory.Interface.build().getRemoteVersionLabel().setText(de.idrinth.waraddonclient.factory.RemoteRequest.build().getVersion());
+        try {
+            de.idrinth.waraddonclient.factory.Interface.build().getRemoteVersionLabel().setText(de.idrinth.waraddonclient.factory.RemoteRequest.build().getVersion());
+        } catch (java.lang.Exception exception) {
+            de.idrinth.factory.Logger.build().log(exception.getMessage(), de.idrinth.Logger.levelError);
+        }
     }
 }

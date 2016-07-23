@@ -75,7 +75,7 @@ public class Request {
         try {
             client.close();
         } catch (java.io.IOException exception) {
-            System.out.println(exception.getMessage());
+            de.idrinth.factory.Logger.build().log(exception.getMessage(), de.idrinth.Logger.levelError);
         }
         return wasSuccess;
     }
@@ -91,7 +91,7 @@ public class Request {
             }
             client.close();
         } catch (java.io.IOException exception) {
-            System.out.println(exception.getMessage());
+            de.idrinth.factory.Logger.build().log(exception.getMessage(), de.idrinth.Logger.levelError);
         }
         return version;
     }

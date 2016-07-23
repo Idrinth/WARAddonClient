@@ -54,7 +54,7 @@ public class User {
                     new javax.xml.transform.stream.StreamResult(new java.io.File("./idrinth.xml"))
             );
         } catch (javax.xml.transform.TransformerException exception) {
-            System.out.println(exception);
+            de.idrinth.factory.Logger.build().log(exception.getMessage(), de.idrinth.Logger.levelError);
         }
     }
 

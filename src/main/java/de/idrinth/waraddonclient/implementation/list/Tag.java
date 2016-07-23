@@ -67,15 +67,15 @@ public class Tag implements java.lang.Runnable {
     public void run() {
         try {
             Thread.sleep(10000);
-        } catch (java.lang.InterruptedException e) {
-            System.out.println(e.getMessage());
+        } catch (java.lang.InterruptedException exception) {
+            de.idrinth.factory.Logger.build().log(exception.getMessage(), de.idrinth.Logger.levelError);
         }
         while (true) {
             while (System.currentTimeMillis() < lastRefreshed + 300000) {
                 try {
                     Thread.sleep(100000);
-                } catch (java.lang.InterruptedException e) {
-                    System.out.println(e.getMessage());
+                } catch (java.lang.InterruptedException exception) {
+                    de.idrinth.factory.Logger.build().log(exception.getMessage(), de.idrinth.Logger.levelError);
                 }
             }
             processAddons();
