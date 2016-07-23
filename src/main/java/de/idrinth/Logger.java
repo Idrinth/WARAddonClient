@@ -16,13 +16,51 @@
  */
 package de.idrinth;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.util.Calendar;
+
 public class Logger {
 
     public static int levelInfo = 0;
     public static int levelWarn = 1;
     public static int levelError = 2;
+    protected static String[] severityLabel;
+    protected java.io.File output = null;
+
+    public Logger() {
+        severityLabel = new String[3];
+        severityLabel[0] = "Info ";
+        severityLabel[1] = "Warn ";
+        severityLabel[2] = "Error";
+        try {
+            java.io.File output = new java.io.File("idrinth.log");
+            if (!output.exists()) {
+                output.createNewFile();
+            }
+        } catch (java.lang.Exception exception) {
+            this.log(exception.getMessage(), levelError);
+        }
+    }
+
+    protected String buildMessage(String message, int severity) {
+        return "[" + (new java.text.SimpleDateFormat("YYYY-mm-dd hh:mm:ss")).format(java.util.Calendar.getInstance().getTime()) + "][" + severityLabel[severity] + "] " + message + "\n";
+    }
 
     public void log(String message, int severity) {
-
+        message = buildMessage(message, severity);
+        if (output == null) {
+            System.out.println(message);
+            return;
+        }
+        try {
+            org.apache.commons.io.FileUtils.writeStringToFile(output, message, null, true);
+        } catch (Exception exception) {
+            System.out.println(message);
+            System.out.println(exception.getMessage());
+        }
     }
 }
