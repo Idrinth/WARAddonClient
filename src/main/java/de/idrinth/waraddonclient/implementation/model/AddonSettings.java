@@ -25,37 +25,71 @@ public class AddonSettings {
     protected String name;
     protected boolean hasSettings;
 
+    /**
+     *
+     * @return String
+     */
     public String getFile() {
         return file;
     }
 
+    /**
+     * is file upload enabled?
+     *
+     * @return boolean
+     */
     public boolean isEnabled() {
         return enabled;
     }
 
+    /**
+     * activates/deactivates upload
+     *
+     * @param enabled
+     */
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
         de.idrinth.waraddonclient.factory.User.build().setEnabled(name, enabled);
     }
 
+    /**
+     *
+     * @return String
+     */
     public String getReason() {
         return reason;
     }
 
+    /**
+     *
+     * @return String
+     */
     public String getUrl() {
         return url;
     }
 
+    /**
+     * initialises from addon-name
+     *
+     * @param name
+     */
     public AddonSettings(String name) {
         this.name = name;
         this.enabled = de.idrinth.waraddonclient.factory.User.build().getEnabled(name);
         refresh();
     }
 
+    /**
+     *
+     * @return boolean
+     */
     public boolean showSettings() {
         return hasSettings;
     }
 
+    /**
+     * refres
+     */
     final public void refresh() {
         file = "";
         reason = "";

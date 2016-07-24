@@ -25,6 +25,8 @@ public class Addon {
     private String installed = "-";
     private java.util.ArrayList<String> tags = new java.util.ArrayList();
     private AddonSettings addonSettings;
+    private static final String basePath = "./Interface/AddOns/";
+    private static final String versionFile = "/self.idrinth";
 
     /**
      * Initialize from a json object
@@ -237,10 +239,10 @@ public class Addon {
         }
 
         /**
-         * removes all data of this addon from the arddrive
+         * removes all data of this addon from the harddrive
          */
         private void uninstall() {
-            java.io.File addonFolder = new java.io.File("./Interface/AddOns/" + name);
+            java.io.File addonFolder = new java.io.File(basePath + name);
             emptyFolder(addonFolder);
             addonFolder.delete();
         }
@@ -252,7 +254,7 @@ public class Addon {
          * @throws java.lang.Exception
          */
         private java.io.File getZip() throws java.lang.Exception {
-            java.io.File file = new java.io.File("./Interface/AddOns/" + slug + ".zip");
+            java.io.File file = new java.io.File(basePath + slug + ".zip");
             try (java.io.InputStream stream = de.idrinth.waraddonclient.factory.RemoteRequest.build().getAddonDownload(slug + "/download/" + version.replace(".", "-") + "/")) {
                 org.apache.commons.io.FileUtils.copyInputStreamToFile(stream, file);
             }
@@ -266,16 +268,16 @@ public class Addon {
          */
         private void install() throws java.lang.Exception {
             java.io.File file = getZip();
-            (new net.lingala.zip4j.core.ZipFile(file)).extractAll("./Interface/AddOns/");
+            (new net.lingala.zip4j.core.ZipFile(file)).extractAll(basePath);
             org.apache.commons.io.FileUtils.deleteQuietly(file);
-            org.apache.commons.io.FileUtils.writeStringToFile(new java.io.File("./Interface/AddOns/" + name + "/self.idrinth"), "<?xml version=\"1.0\" encoding=\"UTF-8\"?><UiMod><name>" + name + "</name><version>" + version + "(sys)</version></UiMod>");
+            org.apache.commons.io.FileUtils.writeStringToFile(new java.io.File(basePath + name + versionFile), "<?xml version=\"1.0\" encoding=\"UTF-8\"?><UiMod><name>" + name + "</name><version>" + version + "(sys)</version></UiMod>");
         }
 
     }
 
     private class VersionFinder {
 
-        java.io.File folder;
+        private final java.io.File folder;
 
         /**
          *
@@ -310,7 +312,7 @@ public class Addon {
          * tries to find and set the default version
          */
         private void getDownloadVersion() {
-            java.io.File file = new java.io.File(folder.getPath() + "/self.idrinth");
+            java.io.File file = new java.io.File(folder.getPath() + versionFile);
             if (file.exists()) {
                 try {
                     org.w3c.dom.NodeList list = javax.xml.parsers.DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(file).getElementsByTagName("version");
