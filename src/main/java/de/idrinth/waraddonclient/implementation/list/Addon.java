@@ -101,11 +101,7 @@ public class Addon implements java.lang.Runnable {
                 de.idrinth.factory.Logger.build().log(exception.getMessage(), de.idrinth.Logger.levelError);
                 failuresInARow++;
                 if (failuresInARow > 5) {
-                    /**
-                     * @todo find a nicer option
-                     */
-                    System.exit(72);
-                    return;
+                    de.idrinth.waraddonclient.factory.Interface.build().exitWithError(exception.getMessage());
                 }
             }
             lastRefreshed = System.currentTimeMillis();

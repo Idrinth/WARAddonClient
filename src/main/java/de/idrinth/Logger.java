@@ -33,7 +33,7 @@ public class Logger {
                 output.createNewFile();
             }
         } catch (java.lang.Exception exception) {
-            log(exception.getMessage(), levelError);
+            de.idrinth.waraddonclient.factory.Interface.build().exitWithError(exception.getMessage());
         }
     }
 
@@ -68,14 +68,11 @@ public class Logger {
      */
     public final void log(String message, int severity) {
         String formattedMessage = buildMessage(message, severity);
-        if (output != null) {
-            try {
-                org.apache.commons.io.FileUtils.writeStringToFile(output, formattedMessage, null, true);
-                return;
-            } catch (Exception exception) {
-                formattedMessage += " " + exception.getMessage();
-            }
+        try {
+            org.apache.commons.io.FileUtils.writeStringToFile(output, formattedMessage, null, true);
+            return;
+        } catch (Exception exception) {
+            de.idrinth.waraddonclient.factory.Interface.build().exitWithError(formattedMessage += "\n" + exception.getMessage());
         }
-        System.out.println(formattedMessage);
     }
 }
