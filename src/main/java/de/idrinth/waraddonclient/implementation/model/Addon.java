@@ -160,7 +160,7 @@ public class Addon {
     public void install() throws java.lang.Exception {
         uninstall();
         extractZip();
-        if (installed.equals("-")) {
+        if ("-".equals(installed)) {
             addonSettings.refresh();
         }
     }

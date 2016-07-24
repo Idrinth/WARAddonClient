@@ -551,9 +551,9 @@ public class Window extends javax.swing.JFrame {
         if (lang.equals(language)) {
             return;
         }
-        English.setSelected(lang.equals("en"));
-        Deutsch.setSelected(lang.equals("de"));
-        Francais.setSelected(lang.equals("fr"));
+        English.setSelected("en".equals(lang));
+        Deutsch.setSelected("de".equals(lang));
+        Francais.setSelected("fr".equals(lang));
         language = lang;
         if (activeAddon != null) {
             Description.setText(activeAddon.getDescription(language));
