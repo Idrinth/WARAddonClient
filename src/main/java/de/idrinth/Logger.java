@@ -72,7 +72,7 @@ public class Logger {
             org.apache.commons.io.FileUtils.writeStringToFile(output, formattedMessage, null, true);
             return;
         } catch (Exception exception) {
-            de.idrinth.waraddonclient.factory.Interface.build().exitWithError(formattedMessage += "\n" + exception.getMessage());
+            de.idrinth.waraddonclient.factory.Interface.build().exitWithError(formattedMessage + "\n" + exception.getMessage());
         }
     }
 }
