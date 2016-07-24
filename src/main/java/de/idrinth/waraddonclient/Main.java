@@ -23,6 +23,7 @@ public class Main {
     protected de.idrinth.waraddonclient.gui.Window gui;
 
     public Main() {
+        de.idrinth.factory.Logger.build().log("Starting", de.idrinth.Logger.levelInfo);
         addonList = de.idrinth.waraddonclient.factory.AddonList.build();
         fileWatcher = de.idrinth.waraddonclient.factory.FileWatcher.build();
         gui = de.idrinth.waraddonclient.factory.Interface.build();

@@ -25,7 +25,7 @@ public class Logger {
 
     public Logger() {
         try {
-            java.io.File output = new java.io.File("idrinth.log");
+            output = new java.io.File("idrinth.log");
             if (!output.exists()) {
                 output.createNewFile();
             }
@@ -38,15 +38,15 @@ public class Logger {
         String severityLabel;
         switch (severity) {
             case 0:
-                severityLabel = "Info ";
+                severityLabel = "[Info] ";
                 break;
             case 1:
-                severityLabel = "Warn ";
+                severityLabel = "[Warn] ";
                 break;
             default:
-                severityLabel = "Error";
+                severityLabel = "[Error]";
         }
-        return "[" + (new java.text.SimpleDateFormat("YYYY-mm-dd hh:mm:ss")).format(java.util.Calendar.getInstance().getTime()) + "][" + severityLabel + "] " + message + "\n";
+        return "[" + (new java.text.SimpleDateFormat("YYYY-MM-dd HH:mm:ss z")).format(java.util.Calendar.getInstance().getTime()) + "]" + severityLabel + " " + message + "\n";
     }
 
     public void log(String message, int severity) {
