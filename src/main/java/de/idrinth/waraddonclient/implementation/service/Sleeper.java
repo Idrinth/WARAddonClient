@@ -19,6 +19,13 @@ package de.idrinth.waraddonclient.implementation.service;
 public class Sleeper {
 
     /**
+     * prevent init
+     */
+    private Sleeper() {
+        //only static
+    }
+
+    /**
      * Sleeps for a given duration in the current thread
      *
      * @param duration
