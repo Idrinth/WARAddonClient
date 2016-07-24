@@ -86,10 +86,10 @@ public class TrustManager implements org.apache.http.ssl.TrustStrategy {
      */
     private final void addCertToStore(String name) throws java.lang.Exception {
         java.net.URL resource = getClass().getResource("/certificates/" + name + ".cer");
-        java.io.BufferedInputStream bis = new java.io.BufferedInputStream(resource.openStream());
-        java.security.cert.Certificate cert = java.security.cert.CertificateFactory.getInstance("X.509").generateCertificate(bis);
-        bis.close();
-        keyStore.setCertificateEntry(name, cert);
+        try (java.io.BufferedInputStream bis = new java.io.BufferedInputStream(resource.openStream())) {
+            java.security.cert.Certificate cert = java.security.cert.CertificateFactory.getInstance("X.509").generateCertificate(bis);
+            keyStore.setCertificateEntry(name, cert);
+        }
     }
 
     /**

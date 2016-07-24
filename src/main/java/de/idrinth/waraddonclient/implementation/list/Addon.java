@@ -36,11 +36,11 @@ public class Addon implements java.lang.Runnable {
     /**
      * returns the addon at the list-position i
      *
-     * @param i
+     * @param position
      * @return de.idrinth.waraddonclient.implementation.model.Addon
      */
-    public de.idrinth.waraddonclient.implementation.model.Addon get(int i) {
-        return (de.idrinth.waraddonclient.implementation.model.Addon) rows.get(i);
+    public de.idrinth.waraddonclient.implementation.model.Addon get(int position) {
+        return (de.idrinth.waraddonclient.implementation.model.Addon) rows.get(position);
     }
 
     /**

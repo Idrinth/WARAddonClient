@@ -53,12 +53,7 @@ public class TextCategory extends javax.swing.RowFilter {
      * @return boolean
      */
     private boolean isInAllowedCategory(de.idrinth.waraddonclient.implementation.model.Addon addon) {
-        for (String tag : tags) {
-            if (addon.hasTag(tag)) {
-                return true;
-            }
-        }
-        return false;
+        return tags.stream().anyMatch((tag) -> (addon.hasTag(tag)));
     }
 
 }

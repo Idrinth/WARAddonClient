@@ -177,7 +177,7 @@ public class Addon {
      * @throws java.lang.Exception
      */
     public void install() throws java.lang.Exception {
-        (new Updater()).run(false);
+        (new Updater()).run(true);
     }
 
     /**
@@ -186,7 +186,7 @@ public class Addon {
      * @throws java.lang.Exception
      */
     public void uninstall() throws java.lang.Exception {
-        (new Updater()).run(true);
+        (new Updater()).run(false);
     }
 
     /**

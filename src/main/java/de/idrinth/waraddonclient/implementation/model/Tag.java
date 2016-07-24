@@ -22,41 +22,58 @@ public class Tag {
     private java.util.HashMap<String, Addon> list = new java.util.HashMap();
     private javax.swing.JCheckBoxMenuItem item;
 
+    /**
+     *
+     * @param name
+     */
     public Tag(String name) {
         this.name = name;
         item = new javax.swing.JCheckBoxMenuItem();
         item.setText(name);
         item.setSelected(true);
-        item.addActionListener(
-                new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                de.idrinth.waraddonclient.factory.Interface.build().newFilter();
-            }
-        }
-        );
+        item.addActionListener((java.awt.event.ActionEvent evt) -> {
+            de.idrinth.waraddonclient.factory.Interface.build().newFilter();
+        });
     }
 
+    /**
+     *
+     * @return javax.swing.JCheckBoxMenuItem
+     */
     public javax.swing.JCheckBoxMenuItem getMenu() {
         return item;
     }
 
+    /**
+     *
+     * @return boolean
+     */
     public boolean isActive() {
         return item.isSelected();
     }
 
+    /**
+     *
+     * @return boolean
+     */
     public boolean hasMembers() {
         return !list.isEmpty();
     }
 
+    /**
+     *
+     * @param addon
+     */
     public void addMember(Addon addon) {
         list.put(addon.getName(), addon);
     }
 
+    /**
+     *
+     */
     public void checkMembers() {
-        for (String addon : list.keySet()) {
-            if (!list.get(addon).hasTag(name)) {
-                list.remove(addon);
-            }
-        }
+        list.keySet().stream().filter((addon) -> (!list.get(addon).hasTag(name))).forEach((addon) -> {
+            list.remove(addon);
+        });
     }
 }

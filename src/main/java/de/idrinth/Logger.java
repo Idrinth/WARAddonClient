@@ -23,6 +23,9 @@ public class Logger {
     public final static int levelError = 2;
     private java.io.File output;
 
+    /**
+     * tries to initialize an output file
+     */
     public Logger() {
         try {
             output = new java.io.File("idrinth.log");
@@ -63,7 +66,7 @@ public class Logger {
      * @param message
      * @param severity
      */
-    public void log(String message, int severity) {
+    public final void log(String message, int severity) {
         String formattedMessage = buildMessage(message, severity);
         if (output != null) {
             try {
