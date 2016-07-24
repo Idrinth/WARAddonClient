@@ -21,14 +21,9 @@ public class Logger {
     public final static int levelInfo = 0;
     public final static int levelWarn = 1;
     public final static int levelError = 2;
-    protected static String[] severityLabel;
     protected java.io.File output = null;
 
     public Logger() {
-        severityLabel = new String[3];
-        severityLabel[0] = "Info ";
-        severityLabel[1] = "Warn ";
-        severityLabel[2] = "Error";
         try {
             java.io.File output = new java.io.File("idrinth.log");
             if (!output.exists()) {
@@ -40,7 +35,18 @@ public class Logger {
     }
 
     protected String buildMessage(String message, int severity) {
-        return "[" + (new java.text.SimpleDateFormat("YYYY-mm-dd hh:mm:ss")).format(java.util.Calendar.getInstance().getTime()) + "][" + severityLabel[severity] + "] " + message + "\n";
+        String severityLabel;
+        switch (severity) {
+            case 0:
+                severityLabel = "Info ";
+                break;
+            case 1:
+                severityLabel = "Warn ";
+                break;
+            default:
+                severityLabel = "Error";
+        }
+        return "[" + (new java.text.SimpleDateFormat("YYYY-mm-dd hh:mm:ss")).format(java.util.Calendar.getInstance().getTime()) + "][" + severityLabel + "] " + message + "\n";
     }
 
     public void log(String message, int severity) {
