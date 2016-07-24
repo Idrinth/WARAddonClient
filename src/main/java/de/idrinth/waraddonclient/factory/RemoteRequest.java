@@ -21,6 +21,13 @@ public class RemoteRequest {
     private static de.idrinth.waraddonclient.implementation.service.Request instance;
 
     /**
+     * prevent initialization
+     */
+    private RemoteRequest() {
+        //this is static only
+    }
+
+    /**
      * returns the http-request-handler
      *
      * @return de.idrinth.waraddonclient.implementation.service.Request

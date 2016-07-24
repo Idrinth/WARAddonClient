@@ -21,6 +21,13 @@ public class Interface {
     private static de.idrinth.waraddonclient.gui.Window instance;
 
     /**
+     * prevent initialization
+     */
+    private Interface() {
+        //this is static only
+    }
+
+    /**
      * gets the GUI-object
      *
      * @return de.idrinth.waraddonclient.gui.Window

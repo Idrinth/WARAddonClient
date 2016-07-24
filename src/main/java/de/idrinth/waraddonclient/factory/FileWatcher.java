@@ -21,6 +21,13 @@ public class FileWatcher {
     private static de.idrinth.waraddonclient.implementation.service.FileWatcher instance;
 
     /**
+     * prevent initialization
+     */
+    private FileWatcher() {
+        //this is static only
+    }
+
+    /**
      * Gets the filewatcher
      *
      * @return de.idrinth.waraddonclient.implementation.service.FileWatcher

@@ -21,6 +21,13 @@ public class AddonList {
     private static de.idrinth.waraddonclient.implementation.list.Addon instance;
 
     /**
+     * prevent initialization
+     */
+    private AddonList() {
+        //this is static only
+    }
+
+    /**
      * gets the list of addons
      *
      * @return de.idrinth.waraddonclient.implementation.list.Addon

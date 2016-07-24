@@ -21,6 +21,13 @@ public class User {
     private static de.idrinth.waraddonclient.implementation.model.User instance;
 
     /**
+     * prevent initialization
+     */
+    private User() {
+        //this is static only
+    }
+
+    /**
      * returns data of the current user
      *
      * @return de.idrinth.waraddonclient.implementation.model.User
