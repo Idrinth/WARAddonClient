@@ -44,15 +44,15 @@ public class Logger {
     }
 
     public void log(String message, int severity) {
-        message = buildMessage(message, severity);
+        String formattedMessage = buildMessage(message, severity);
         if (output == null) {
-            System.out.println(message);
+            System.out.println(formattedMessage);
             return;
         }
         try {
-            org.apache.commons.io.FileUtils.writeStringToFile(output, message, null, true);
+            org.apache.commons.io.FileUtils.writeStringToFile(output, formattedMessage, null, true);
         } catch (Exception exception) {
-            System.out.println(message);
+            System.out.println(formattedMessage);
             System.out.println(exception.getMessage());
         }
     }

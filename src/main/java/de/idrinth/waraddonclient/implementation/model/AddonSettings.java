@@ -46,7 +46,7 @@ public class AddonSettings {
         return url;
     }
 
-    AddonSettings(String name) {
+    public AddonSettings(String name) {
         this.name = name;
         this.enabled = de.idrinth.waraddonclient.factory.User.build().getEnabled(name);
         refresh();
@@ -81,6 +81,8 @@ public class AddonSettings {
                             case "reason":
                                 reason = list.item(counter).getTextContent();
                                 break;
+                            default:
+                                de.idrinth.factory.Logger.build().log("found unknown node " + list.item(counter).getNodeName().toLowerCase() + " in " + name, de.idrinth.Logger.levelInfo);
                         }
                     }
                     hasSettings = true;

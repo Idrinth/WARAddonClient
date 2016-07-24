@@ -100,10 +100,7 @@ public class Addon {
         if (file.exists()) {
             try {
                 org.w3c.dom.NodeList list = javax.xml.parsers.DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(file).getElementsByTagName("version");
-                for (int counter = 0; counter < list.getLength(); counter++) {
-                    this.installed = list.item(counter).getTextContent();
-                    return;
-                }
+                this.installed = list.item(0).getTextContent();
             } catch (javax.xml.parsers.ParserConfigurationException | javax.xml.parsers.FactoryConfigurationError | org.xml.sax.SAXException | java.io.IOException exception) {
                 de.idrinth.factory.Logger.build().log(exception.getMessage(), de.idrinth.Logger.levelError);
             }
