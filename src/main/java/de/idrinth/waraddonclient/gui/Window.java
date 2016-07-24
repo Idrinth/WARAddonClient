@@ -78,54 +78,8 @@ public class Window extends javax.swing.JFrame {
         }
     }
 
-    class hyperlinkListener implements javax.swing.event.HyperlinkListener {
-
-        public void hyperlinkUpdate(javax.swing.event.HyperlinkEvent event) {
-            if (javax.swing.event.HyperlinkEvent.EventType.ACTIVATED.equals(event.getEventType())) {
-                try {
-                    java.awt.Desktop.getDesktop().browse(event.getURL().toURI());
-                } catch (java.net.URISyntaxException | java.io.IOException exception) {
-                    de.idrinth.factory.Logger.build().log(exception.getMessage(), de.idrinth.Logger.levelError);
-                }
-            }
-
-        }
-    }
-
     public javax.swing.JLabel getRemoteVersionLabel() {
         return remoteVersion;
-    }
-
-    class tableListener implements javax.swing.event.ListSelectionListener {
-
-        @Override
-        public void valueChanged(javax.swing.event.ListSelectionEvent event) {
-            try {
-                activeAddon = de.idrinth.waraddonclient.factory.AddonList.build().get(AddonList.convertRowIndexToModel(AddonList.getSelectedRow()));
-            } catch (java.lang.ArrayIndexOutOfBoundsException exception) {
-                de.idrinth.factory.Logger.build().log(exception.getMessage(), de.idrinth.Logger.levelError);
-                return;
-            }
-            if (activeAddon == null) {
-                return;
-            }
-            Description.setText(activeAddon.getDescription(language));
-            Title.setText(activeAddon.getName());
-            InstallButton.setEnabled(true);
-            RemoveButton.setEnabled(true);
-            setTitle(activeAddon.getName() + " - Idrinth's WAR Addon Client");
-            de.idrinth.waraddonclient.implementation.model.AddonSettings settings = activeAddon.getUploadData();
-            rightSide.setEnabledAt(1, settings.showSettings());
-            UploadReason.setText(settings.getReason());
-            UploadUrl.setText(settings.getUrl());
-            UploadFile.setText(settings.getFile());
-            UploadEnable.setSelected(settings.isEnabled());
-            String taglist = "Tagged: ";
-            for (String tagname : activeAddon.getTags()) {
-                taglist += tagname + ", ";
-            }
-            CurTags.setText(taglist.substring(0, taglist.length() - 2));
-        }
     }
 
     /**
@@ -618,4 +572,49 @@ public class Window extends javax.swing.JFrame {
     private javax.swing.JLabel remoteVersion;
     private javax.swing.JTabbedPane rightSide;
     // End of variables declaration//GEN-END:variables
+
+    class hyperlinkListener implements javax.swing.event.HyperlinkListener {
+
+        @Override
+        public void hyperlinkUpdate(javax.swing.event.HyperlinkEvent event) {
+            if (javax.swing.event.HyperlinkEvent.EventType.ACTIVATED.equals(event.getEventType())) {
+                try {
+                    java.awt.Desktop.getDesktop().browse(event.getURL().toURI());
+                } catch (java.net.URISyntaxException | java.io.IOException exception) {
+                    de.idrinth.factory.Logger.build().log(exception.getMessage(), de.idrinth.Logger.levelError);
+                }
+            }
+
+        }
+    }
+
+    class tableListener implements javax.swing.event.ListSelectionListener {
+
+        @Override
+        public void valueChanged(javax.swing.event.ListSelectionEvent event) {
+            try {
+                activeAddon = de.idrinth.waraddonclient.factory.AddonList.build().get(AddonList.convertRowIndexToModel(AddonList.getSelectedRow()));
+            } catch (java.lang.ArrayIndexOutOfBoundsException exception) {
+                de.idrinth.factory.Logger.build().log(exception.getMessage(), de.idrinth.Logger.levelError);
+                return;
+            }
+            if (activeAddon == null) {
+                return;
+            }
+            Description.setText(activeAddon.getDescription(language));
+            Title.setText(activeAddon.getName());
+            InstallButton.setEnabled(true);
+            RemoveButton.setEnabled(true);
+            setTitle(activeAddon.getName() + " - Idrinth's WAR Addon Client");
+            de.idrinth.waraddonclient.implementation.model.AddonSettings settings = activeAddon.getUploadData();
+            rightSide.setEnabledAt(1, settings.showSettings());
+            UploadReason.setText(settings.getReason());
+            UploadUrl.setText(settings.getUrl());
+            UploadFile.setText(settings.getFile());
+            UploadEnable.setSelected(settings.isEnabled());
+            String taglist = "Tagged: ";
+            taglist = activeAddon.getTags().stream().map((tagname) -> tagname + ", ").reduce(taglist, String::concat);
+            CurTags.setText(taglist.substring(0, taglist.length() - 2));
+        }
+    }
 }

@@ -30,7 +30,7 @@ public class Logger {
                 output.createNewFile();
             }
         } catch (java.lang.Exception exception) {
-            this.log(exception.getMessage(), levelError);
+            log(exception.getMessage(), levelError);
         }
     }
 
@@ -70,7 +70,7 @@ public class Logger {
                 org.apache.commons.io.FileUtils.writeStringToFile(output, formattedMessage, null, true);
                 return;
             } catch (Exception exception) {
-                System.out.println(exception.getMessage());
+                formattedMessage += " " + exception.getMessage();
             }
         }
         System.out.println(formattedMessage);
