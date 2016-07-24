@@ -18,7 +18,7 @@ package de.idrinth.factory;
 
 public class Logger {
 
-    protected static de.idrinth.Logger instance = null;
+    protected static de.idrinth.Logger instance;
 
     /**
      *

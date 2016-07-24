@@ -18,7 +18,7 @@ package de.idrinth.waraddonclient.implementation.model;
 
 public class User {
 
-    private org.w3c.dom.Document xml = null;
+    private org.w3c.dom.Document xml;
 
     /**
      *

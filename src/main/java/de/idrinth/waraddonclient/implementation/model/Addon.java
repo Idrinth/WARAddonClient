@@ -24,7 +24,7 @@ public class Addon {
     private String name;
     private String installed = "-";
     private java.util.ArrayList<String> tags = new java.util.ArrayList();
-    private AddonSettings addonSettings = null;
+    private AddonSettings addonSettings;
 
     /**
      * Initialize from a json object
@@ -44,7 +44,7 @@ public class Addon {
             tags.add(tagList.getString(counter));
             counter++;
         }
-        findInstalled();
+        new VersionFinder().run();
         addonSettings = new AddonSettings(name);
     }
 
@@ -93,7 +93,7 @@ public class Addon {
      * @return String
      */
     public String getInstalled() {
-        findInstalled();
+        new VersionFinder().run();
         return installed;
     }
 
@@ -104,41 +104,6 @@ public class Addon {
      */
     public final AddonSettings getUploadData() {
         return addonSettings;
-    }
-
-    /**
-     * tries to find the installed version of the addon
-     */
-    protected final void findInstalled() {
-        installed = "-";
-        java.io.File folder = new de.idrinth.waraddonclient.implementation.service.FindAddonFolder().find(name);
-        if (folder == null || !folder.exists()) {
-            return;
-        }
-        for (java.io.File fileEntry : folder.listFiles()) {
-            if (!fileEntry.isDirectory()
-                    && org.apache.commons.io.FilenameUtils.getExtension(fileEntry.getName()).equalsIgnoreCase("mod")) {
-                try {
-                    installed = "unknown";
-                    org.w3c.dom.NodeList list = javax.xml.parsers.DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(fileEntry).getElementsByTagName("UiMod");
-                    for (int counter = 0; counter < list.getLength(); counter++) {
-                        this.installed = list.item(counter).getAttributes().getNamedItem("version").getTextContent();
-                        return;
-                    }
-                } catch (javax.xml.parsers.ParserConfigurationException | javax.xml.parsers.FactoryConfigurationError | org.xml.sax.SAXException | java.io.IOException exception) {
-                    de.idrinth.factory.Logger.build().log(exception.getMessage(), de.idrinth.Logger.levelError);
-                }
-            }
-        }
-        java.io.File file = new java.io.File(folder.getPath() + "/self.idrinth");
-        if (file.exists()) {
-            try {
-                org.w3c.dom.NodeList list = javax.xml.parsers.DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(file).getElementsByTagName("version");
-                this.installed = list.item(0).getTextContent();
-            } catch (javax.xml.parsers.ParserConfigurationException | javax.xml.parsers.FactoryConfigurationError | org.xml.sax.SAXException | java.io.IOException exception) {
-                de.idrinth.factory.Logger.build().log(exception.getMessage(), de.idrinth.Logger.levelError);
-            }
-        }
     }
 
     /**
@@ -205,29 +170,12 @@ public class Addon {
     }
 
     /**
-     * downloads a zip for the install()-method
-     *
-     * @return java.io.File
-     * @throws java.lang.Exception
-     */
-    private java.io.File getZip() throws java.lang.Exception {
-        java.io.File file = new java.io.File("./Interface/AddOns/" + slug + ".zip");
-        try (java.io.InputStream stream = de.idrinth.waraddonclient.factory.RemoteRequest.build().getAddonDownload(slug + "/download/" + version.replace(".", "-") + "/")) {
-            org.apache.commons.io.FileUtils.copyInputStreamToFile(stream, file);
-        }
-        return file;
-    }
-
-    /**
-     * extracts a zip downloaded for the install()-method
+     * downloads a zip and unpacks it
      *
      * @throws java.lang.Exception
      */
-    private void extractZip() throws java.lang.Exception {
-        java.io.File file = getZip();
-        (new net.lingala.zip4j.core.ZipFile(file)).extractAll("./Interface/AddOns/");
-        org.apache.commons.io.FileUtils.deleteQuietly(file);
-        org.apache.commons.io.FileUtils.writeStringToFile(new java.io.File("./Interface/AddOns/" + name + "/self.idrinth"), "<?xml version=\"1.0\" encoding=\"UTF-8\"?><UiMod><name>" + name + "</name><version>" + version + "(sys)</version></UiMod>");
+    public void install() throws java.lang.Exception {
+        (new Updater()).run(false);
     }
 
     /**
@@ -235,23 +183,8 @@ public class Addon {
      *
      * @throws java.lang.Exception
      */
-    public void install() throws java.lang.Exception {
-        uninstall();
-        extractZip();
-        if ("-".equals(installed)) {
-            addonSettings.refresh();
-        }
-    }
-
-    /**
-     * removes all data of this addon from the arddrive
-     */
-    public void uninstall() {
-        java.io.File addonFolder = new java.io.File("./Interface/AddOns/" + name);
-        emptyFolder(addonFolder);
-        addonFolder.delete();
-        addonSettings.refresh();
-        addonSettings.setEnabled(false);
+    public void uninstall() throws java.lang.Exception {
+        (new Updater()).run(true);
     }
 
     /**
@@ -283,6 +216,124 @@ public class Addon {
                 emptyFolder(file);
             }
             file.delete();
+        }
+    }
+
+    private class Updater {
+
+        /**
+         * deleted,updates or installs the addon
+         *
+         * @param redeploy
+         * @throws java.lang.Exception
+         */
+        public void run(boolean redeploy) throws java.lang.Exception {
+            uninstall();
+            if (redeploy) {
+                install();
+            }
+            addonSettings.refresh();
+            addonSettings.setEnabled(false);
+        }
+
+        /**
+         * removes all data of this addon from the arddrive
+         */
+        private void uninstall() {
+            java.io.File addonFolder = new java.io.File("./Interface/AddOns/" + name);
+            emptyFolder(addonFolder);
+            addonFolder.delete();
+        }
+
+        /**
+         * downloads a zip for the install()-method
+         *
+         * @return java.io.File
+         * @throws java.lang.Exception
+         */
+        private java.io.File getZip() throws java.lang.Exception {
+            java.io.File file = new java.io.File("./Interface/AddOns/" + slug + ".zip");
+            try (java.io.InputStream stream = de.idrinth.waraddonclient.factory.RemoteRequest.build().getAddonDownload(slug + "/download/" + version.replace(".", "-") + "/")) {
+                org.apache.commons.io.FileUtils.copyInputStreamToFile(stream, file);
+            }
+            return file;
+        }
+
+        /**
+         * extracts a zip downloaded for the install()-method
+         *
+         * @throws java.lang.Exception
+         */
+        private void install() throws java.lang.Exception {
+            java.io.File file = getZip();
+            (new net.lingala.zip4j.core.ZipFile(file)).extractAll("./Interface/AddOns/");
+            org.apache.commons.io.FileUtils.deleteQuietly(file);
+            org.apache.commons.io.FileUtils.writeStringToFile(new java.io.File("./Interface/AddOns/" + name + "/self.idrinth"), "<?xml version=\"1.0\" encoding=\"UTF-8\"?><UiMod><name>" + name + "</name><version>" + version + "(sys)</version></UiMod>");
+        }
+
+    }
+
+    private class VersionFinder {
+
+        java.io.File folder;
+
+        /**
+         *
+         * @param base
+         */
+        public VersionFinder() {
+            folder = new de.idrinth.waraddonclient.implementation.service.FindAddonFolder().find(name);
+        }
+
+        /**
+         * tries to find and set the usual version
+         *
+         * @return boolean
+         */
+        private boolean processDirectory() {
+            for (java.io.File fileEntry : folder.listFiles()) {
+                if (!fileEntry.isDirectory()
+                        && org.apache.commons.io.FilenameUtils.getExtension(fileEntry.getName()).equalsIgnoreCase("mod")) {
+                    try {
+                        org.w3c.dom.NodeList list = javax.xml.parsers.DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(fileEntry).getElementsByTagName("UiMod");
+                        installed = list.item(0).getAttributes().getNamedItem("version").getTextContent();
+                        return true;
+                    } catch (javax.xml.parsers.ParserConfigurationException | javax.xml.parsers.FactoryConfigurationError | org.xml.sax.SAXException | java.io.IOException exception) {
+                        de.idrinth.factory.Logger.build().log(exception.getMessage(), de.idrinth.Logger.levelError);
+                    }
+                }
+            }
+            return false;
+        }
+
+        /**
+         * tries to find and set the default version
+         */
+        private void getDownloadVersion() {
+            java.io.File file = new java.io.File(folder.getPath() + "/self.idrinth");
+            if (file.exists()) {
+                try {
+                    org.w3c.dom.NodeList list = javax.xml.parsers.DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(file).getElementsByTagName("version");
+                    installed = list.item(0).getTextContent();
+                } catch (javax.xml.parsers.ParserConfigurationException | javax.xml.parsers.FactoryConfigurationError | org.xml.sax.SAXException | java.io.IOException exception) {
+                    de.idrinth.factory.Logger.build().log(exception.getMessage(), de.idrinth.Logger.levelError);
+                }
+            }
+
+        }
+
+        /**
+         * starts searching for an installed version
+         */
+        public void run() {
+            if (folder == null || !folder.exists()) {
+                return;
+            }
+            installed = "unknown";
+            if (processDirectory()) {
+                return;
+            }
+            getDownloadVersion();
         }
     }
 }

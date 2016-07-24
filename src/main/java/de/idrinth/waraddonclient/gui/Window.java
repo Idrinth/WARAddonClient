@@ -462,7 +462,11 @@ public class Window extends javax.swing.JFrame {
     }//GEN-LAST:event_SearchKeyReleased
 
     private void RemoveButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_RemoveButtonActionPerformed
-        activeAddon.uninstall();
+        try {
+            activeAddon.uninstall();
+        } catch (Exception exception) {
+            de.idrinth.factory.Logger.build().log(exception.getMessage(), de.idrinth.Logger.levelError);
+        }
         updateList();
     }//GEN-LAST:event_RemoveButtonActionPerformed
 

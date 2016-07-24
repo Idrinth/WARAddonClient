@@ -19,9 +19,9 @@ package de.idrinth.waraddonclient.implementation.service;
 public class Request {
 
     private final String baseUrl = "https://tools.idrinth.de/";
-    private volatile boolean requestActive = false;
-    private org.apache.http.impl.client.CloseableHttpClient client = null;
-    private javax.net.ssl.SSLContext sslContext = null;
+    private volatile boolean requestActive;
+    private org.apache.http.impl.client.CloseableHttpClient client;
+    private javax.net.ssl.SSLContext sslContext;
 
     /**
      * Throws an exception if there's issues with the ssl-certificates

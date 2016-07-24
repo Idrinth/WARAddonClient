@@ -21,7 +21,7 @@ public class Main {
     protected de.idrinth.waraddonclient.implementation.list.Addon addonList;
     protected de.idrinth.waraddonclient.implementation.service.FileWatcher fileWatcher;
     protected de.idrinth.waraddonclient.gui.Window gui;
-    protected static Main instance = null;
+    protected static Main instance;
 
     /**
      * initializes the program

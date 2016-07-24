@@ -19,11 +19,11 @@ package de.idrinth.waraddonclient.implementation.model;
 public class AddonSettings {
 
     protected String file = "";
-    protected boolean enabled = false;
+    protected boolean enabled;
     protected String reason = "";
     protected String url = "";
     protected String name;
-    protected boolean hasSettings = false;
+    protected boolean hasSettings;
 
     public String getFile() {
         return file;
@@ -66,31 +66,51 @@ public class AddonSettings {
             return;
         }
         for (java.io.File fileEntry : folder.listFiles()) {
-            if (!fileEntry.isDirectory()
-                    && fileEntry.getName().equalsIgnoreCase("upload.idrinth")) {
-                try {
-                    org.w3c.dom.NodeList list = javax.xml.parsers.DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(fileEntry).getFirstChild().getChildNodes();
-                    for (int counter = 0; counter < list.getLength(); counter++) {
-                        switch (list.item(counter).getNodeName().toLowerCase()) {
-                            case "file":
-                                file = list.item(counter).getTextContent();
-                                break;
-                            case "url":
-                                url = list.item(counter).getTextContent();
-                                break;
-                            case "reason":
-                                reason = list.item(counter).getTextContent();
-                                break;
-                            default:
-                                de.idrinth.factory.Logger.build().log("found unknown node " + list.item(counter).getNodeName().toLowerCase() + " in " + name, de.idrinth.Logger.levelInfo);
-                        }
-                    }
-                    hasSettings = true;
-                    return;
-                } catch (javax.xml.parsers.ParserConfigurationException | javax.xml.parsers.FactoryConfigurationError | org.xml.sax.SAXException | java.io.IOException exception) {
-                    de.idrinth.factory.Logger.build().log(exception.getMessage(), de.idrinth.Logger.levelError);
-                }
+            processFile(fileEntry);
+            if (hasSettings) {
+                return;
             }
+        }
+    }
+
+    /**
+     *
+     * @param fileEntry
+     */
+    private void processFile(java.io.File fileEntry) {
+        if (fileEntry.isDirectory()) {
+            return;
+        }
+        if (!"upload.idrinth".equalsIgnoreCase(fileEntry.getName())) {
+            return;
+        }
+        try {
+            org.w3c.dom.NodeList list = javax.xml.parsers.DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(fileEntry).getFirstChild().getChildNodes();
+            for (int counter = 0; counter < list.getLength(); counter++) {
+                processNode(list.item(counter));
+            }
+            hasSettings = true;
+        } catch (javax.xml.parsers.ParserConfigurationException | javax.xml.parsers.FactoryConfigurationError | org.xml.sax.SAXException | java.io.IOException exception) {
+            de.idrinth.factory.Logger.build().log(exception.getMessage(), de.idrinth.Logger.levelError);
+        }
+    }
+
+    /**
+     * checks if the node has any information that is useful
+     *
+     * @param item
+     */
+    private void processNode(org.w3c.dom.Node item) {
+        if ("file".equalsIgnoreCase(item.getNodeName())) {
+            file = item.getTextContent();
+            return;
+        }
+        if ("url".equalsIgnoreCase(item.getNodeName())) {
+            url = item.getTextContent();
+            return;
+        }
+        if ("reason".equalsIgnoreCase(item.getNodeName())) {
+            reason = item.getTextContent();
         }
     }
 }

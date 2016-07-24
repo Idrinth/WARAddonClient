@@ -18,7 +18,7 @@ package de.idrinth.waraddonclient.factory;
 
 public class FileWatcher {
 
-    protected static de.idrinth.waraddonclient.implementation.service.FileWatcher instance = null;
+    protected static de.idrinth.waraddonclient.implementation.service.FileWatcher instance;
 
     /**
      * Gets the filewatcher

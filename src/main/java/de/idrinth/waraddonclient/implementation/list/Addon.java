@@ -22,7 +22,7 @@ public class Addon implements java.lang.Runnable {
     protected java.util.ArrayList<de.idrinth.waraddonclient.implementation.model.Addon> rows = new java.util.ArrayList();
     protected java.util.Hashtable<String, watchedFile> watchedFilesMap = new java.util.Hashtable();
     private int duration = 15;
-    private long lastRefreshed = 0;
+    private long lastRefreshed;
 
     /**
      * set the refresh frequency
@@ -144,7 +144,7 @@ public class Addon implements java.lang.Runnable {
 
     public class watchedFile implements java.lang.Runnable {
 
-        protected boolean active = false;
+        protected boolean active;
         protected java.io.File file;
         protected java.util.ArrayList<de.idrinth.waraddonclient.implementation.model.Addon> list = new java.util.ArrayList();
 
@@ -180,9 +180,9 @@ public class Addon implements java.lang.Runnable {
                 active = false;
                 return;
             }
-            for (de.idrinth.waraddonclient.implementation.model.Addon addon : list) {
+            list.stream().forEach((addon) -> {
                 addon.fileWasChanged(file);
-            }
+            });
             active = false;
         }
     }

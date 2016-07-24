@@ -21,7 +21,7 @@ public class Tag implements java.lang.Runnable {
     protected javax.swing.JMenu menu;
     protected java.util.HashMap<String, de.idrinth.waraddonclient.implementation.model.Tag> tags = new java.util.HashMap();
     protected java.util.ArrayList<String> tagNames = new java.util.ArrayList();
-    protected long lastRefreshed = 0;
+    protected long lastRefreshed;
 
     /**
      * Create a tag-handler for a menu entry

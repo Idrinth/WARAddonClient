@@ -18,7 +18,7 @@ package de.idrinth.waraddonclient.implementation.service;
 
 public class FileWatcher implements java.lang.Runnable {
 
-    protected java.nio.file.WatchService watcher = null;
+    protected java.nio.file.WatchService watcher;
 
     /**
      * initialises the filwatchin for the log-folder so uploads of changed data
