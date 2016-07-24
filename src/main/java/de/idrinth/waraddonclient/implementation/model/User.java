@@ -30,6 +30,7 @@ public class User {
                 xml = javax.xml.parsers.DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(file);
             }
         } catch (java.io.IOException | javax.xml.parsers.ParserConfigurationException | org.xml.sax.SAXException exception) {
+            de.idrinth.factory.Logger.build().log(exception.getMessage(), de.idrinth.Logger.levelError);
         }
         try {
             if (xml == null) {
@@ -37,6 +38,7 @@ public class User {
                 xml.appendChild(xml.createElement("AddOns"));
             }
         } catch (javax.xml.parsers.ParserConfigurationException exception) {
+            de.idrinth.factory.Logger.build().log(exception.getMessage(), de.idrinth.Logger.levelError);
         }
     }
 
