@@ -18,7 +18,7 @@ package de.idrinth.waraddonclient.factory;
 
 public class User {
 
-    protected static de.idrinth.waraddonclient.implementation.model.User instance;
+    private static de.idrinth.waraddonclient.implementation.model.User instance;
 
     /**
      * returns data of the current user

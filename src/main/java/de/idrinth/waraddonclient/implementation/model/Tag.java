@@ -18,9 +18,9 @@ package de.idrinth.waraddonclient.implementation.model;
 
 public class Tag {
 
-    protected String name;
-    protected java.util.HashMap<String, Addon> list = new java.util.HashMap();
-    protected javax.swing.JCheckBoxMenuItem item;
+    private String name;
+    private java.util.HashMap<String, Addon> list = new java.util.HashMap();
+    private javax.swing.JCheckBoxMenuItem item;
 
     public Tag(String name) {
         this.name = name;

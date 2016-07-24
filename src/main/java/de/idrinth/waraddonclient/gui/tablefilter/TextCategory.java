@@ -18,8 +18,8 @@ package de.idrinth.waraddonclient.gui.tablefilter;
 
 public class TextCategory extends javax.swing.RowFilter {
 
-    protected java.util.regex.Pattern textfilter;
-    protected java.util.ArrayList<String> tags;
+    private java.util.regex.Pattern textfilter;
+    private java.util.ArrayList<String> tags;
 
     /**
      *
@@ -52,7 +52,7 @@ public class TextCategory extends javax.swing.RowFilter {
      * @param addon
      * @return boolean
      */
-    protected boolean isInAllowedCategory(de.idrinth.waraddonclient.implementation.model.Addon addon) {
+    private boolean isInAllowedCategory(de.idrinth.waraddonclient.implementation.model.Addon addon) {
         for (String tag : tags) {
             if (addon.hasTag(tag)) {
                 return true;

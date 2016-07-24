@@ -33,7 +33,7 @@ public class FindAddonFolder {
         return folder;
     }
 
-    protected java.io.File findMatch(java.io.File folder, String search) {
+    private java.io.File findMatch(java.io.File folder, String search) {
         if (!folder.exists()) {
             return null;
         }

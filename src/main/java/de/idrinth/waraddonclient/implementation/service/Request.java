@@ -68,7 +68,7 @@ public class Request {
      * @return org.apache.http.HttpResponse
      * @throws java.lang.Exception
      */
-    protected synchronized org.apache.http.HttpResponse executionHandler(org.apache.http.client.methods.HttpRequestBase uri) throws java.lang.Exception {
+    private synchronized org.apache.http.HttpResponse executionHandler(org.apache.http.client.methods.HttpRequestBase uri) throws java.lang.Exception {
         uri.setConfig(org.apache.http.client.config.RequestConfig.DEFAULT);
         uri.setHeader("User-Agent", "IdrinthAddonClient/" + de.idrinth.waraddonclient.configuration.Version.getLocalVersion());
         uri.setHeader("Cache-Control", "no-cache");

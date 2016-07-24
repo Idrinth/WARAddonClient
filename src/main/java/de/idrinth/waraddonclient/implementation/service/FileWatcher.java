@@ -18,7 +18,7 @@ package de.idrinth.waraddonclient.implementation.service;
 
 public class FileWatcher implements java.lang.Runnable {
 
-    protected java.nio.file.WatchService watcher;
+    private java.nio.file.WatchService watcher;
 
     /**
      * initialises the filwatchin for the log-folder so uploads of changed data
@@ -50,7 +50,7 @@ public class FileWatcher implements java.lang.Runnable {
      *
      * @throws InterruptedException
      */
-    protected void handleEvents() throws InterruptedException {
+    private void handleEvents() throws InterruptedException {
         while (true) {
             java.nio.file.WatchKey key = watcher.take();
             for (java.nio.file.WatchEvent event : key.pollEvents()) {

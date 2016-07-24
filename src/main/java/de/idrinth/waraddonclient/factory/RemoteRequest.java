@@ -18,7 +18,7 @@ package de.idrinth.waraddonclient.factory;
 
 public class RemoteRequest {
 
-    protected static de.idrinth.waraddonclient.implementation.service.Request instance;
+    private static de.idrinth.waraddonclient.implementation.service.Request instance;
 
     /**
      * returns the http-request-handler

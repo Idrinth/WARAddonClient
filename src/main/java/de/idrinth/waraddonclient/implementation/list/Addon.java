@@ -18,9 +18,9 @@ package de.idrinth.waraddonclient.implementation.list;
 
 public class Addon implements java.lang.Runnable {
 
-    protected java.util.HashMap<String, de.idrinth.waraddonclient.implementation.model.Addon> list = new java.util.HashMap();
-    protected java.util.ArrayList<de.idrinth.waraddonclient.implementation.model.Addon> rows = new java.util.ArrayList();
-    protected java.util.Hashtable<String, watchedFile> watchedFilesMap = new java.util.Hashtable();
+    private java.util.HashMap<String, de.idrinth.waraddonclient.implementation.model.Addon> list = new java.util.HashMap();
+    private java.util.ArrayList<de.idrinth.waraddonclient.implementation.model.Addon> rows = new java.util.ArrayList();
+    private java.util.Hashtable<String, watchedFile> watchedFilesMap = new java.util.Hashtable();
     private int duration = 15;
     private long lastRefreshed;
 
@@ -117,7 +117,7 @@ public class Addon implements java.lang.Runnable {
      *
      * @param parse
      */
-    protected void parseJsonResult(javax.json.JsonArray parse) {
+    private void parseJsonResult(javax.json.JsonArray parse) {
         javax.swing.table.DefaultTableModel model = (javax.swing.table.DefaultTableModel) de.idrinth.waraddonclient.factory.Interface.build().getAddonTable().getModel();
         int counter = 0;
         while (parse.size() > counter) {
@@ -144,9 +144,9 @@ public class Addon implements java.lang.Runnable {
 
     public class watchedFile implements java.lang.Runnable {
 
-        protected boolean active;
-        protected java.io.File file;
-        protected java.util.ArrayList<de.idrinth.waraddonclient.implementation.model.Addon> list = new java.util.ArrayList();
+        private boolean active;
+        private java.io.File file;
+        private java.util.ArrayList<de.idrinth.waraddonclient.implementation.model.Addon> list = new java.util.ArrayList();
 
         /**
          * Adds an addon to watch an be handled here

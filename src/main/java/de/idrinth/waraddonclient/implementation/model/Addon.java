@@ -115,7 +115,7 @@ public class Addon {
      * @param data
      * @return String
      */
-    protected final String getStringFromObject(String key, javax.json.JsonObject data) {
+    private final String getStringFromObject(String key, javax.json.JsonObject data) {
         if (key != null && data != null && data.containsKey(key) && !data.isNull(key)) {
             return java.util.regex.Pattern.compile("^\"|\"$").matcher(data.get(key).toString()).replaceAll("");
         }
@@ -209,7 +209,7 @@ public class Addon {
      *
      * @param folder
      */
-    protected void emptyFolder(java.io.File folder) {
+    private void emptyFolder(java.io.File folder) {
         if (folder == null || !folder.exists()) {
             return;
         }

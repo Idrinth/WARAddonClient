@@ -18,10 +18,10 @@ package de.idrinth.waraddonclient;
 
 public class Main {
 
-    protected de.idrinth.waraddonclient.implementation.list.Addon addonList;
-    protected de.idrinth.waraddonclient.implementation.service.FileWatcher fileWatcher;
-    protected de.idrinth.waraddonclient.gui.Window gui;
-    protected static Main instance;
+    private de.idrinth.waraddonclient.implementation.list.Addon addonList;
+    private de.idrinth.waraddonclient.implementation.service.FileWatcher fileWatcher;
+    private de.idrinth.waraddonclient.gui.Window gui;
+    private static Main instance;
 
     /**
      * initializes the program

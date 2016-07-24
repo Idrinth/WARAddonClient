@@ -19,7 +19,7 @@ package de.idrinth.ssl;
 public class TrustManager implements org.apache.http.ssl.TrustStrategy {
 
     public java.security.KeyStore keyStore;
-    protected javax.net.ssl.X509TrustManager manager;
+    private javax.net.ssl.X509TrustManager manager;
 
     /**
      *
@@ -48,7 +48,7 @@ public class TrustManager implements org.apache.http.ssl.TrustStrategy {
      *
      * @throws java.lang.Exception
      */
-    protected final void getStore() throws java.lang.Exception {
+    private final void getStore() throws java.lang.Exception {
         String fileSep = System.getProperty("file.separator");
         java.io.File file = new java.io.File(System.getProperty("sun.boot.library.path"));
         while (!(new java.io.File(file.getAbsoluteFile() + fileSep + "lib").exists())) {
@@ -84,7 +84,7 @@ public class TrustManager implements org.apache.http.ssl.TrustStrategy {
      * @param name
      * @throws java.lang.Exception
      */
-    protected final void addCertToStore(String name) throws java.lang.Exception {
+    private final void addCertToStore(String name) throws java.lang.Exception {
         java.net.URL resource = getClass().getResource("/certificates/" + name + ".cer");
         java.io.BufferedInputStream bis = new java.io.BufferedInputStream(resource.openStream());
         java.security.cert.Certificate cert = java.security.cert.CertificateFactory.getInstance("X.509").generateCertificate(bis);

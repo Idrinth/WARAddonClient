@@ -21,7 +21,7 @@ public class Logger {
     public final static int levelInfo = 0;
     public final static int levelWarn = 1;
     public final static int levelError = 2;
-    protected java.io.File output = null;
+    private java.io.File output = null;
 
     public Logger() {
         try {
@@ -41,7 +41,7 @@ public class Logger {
      * @param severity
      * @return
      */
-    protected String buildMessage(String message, int severity) {
+    private String buildMessage(String message, int severity) {
         String severityLabel;
         switch (severity) {
             case 0:

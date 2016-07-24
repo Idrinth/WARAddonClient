@@ -59,7 +59,7 @@ public class User {
     /**
      * writes an xml for configuration
      */
-    protected void writeDocument() {
+    private void writeDocument() {
         try {
             javax.xml.transform.TransformerFactory.newInstance().newTransformer().transform(
                     new javax.xml.transform.dom.DOMSource(xml),

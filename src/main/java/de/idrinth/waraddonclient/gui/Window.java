@@ -36,7 +36,7 @@ public class Window extends javax.swing.JFrame {
         return AddonList;
     }
 
-    protected final void finishGuiBuilding() {
+    private final void finishGuiBuilding() {
         AddonList.getSelectionModel().addListSelectionListener(new tableListener());
         Description.setText("<html><h1>Welcome to the client.</h1><p>To get something more useful here, select an addon to the left.</p>");
         InstallButton.setEnabled(false);
@@ -63,7 +63,7 @@ public class Window extends javax.swing.JFrame {
         }
     }
 
-    protected final void processPosition() {
+    private final void processPosition() {
         String errors = "";
         if (!new java.io.File("./WAR.exe").exists()) {
             errors += "Missing WAR.exe here, please put this file in the Warhammer Online directory.";
@@ -506,7 +506,7 @@ public class Window extends javax.swing.JFrame {
         changeRefreshTo(180);
     }//GEN-LAST:event_Refresh4ActionPerformed
 
-    protected void changeLanguageTo(String lang) {
+    private void changeLanguageTo(String lang) {
         if (lang.equals(language)) {
             return;
         }
@@ -519,7 +519,7 @@ public class Window extends javax.swing.JFrame {
         }
     }
 
-    protected void changeRefreshTo(int dur) {
+    private void changeRefreshTo(int dur) {
         Refresh1.setSelected(dur == 15);
         Refresh2.setSelected(dur == 30);
         Refresh3.setSelected(dur == 60);
@@ -527,7 +527,7 @@ public class Window extends javax.swing.JFrame {
         de.idrinth.waraddonclient.factory.AddonList.build().setDuration(dur);
     }
 
-    protected void updateList() {
+    private void updateList() {
         for (int position = 0; position < AddonList.getRowCount(); position++) {
             if (de.idrinth.waraddonclient.factory.AddonList.build().get(AddonList.convertRowIndexToModel(position)).getName().equalsIgnoreCase(activeAddon.getName())) {
                 AddonList.setValueAt(activeAddon.getInstalled(), position, 2);

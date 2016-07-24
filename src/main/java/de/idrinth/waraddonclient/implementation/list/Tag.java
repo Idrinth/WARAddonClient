@@ -18,10 +18,10 @@ package de.idrinth.waraddonclient.implementation.list;
 
 public class Tag implements java.lang.Runnable {
 
-    protected javax.swing.JMenu menu;
-    protected java.util.HashMap<String, de.idrinth.waraddonclient.implementation.model.Tag> tags = new java.util.HashMap();
-    protected java.util.ArrayList<String> tagNames = new java.util.ArrayList();
-    protected long lastRefreshed;
+    private javax.swing.JMenu menu;
+    private java.util.HashMap<String, de.idrinth.waraddonclient.implementation.model.Tag> tags = new java.util.HashMap();
+    private java.util.ArrayList<String> tagNames = new java.util.ArrayList();
+    private long lastRefreshed;
 
     /**
      * Create a tag-handler for a menu entry
@@ -35,7 +35,7 @@ public class Tag implements java.lang.Runnable {
     /**
      * processes the addon lst to see what addon is tagged with a specific tag
      */
-    protected void processAddons() {
+    private void processAddons() {
         for (int counter = 0; counter < de.idrinth.waraddonclient.factory.AddonList.build().size(); counter++) {
             for (String tag : de.idrinth.waraddonclient.factory.AddonList.build().get(counter).getTags()) {
                 if (!tags.containsKey(tag)) {
@@ -65,7 +65,7 @@ public class Tag implements java.lang.Runnable {
     /**
      * removes unneeded tags and adds new tags to the menu
      */
-    protected void processTags() {
+    private void processTags() {
         tagNames.stream().map((name) -> {
             tags.get(name).checkMembers();
             return name;
