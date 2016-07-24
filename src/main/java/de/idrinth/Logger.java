@@ -21,7 +21,7 @@ public class Logger {
     public final static int levelInfo = 0;
     public final static int levelWarn = 1;
     public final static int levelError = 2;
-    private java.io.File output = null;
+    private java.io.File output;
 
     public Logger() {
         try {
