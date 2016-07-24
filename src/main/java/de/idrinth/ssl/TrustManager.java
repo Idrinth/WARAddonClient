@@ -43,7 +43,7 @@ public class TrustManager implements org.apache.http.ssl.TrustStrategy {
     protected final void getStore() throws java.security.GeneralSecurityException, java.io.IOException, java.security.NoSuchAlgorithmException, java.security.cert.CertificateException {
         String fileSep = System.getProperty("file.separator");
         java.io.File file = new java.io.File(System.getProperty("sun.boot.library.path"));
-        while (new java.io.File(file.getAbsoluteFile() + fileSep + "lib").exists() != true) {
+        while (!(new java.io.File(file.getAbsoluteFile() + fileSep + "lib").exists())) {
             file = file.getParentFile();
         }
         keyStore = java.security.KeyStore.getInstance(java.security.KeyStore.getDefaultType());
