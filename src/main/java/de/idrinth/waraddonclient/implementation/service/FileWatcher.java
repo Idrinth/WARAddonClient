@@ -20,6 +20,10 @@ public class FileWatcher implements java.lang.Runnable {
 
     protected java.nio.file.WatchService watcher = null;
 
+    /**
+     * initialises the filwatchin for the log-folder so uploads of changed data
+     * may happen
+     */
     @Override
     public void run() {
         try {
@@ -41,6 +45,11 @@ public class FileWatcher implements java.lang.Runnable {
         }
     }
 
+    /**
+     * lets filesbe uploaded if so desired
+     *
+     * @throws InterruptedException
+     */
     protected void handleEvents() throws InterruptedException {
         while (true) {
             java.nio.file.WatchKey key = watcher.take();

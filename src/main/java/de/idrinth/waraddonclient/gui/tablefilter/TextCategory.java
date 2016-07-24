@@ -21,11 +21,22 @@ public class TextCategory extends javax.swing.RowFilter {
     protected java.util.regex.Pattern textfilter;
     protected java.util.ArrayList<String> tags;
 
+    /**
+     *
+     * @param text
+     * @param tagList
+     */
     public TextCategory(String text, java.util.ArrayList<String> tagList) {
         textfilter = java.util.regex.Pattern.compile("(?i)" + java.util.regex.Pattern.quote(text));
         tags = tagList;
     }
 
+    /**
+     * apply textfilter tp displayed addon list
+     *
+     * @param entry
+     * @return boolean
+     */
     @Override
     public boolean include(Entry entry) {
         de.idrinth.waraddonclient.implementation.model.Addon addon = de.idrinth.waraddonclient.factory.AddonList.build().get(entry.getStringValue(0));
@@ -35,6 +46,12 @@ public class TextCategory extends javax.swing.RowFilter {
         return isInAllowedCategory(addon);
     }
 
+    /**
+     * Does any category match?
+     *
+     * @param addon
+     * @return boolean
+     */
     protected boolean isInAllowedCategory(de.idrinth.waraddonclient.implementation.model.Addon addon) {
         for (String tag : tags) {
             if (addon.hasTag(tag)) {

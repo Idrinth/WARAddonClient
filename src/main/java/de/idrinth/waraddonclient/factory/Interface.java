@@ -20,6 +20,11 @@ public class Interface {
 
     protected static de.idrinth.waraddonclient.gui.Window instance = null;
 
+    /**
+     * gets the GUI-object
+     *
+     * @return de.idrinth.waraddonclient.gui.Window
+     */
     public synchronized static de.idrinth.waraddonclient.gui.Window build() {
         if (instance == null) {
             instance = new de.idrinth.waraddonclient.gui.Window();

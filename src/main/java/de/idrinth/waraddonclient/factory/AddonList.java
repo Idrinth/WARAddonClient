@@ -20,6 +20,11 @@ public class AddonList {
 
     protected static de.idrinth.waraddonclient.implementation.list.Addon instance = null;
 
+    /**
+     * gets the list of addons
+     *
+     * @return de.idrinth.waraddonclient.implementation.list.Addon
+     */
     public synchronized static de.idrinth.waraddonclient.implementation.list.Addon build() {
         if (instance == null) {
             instance = new de.idrinth.waraddonclient.implementation.list.Addon();

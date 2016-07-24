@@ -18,6 +18,11 @@ package de.idrinth.waraddonclient.configuration;
 
 public class Version implements java.lang.Runnable {
 
+    /**
+     * the locally installed version
+     *
+     * @return String
+     */
     public static String getLocalVersion() {
         return "1.3.0";
     }

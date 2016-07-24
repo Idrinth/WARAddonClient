@@ -20,6 +20,11 @@ public class FileWatcher {
 
     protected static de.idrinth.waraddonclient.implementation.service.FileWatcher instance = null;
 
+    /**
+     * Gets the filewatcher
+     *
+     * @return de.idrinth.waraddonclient.implementation.service.FileWatcher
+     */
     public synchronized static de.idrinth.waraddonclient.implementation.service.FileWatcher build() {
         if (instance == null) {
             instance = new de.idrinth.waraddonclient.implementation.service.FileWatcher();

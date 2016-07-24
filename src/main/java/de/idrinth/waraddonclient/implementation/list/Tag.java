@@ -23,10 +23,18 @@ public class Tag implements java.lang.Runnable {
     protected java.util.ArrayList<String> tagNames = new java.util.ArrayList();
     protected long lastRefreshed = 0;
 
+    /**
+     * Create a tag-handler for a menu entry
+     *
+     * @param menu
+     */
     public Tag(javax.swing.JMenu menu) {
         this.menu = menu;
     }
 
+    /**
+     * processes the addon lst to see what addon is tagged with a specific tag
+     */
     protected void processAddons() {
         for (int counter = 0; counter < de.idrinth.waraddonclient.factory.AddonList.build().size(); counter++) {
             for (String tag : de.idrinth.waraddonclient.factory.AddonList.build().get(counter).getTags()) {
@@ -41,19 +49,27 @@ public class Tag implements java.lang.Runnable {
         }
     }
 
+    /**
+     * get the selected tags
+     *
+     * @return
+     */
     public java.util.ArrayList<String> getActiveTags() {
         java.util.ArrayList<String> active = new java.util.ArrayList();
-        for (String tag : tagNames) {
-            if (tags.get(tag).isActive()) {
-                active.add(tag);
-            }
-        }
+        tagNames.stream().filter((tag) -> (tags.get(tag).isActive())).forEach((tag) -> {
+            active.add(tag);
+        });
         return active;
     }
 
+    /**
+     * removes unneeded tags and adds new tags to the menu
+     */
     protected void processTags() {
-        for (String name : tagNames) {
+        tagNames.stream().map((name) -> {
             tags.get(name).checkMembers();
+            return name;
+        }).forEach((name) -> {
             if (!tags.get(name).hasMembers()) {
                 menu.remove(tags.get(name).getMenu());
                 tags.remove(name);
@@ -61,9 +77,13 @@ public class Tag implements java.lang.Runnable {
             } else if (tags.get(name).getMenu().getParent() == null) {
                 menu.add(tags.get(name).getMenu());
             }
-        }
+        });
     }
 
+    /**
+     * update the addon-tag relationships
+     */
+    @Override
     public void run() {
         de.idrinth.waraddonclient.implementation.service.Sleeper.sleep(10000);
         while (true) {

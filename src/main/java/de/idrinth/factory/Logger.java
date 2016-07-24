@@ -20,6 +20,10 @@ public class Logger {
 
     protected static de.idrinth.Logger instance = null;
 
+    /**
+     *
+     * @return de.idrinth.Logger
+     */
     public synchronized static de.idrinth.Logger build() {
         if (instance == null) {
             instance = new de.idrinth.Logger();

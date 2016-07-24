@@ -21,7 +21,11 @@ public class TrustManager implements org.apache.http.ssl.TrustStrategy {
     public java.security.KeyStore keyStore;
     protected javax.net.ssl.X509TrustManager manager;
 
-    public TrustManager() throws java.security.GeneralSecurityException, java.io.IOException, java.security.NoSuchAlgorithmException, java.security.cert.CertificateException, java.security.NoSuchAlgorithmException, java.security.KeyStoreException, java.lang.RuntimeException {
+    /**
+     *
+     * @throws java.lang.Exception
+     */
+    public TrustManager() throws java.lang.Exception {
         getStore();
         addCertToStore("StartComCertificationAuthority");
         addCertToStore("StartComClass2IVServerCA");
@@ -40,7 +44,11 @@ public class TrustManager implements org.apache.http.ssl.TrustStrategy {
         throw new java.lang.RuntimeException("Couldn't initialize Trustmanager due to lack of X509TrustManager");
     }
 
-    protected final void getStore() throws java.security.GeneralSecurityException, java.io.IOException, java.security.NoSuchAlgorithmException, java.security.cert.CertificateException {
+    /**
+     *
+     * @throws java.lang.Exception
+     */
+    protected final void getStore() throws java.lang.Exception {
         String fileSep = System.getProperty("file.separator");
         java.io.File file = new java.io.File(System.getProperty("sun.boot.library.path"));
         while (!(new java.io.File(file.getAbsoluteFile() + fileSep + "lib").exists())) {
@@ -71,7 +79,12 @@ public class TrustManager implements org.apache.http.ssl.TrustStrategy {
         System.setProperty("javax.net.ssl.trustStorePassword", "changeit");
     }
 
-    protected final void addCertToStore(String name) throws java.io.IOException, java.security.cert.CertificateException, java.security.KeyStoreException {
+    /**
+     *
+     * @param name
+     * @throws java.lang.Exception
+     */
+    protected final void addCertToStore(String name) throws java.lang.Exception {
         java.net.URL resource = getClass().getResource("/certificates/" + name + ".cer");
         java.io.BufferedInputStream bis = new java.io.BufferedInputStream(resource.openStream());
         java.security.cert.Certificate cert = java.security.cert.CertificateFactory.getInstance("X.509").generateCertificate(bis);
@@ -79,6 +92,12 @@ public class TrustManager implements org.apache.http.ssl.TrustStrategy {
         keyStore.setCertificateEntry(name, cert);
     }
 
+    /**
+     *
+     * @param chain
+     * @param authType
+     * @return boolean
+     */
     @Override
     public boolean isTrusted(java.security.cert.X509Certificate[] chain, String authType) {
         try {
@@ -86,7 +105,7 @@ public class TrustManager implements org.apache.http.ssl.TrustStrategy {
             return true;
         } catch (java.security.cert.CertificateException e) {
             de.idrinth.factory.Logger.build().log(e.getMessage(), de.idrinth.Logger.levelWarn);
-            return false;
         }
+        return false;
     }
 }

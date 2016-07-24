@@ -98,6 +98,7 @@ public class Window extends javax.swing.JFrame {
 
     class tableListener implements javax.swing.event.ListSelectionListener {
 
+        @Override
         public void valueChanged(javax.swing.event.ListSelectionEvent event) {
             try {
                 activeAddon = de.idrinth.waraddonclient.factory.AddonList.build().get(AddonList.convertRowIndexToModel(AddonList.getSelectedRow()));

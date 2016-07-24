@@ -21,7 +21,11 @@ public class Main {
     protected de.idrinth.waraddonclient.implementation.list.Addon addonList;
     protected de.idrinth.waraddonclient.implementation.service.FileWatcher fileWatcher;
     protected de.idrinth.waraddonclient.gui.Window gui;
+    protected static Main instance = null;
 
+    /**
+     * initializes the program
+     */
     public Main() {
         de.idrinth.factory.Logger.build().log("Starting", de.idrinth.Logger.levelInfo);
         addonList = de.idrinth.waraddonclient.factory.AddonList.build();
@@ -30,6 +34,10 @@ public class Main {
         gui.setVisible(true);
     }
 
+    /**
+     *
+     * @param args
+     */
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
@@ -56,7 +64,7 @@ public class Main {
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(() -> {
-            Main main = new Main();
+            instance = new Main();
         });
     }
 }

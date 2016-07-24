@@ -24,31 +24,67 @@ public class Addon implements java.lang.Runnable {
     private int duration = 15;
     private long lastRefreshed = 0;
 
+    /**
+     * set the refresh frequency
+     *
+     * @param dur
+     */
     public void setDuration(int dur) {
         duration = dur;
     }
 
+    /**
+     * returns the addon at the list-position i
+     *
+     * @param i
+     * @return de.idrinth.waraddonclient.implementation.model.Addon
+     */
     public de.idrinth.waraddonclient.implementation.model.Addon get(int i) {
         return (de.idrinth.waraddonclient.implementation.model.Addon) rows.get(i);
     }
 
+    /**
+     * return the addon with the given name
+     *
+     * @param name
+     * @return de.idrinth.waraddonclient.implementation.model.Addon
+     */
     public de.idrinth.waraddonclient.implementation.model.Addon get(String name) {
         return (de.idrinth.waraddonclient.implementation.model.Addon) list.get(name);
     }
 
+    /**
+     * amount of addons handled
+     *
+     * @return int
+     */
     public int size() {
         return list.size();
     }
 
+    /**
+     * adds an addon to the global list
+     *
+     * @param addon
+     */
     public void add(de.idrinth.waraddonclient.implementation.model.Addon addon) {
         list.put(addon.getName(), addon);
         rows.add(addon);
     }
 
+    /**
+     * returns a list of files watched
+     *
+     * @return java.util.Hashtable
+     */
     public java.util.Hashtable<String, watchedFile> getWatchedFiles() {
         return watchedFilesMap;
     }
 
+    /**
+     * handles updating the addonlists
+     */
+    @Override
     public void run() {
         int failuresInARow = 0;
         while (true) {
@@ -76,6 +112,11 @@ public class Addon implements java.lang.Runnable {
         }
     }
 
+    /**
+     * works through the datab provided by the website's api
+     *
+     * @param parse
+     */
     protected void parseJsonResult(javax.json.JsonArray parse) {
         javax.swing.table.DefaultTableModel model = (javax.swing.table.DefaultTableModel) de.idrinth.waraddonclient.factory.Interface.build().getAddonTable().getModel();
         int counter = 0;
@@ -107,10 +148,20 @@ public class Addon implements java.lang.Runnable {
         protected java.io.File file;
         protected java.util.ArrayList<de.idrinth.waraddonclient.implementation.model.Addon> list = new java.util.ArrayList();
 
+        /**
+         * Adds an addon to watch an be handled here
+         *
+         * @param addon
+         */
         public void addAddon(de.idrinth.waraddonclient.implementation.model.Addon addon) {
             list.add(addon);
         }
 
+        /**
+         * sets a file up for uploading checks
+         *
+         * @param file
+         */
         public void setFileToProcess(java.io.File file) {
             while (active) {
                 de.idrinth.waraddonclient.implementation.service.Sleeper.sleep(100);
@@ -120,6 +171,10 @@ public class Addon implements java.lang.Runnable {
             new java.lang.Thread(this).start();
         }
 
+        /**
+         * check if a file was actually updated and is avaible
+         */
+        @Override
         public void run() {
             if (file == null || !file.exists()) {
                 active = false;

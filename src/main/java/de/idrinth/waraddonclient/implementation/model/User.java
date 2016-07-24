@@ -20,6 +20,9 @@ public class User {
 
     private org.w3c.dom.Document xml = null;
 
+    /**
+     *
+     */
     public User() {
         java.io.File file = new java.io.File("./idrinth.xml");
         try {
@@ -37,6 +40,12 @@ public class User {
         }
     }
 
+    /**
+     * may data be uploaded?
+     *
+     * @param name
+     * @return boolean
+     */
     public boolean getEnabled(String name) {
         org.w3c.dom.NodeList list = xml.getElementsByTagName("AddOn");
         for (int counter = 0; counter < list.getLength(); counter++) {
@@ -47,6 +56,9 @@ public class User {
         return false;
     }
 
+    /**
+     * writes an xml for configuration
+     */
     protected void writeDocument() {
         try {
             javax.xml.transform.TransformerFactory.newInstance().newTransformer().transform(
@@ -58,6 +70,12 @@ public class User {
         }
     }
 
+    /**
+     * Set the enabled flag to signify that an addon may upload data
+     *
+     * @param name
+     * @param isEnabled
+     */
     public void setEnabled(String name, boolean isEnabled) {
         org.w3c.dom.NodeList list = xml.getElementsByTagName("AddOn");
         for (int counter = 0; counter < list.getLength(); counter++) {

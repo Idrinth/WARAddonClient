@@ -34,6 +34,13 @@ public class Logger {
         }
     }
 
+    /**
+     * Adds information to a give message
+     *
+     * @param message
+     * @param severity
+     * @return
+     */
     protected String buildMessage(String message, int severity) {
         String severityLabel;
         switch (severity) {
@@ -45,10 +52,17 @@ public class Logger {
                 break;
             default:
                 severityLabel = "[Error]";
+                break;
         }
         return "[" + (new java.text.SimpleDateFormat("YYYY-MM-dd HH:mm:ss z")).format(java.util.Calendar.getInstance().getTime()) + "]" + severityLabel + " " + message + "\n";
     }
 
+    /**
+     * writes a message to file or if that files to system.out
+     *
+     * @param message
+     * @param severity
+     */
     public void log(String message, int severity) {
         String formattedMessage = buildMessage(message, severity);
         if (output != null) {

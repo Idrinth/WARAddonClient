@@ -26,6 +26,11 @@ public class Addon {
     private java.util.ArrayList<String> tags = new java.util.ArrayList();
     private AddonSettings addonSettings = null;
 
+    /**
+     * Initialize from a json object
+     *
+     * @param addon
+     */
     public Addon(javax.json.JsonObject addon) {
         descriptions.put("en", getStringFromObject("description", addon));
         descriptions.put("fr", getStringFromObject("description_fr", addon));
@@ -43,38 +48,67 @@ public class Addon {
         addonSettings = new AddonSettings(name);
     }
 
+    /**
+     * get the tags of this addon
+     *
+     * @return java.util.ArrayList
+     */
     public java.util.ArrayList<String> getTags() {
         return tags;
     }
 
+    /**
+     * does this addon have the given tag?
+     *
+     * @param tag
+     * @return boolean
+     */
     public boolean hasTag(String tag) {
-        for (String hasTag : tags) {
-            if (tag.equalsIgnoreCase(hasTag)) {
-                return true;
-            }
-        }
-        return false;
+        return tags.stream().anyMatch((hasTag) -> (tag.equalsIgnoreCase(hasTag)));
     }
 
+    /**
+     * updates this instance with data from another instance
+     *
+     * @param addon
+     */
     public void update(Addon addon) {
         version = addon.getVersion();
         tags = addon.getTags();
         descriptions = addon.getDescriptions();
     }
 
+    /**
+     * the avaible version
+     *
+     * @return String
+     */
     public String getVersion() {
         return version;
     }
 
+    /**
+     * the installed version
+     *
+     * @return String
+     */
     public String getInstalled() {
         findInstalled();
         return installed;
     }
 
+    /**
+     * returns the settings for this addon
+     *
+     * @return AddonSettings
+     */
     public final AddonSettings getUploadData() {
         return addonSettings;
     }
 
+    /**
+     * tries to find the installed version of the addon
+     */
     protected final void findInstalled() {
         installed = "-";
         java.io.File folder = new de.idrinth.waraddonclient.implementation.service.FindAddonFolder().find(name);
@@ -107,6 +141,13 @@ public class Addon {
         }
     }
 
+    /**
+     * try to find a string in a jsonObject
+     *
+     * @param key
+     * @param data
+     * @return String
+     */
     protected final String getStringFromObject(String key, javax.json.JsonObject data) {
         if (key != null && data != null && data.containsKey(key) && !data.isNull(key)) {
             return java.util.regex.Pattern.compile("^\"|\"$").matcher(data.get(key).toString()).replaceAll("");
@@ -114,6 +155,11 @@ public class Addon {
         return "";
     }
 
+    /**
+     * get the table row configuration for this addon
+     *
+     * @return String[[
+     */
     public String[] getTableRow() {
         String[] row = new String[3];
         row[0] = this.name;
@@ -122,6 +168,12 @@ public class Addon {
         return row;
     }
 
+    /**
+     * return a languages description if avaible, otherwise a default
+     *
+     * @param language
+     * @return String
+     */
     public String getDescription(String language) {
         if (descriptions.containsKey(language) && !descriptions.get(language).isEmpty()) {
             return "<html>" + descriptions.get(language);
@@ -134,22 +186,43 @@ public class Addon {
                 + "/\">http://tools.idrinth.de/addons/" + slug + "/</a>.</p>";
     }
 
+    /**
+     * get a list of descriptions
+     *
+     * @return java.util.Hashtable
+     */
     public java.util.Hashtable<String, String> getDescriptions() {
         return descriptions;
     }
 
+    /**
+     * get addon name
+     *
+     * @return String
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * downloads a zip for the install()-method
+     *
+     * @return java.io.File
+     * @throws java.lang.Exception
+     */
     private java.io.File getZip() throws java.lang.Exception {
         java.io.File file = new java.io.File("./Interface/AddOns/" + slug + ".zip");
-        java.io.InputStream stream = de.idrinth.waraddonclient.factory.RemoteRequest.build().getAddonDownload(slug + "/download/" + version.replace(".", "-") + "/");
-        org.apache.commons.io.FileUtils.copyInputStreamToFile(stream, file);
-        stream.close();
+        try (java.io.InputStream stream = de.idrinth.waraddonclient.factory.RemoteRequest.build().getAddonDownload(slug + "/download/" + version.replace(".", "-") + "/")) {
+            org.apache.commons.io.FileUtils.copyInputStreamToFile(stream, file);
+        }
         return file;
     }
 
+    /**
+     * extracts a zip downloaded for the install()-method
+     *
+     * @throws java.lang.Exception
+     */
     private void extractZip() throws java.lang.Exception {
         java.io.File file = getZip();
         (new net.lingala.zip4j.core.ZipFile(file)).extractAll("./Interface/AddOns/");
@@ -157,6 +230,11 @@ public class Addon {
         org.apache.commons.io.FileUtils.writeStringToFile(new java.io.File("./Interface/AddOns/" + name + "/self.idrinth"), "<?xml version=\"1.0\" encoding=\"UTF-8\"?><UiMod><name>" + name + "</name><version>" + version + "(sys)</version></UiMod>");
     }
 
+    /**
+     * downloads a zip and unpacks it
+     *
+     * @throws java.lang.Exception
+     */
     public void install() throws java.lang.Exception {
         uninstall();
         extractZip();
@@ -165,6 +243,9 @@ public class Addon {
         }
     }
 
+    /**
+     * removes all data of this addon from the arddrive
+     */
     public void uninstall() {
         java.io.File addonFolder = new java.io.File("./Interface/AddOns/" + name);
         emptyFolder(addonFolder);
@@ -173,6 +254,11 @@ public class Addon {
         addonSettings.setEnabled(false);
     }
 
+    /**
+     * starts uploading a file if so configured
+     *
+     * @param file
+     */
     public void fileWasChanged(java.io.File file) {
         if (addonSettings.isEnabled() && file.isFile() && file.getName().equalsIgnoreCase(addonSettings.getFile())) {
             try {
@@ -183,6 +269,11 @@ public class Addon {
         }
     }
 
+    /**
+     * empties a folder
+     *
+     * @param folder
+     */
     protected void emptyFolder(java.io.File folder) {
         if (folder == null || !folder.exists()) {
             return;

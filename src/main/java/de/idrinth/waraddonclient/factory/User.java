@@ -20,6 +20,11 @@ public class User {
 
     protected static de.idrinth.waraddonclient.implementation.model.User instance = null;
 
+    /**
+     * returns data of the current user
+     *
+     * @return de.idrinth.waraddonclient.implementation.model.User
+     */
     public synchronized static de.idrinth.waraddonclient.implementation.model.User build() {
         if (instance == null) {
             instance = new de.idrinth.waraddonclient.implementation.model.User();

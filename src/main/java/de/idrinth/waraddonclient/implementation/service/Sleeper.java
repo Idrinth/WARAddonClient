@@ -18,6 +18,11 @@ package de.idrinth.waraddonclient.implementation.service;
 
 public class Sleeper {
 
+    /**
+     * Sleeps for a given duration in the current thread
+     *
+     * @param duration
+     */
     public static void sleep(int duration) {
         try {
             Thread.sleep(duration);
