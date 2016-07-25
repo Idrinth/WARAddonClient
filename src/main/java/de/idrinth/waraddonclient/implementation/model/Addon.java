@@ -292,7 +292,7 @@ public class Addon implements de.idrinth.waraddonclient.interfaces.model.Addon {
          * @param base
          */
         public VersionFinder() {
-            folder = new de.idrinth.waraddonclient.implementation.service.FindAddonFolder().find(name);
+            folder = de.idrinth.waraddonclient.implementation.service.FindAddonFolder.find(name);
         }
 
         /**

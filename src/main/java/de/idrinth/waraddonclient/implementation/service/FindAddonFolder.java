@@ -16,9 +16,21 @@
  */
 package de.idrinth.waraddonclient.implementation.service;
 
-public class FindAddonFolder {
+public final class FindAddonFolder {
 
-    public java.io.File find(String name) {
+    /**
+     * not to be callsed
+     */
+    private FindAddonFolder() {
+        //should never be constructed
+    }
+
+    /**
+     *
+     * @param name
+     * @return java.io.File
+     */
+    public static java.io.File find(String name) {
         String[] path = new String[3];
         path[0] = "interface";
         path[1] = "addons";
@@ -33,7 +45,13 @@ public class FindAddonFolder {
         return folder;
     }
 
-    private java.io.File findMatch(java.io.File folder, String search) {
+    /**
+     *
+     * @param folder
+     * @param search
+     * @return java.io.Folder
+     */
+    private static java.io.File findMatch(java.io.File folder, String search) {
         if (!folder.exists()) {
             return null;
         }

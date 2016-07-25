@@ -16,7 +16,7 @@
  */
 package de.idrinth.waraddonclient.implementation.service;
 
-public class Sleeper {
+public final class Sleeper {
 
     /**
      * prevent init
