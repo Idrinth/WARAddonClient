@@ -19,8 +19,11 @@ package de.idrinth.waraddonclient.implementation.service;
 public class Request {
 
     private final String baseUrl = "https://tools.idrinth.de/";
+
     private volatile boolean requestActive;
+
     private org.apache.http.impl.client.CloseableHttpClient client;
+
     private javax.net.ssl.SSLContext sslContext;
 
     /**

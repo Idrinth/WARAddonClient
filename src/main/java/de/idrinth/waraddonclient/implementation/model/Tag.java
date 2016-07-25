@@ -19,7 +19,9 @@ package de.idrinth.waraddonclient.implementation.model;
 public class Tag {
 
     private String name;
+
     private java.util.HashMap<String, Addon> list = new java.util.HashMap();
+
     private javax.swing.JCheckBoxMenuItem item;
 
     /**

@@ -19,10 +19,15 @@ package de.idrinth.waraddonclient.implementation.model;
 public class AddonSettings {
 
     private String file = "";
+
     private boolean enabled;
+
     private String reason = "";
+
     private String url = "";
+
     private String name;
+
     private boolean hasSettings;
 
     /**

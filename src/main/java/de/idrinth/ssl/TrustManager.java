@@ -19,6 +19,7 @@ package de.idrinth.ssl;
 public class TrustManager implements org.apache.http.ssl.TrustStrategy {
 
     public java.security.KeyStore keyStore;
+
     private javax.net.ssl.X509TrustManager manager;
 
     /**

@@ -18,8 +18,9 @@ package de.idrinth.waraddonclient.gui.tablefilter;
 
 public class TextCategory extends javax.swing.RowFilter {
 
-    private java.util.regex.Pattern textfilter;
-    private java.util.ArrayList<String> tags;
+    private final java.util.regex.Pattern textfilter;
+
+    private final java.util.ArrayList<String> tags;
 
     /**
      *

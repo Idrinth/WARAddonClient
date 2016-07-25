@@ -53,15 +53,10 @@ public class FileWatcher implements java.lang.Runnable {
     private void handleEvents() throws InterruptedException {
         while (true) {
             java.nio.file.WatchKey key = watcher.take();
-            for (java.nio.file.WatchEvent event : key.pollEvents()) {
-                if (event.kind() == java.nio.file.StandardWatchEventKinds.ENTRY_CREATE
-                        || event.kind() == java.nio.file.StandardWatchEventKinds.ENTRY_MODIFY) {
-                    java.io.File file = new java.io.File("./logs/" + event.context().toString());
-                    if (de.idrinth.waraddonclient.factory.AddonList.build().getWatchedFiles().containsKey(file.getName().toLowerCase())) {
-                        de.idrinth.waraddonclient.factory.AddonList.build().getWatchedFiles().get(file.getName().toLowerCase()).setFileToProcess(file);
-                    }
-                }
-            }
+            key.pollEvents().stream().filter((event) -> (event.kind() == java.nio.file.StandardWatchEventKinds.ENTRY_CREATE
+                    || event.kind() == java.nio.file.StandardWatchEventKinds.ENTRY_MODIFY)).map((event) -> new java.io.File("./logs/" + event.context().toString())).filter((file) -> (de.idrinth.waraddonclient.factory.AddonList.build().getWatchedFiles().containsKey(file.getName().toLowerCase()))).forEach((file) -> {
+                de.idrinth.waraddonclient.factory.AddonList.build().getWatchedFiles().get(file.getName().toLowerCase()).setFileToProcess(file);
+            });
             key.reset();
         }
     }

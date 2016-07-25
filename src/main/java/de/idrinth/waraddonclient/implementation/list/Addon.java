@@ -19,9 +19,13 @@ package de.idrinth.waraddonclient.implementation.list;
 public class Addon implements java.lang.Runnable {
 
     private java.util.HashMap<String, de.idrinth.waraddonclient.implementation.model.Addon> list = new java.util.HashMap();
+
     private java.util.ArrayList<de.idrinth.waraddonclient.implementation.model.Addon> rows = new java.util.ArrayList();
+
     private java.util.Hashtable<String, watchedFile> watchedFilesMap = new java.util.Hashtable();
+
     private int duration = 15;
+
     private long lastRefreshed;
 
     /**
@@ -92,10 +96,7 @@ public class Addon implements java.lang.Runnable {
                 de.idrinth.waraddonclient.implementation.service.Sleeper.sleep(250);
             }
             try {
-                javax.json.JsonArray parse = de.idrinth.waraddonclient.factory.RemoteRequest.build().getAddonList();
-                if (parse != null) {
-                    parseJsonResult(parse);
-                }
+                new JsonProcessor(de.idrinth.waraddonclient.factory.RemoteRequest.build().getAddonList()).run();
                 failuresInARow = 0;
             } catch (Exception exception) {
                 de.idrinth.factory.Logger.build().log(exception.getMessage(), de.idrinth.Logger.levelError);
@@ -108,33 +109,76 @@ public class Addon implements java.lang.Runnable {
         }
     }
 
-    /**
-     * works through the datab provided by the website's api
-     *
-     * @param parse
-     */
-    private void parseJsonResult(javax.json.JsonArray parse) {
-        javax.swing.table.DefaultTableModel model = (javax.swing.table.DefaultTableModel) de.idrinth.waraddonclient.factory.Interface.build().getAddonTable().getModel();
-        int counter = 0;
-        while (parse.size() > counter) {
-            de.idrinth.waraddonclient.implementation.model.Addon addon = new de.idrinth.waraddonclient.implementation.model.Addon(parse.getJsonObject(counter));
-            if (list.containsKey(addon.getName())) {
-                list.get(addon.getName()).update(addon);
-                String[] data = list.get(addon.getName()).getTableRow();
-                model.setValueAt(data[0], rows.indexOf(list.get(addon.getName())), 0);
-                model.setValueAt(data[1], rows.indexOf(list.get(addon.getName())), 1);
-                model.setValueAt(data[2], rows.indexOf(list.get(addon.getName())), 2);
-            } else {
-                this.add(addon);
-                model.addRow(addon.getTableRow());
-                if (!addon.getUploadData().getFile().isEmpty()) {
-                    if (!watchedFilesMap.containsKey(addon.getUploadData().getFile().toLowerCase())) {
-                        watchedFilesMap.put(addon.getUploadData().getFile().toLowerCase(), new watchedFile());
-                    }
-                    watchedFilesMap.get(addon.getUploadData().getFile().toLowerCase()).addAddon(addon);
-                }
+    public class JsonProcessor {
+
+        private final javax.json.JsonArray json;
+
+        public JsonProcessor(javax.json.JsonArray parse) {
+            json = parse;
+        }
+
+        /**
+         * works through the datab provided by the website's api
+         *
+         * @throws java.lang.Exception
+         */
+        public void run() throws java.lang.Exception {
+            if (json == null) {
+                throw new java.lang.Exception("no content in json");
             }
-            counter++;
+            javax.swing.table.DefaultTableModel model = (javax.swing.table.DefaultTableModel) de.idrinth.waraddonclient.factory.Interface.build().getAddonTable().getModel();
+            for (int counter = json.size(); counter > 0; counter--) {
+                model = processJsonAddon(model, new de.idrinth.waraddonclient.implementation.model.Addon(json.getJsonObject(counter - 1)));
+            }
+        }
+
+        /**
+         *
+         * @param model
+         * @param addon
+         * @return javax.swing.table.DefaultTableMode
+         */
+        private javax.swing.table.DefaultTableModel existingAddon(javax.swing.table.DefaultTableModel model, de.idrinth.waraddonclient.implementation.model.Addon addon) {
+            add(addon);
+            model.addRow(addon.getTableRow());
+            if (!addon.getUploadData().getFile().isEmpty()) {
+                if (!watchedFilesMap.containsKey(addon.getUploadData().getFile().toLowerCase())) {
+                    watchedFilesMap.put(addon.getUploadData().getFile().toLowerCase(), new watchedFile());
+                }
+                watchedFilesMap.get(addon.getUploadData().getFile().toLowerCase()).addAddon(addon);
+            }
+            return model;
+        }
+
+        /**
+         *
+         * @param model
+         * @param addon
+         * @return javax.swing.table.DefaultTableMode
+         */
+        private javax.swing.table.DefaultTableModel processJsonAddon(javax.swing.table.DefaultTableModel model, de.idrinth.waraddonclient.implementation.model.Addon addon) {
+            if (list.containsKey(addon.getName())) {
+                return existingAddon(model, addon);
+            }
+            return newAddon(model, addon);
+        }
+
+        /**
+         *
+         * @param model
+         * @param addon
+         * @return javax.swing.table.DefaultTableMode
+         */
+        private javax.swing.table.DefaultTableModel newAddon(javax.swing.table.DefaultTableModel model, de.idrinth.waraddonclient.implementation.model.Addon addon) {
+            if (!list.containsKey(addon.getName())) {
+                return model;
+            }
+            list.get(addon.getName()).update(addon);
+            String[] data = list.get(addon.getName()).getTableRow();
+            model.setValueAt(data[0], rows.indexOf(list.get(addon.getName())), 0);
+            model.setValueAt(data[1], rows.indexOf(list.get(addon.getName())), 1);
+            model.setValueAt(data[2], rows.indexOf(list.get(addon.getName())), 2);
+            return model;
         }
     }
 
@@ -142,7 +186,7 @@ public class Addon implements java.lang.Runnable {
 
         private boolean active;
         private java.io.File file;
-        private java.util.ArrayList<de.idrinth.waraddonclient.implementation.model.Addon> list = new java.util.ArrayList();
+        private final java.util.ArrayList<de.idrinth.waraddonclient.implementation.model.Addon> list = new java.util.ArrayList();
 
         /**
          * Adds an addon to watch an be handled here

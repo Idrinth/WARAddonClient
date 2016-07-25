@@ -19,8 +19,11 @@ package de.idrinth.waraddonclient.implementation.list;
 public class Tag implements java.lang.Runnable {
 
     private javax.swing.JMenu menu;
+
     private java.util.HashMap<String, de.idrinth.waraddonclient.implementation.model.Tag> tags = new java.util.HashMap();
+
     private java.util.ArrayList<String> tagNames = new java.util.ArrayList();
+
     private long lastRefreshed;
 
     /**

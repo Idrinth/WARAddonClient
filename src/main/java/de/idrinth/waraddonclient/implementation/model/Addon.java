@@ -19,13 +19,21 @@ package de.idrinth.waraddonclient.implementation.model;
 public class Addon {
 
     private java.util.Hashtable<String, String> descriptions = new java.util.Hashtable();
+
     private String version;
+
     private String slug;
+
     private String name;
+
     private String installed = "-";
+
     private java.util.ArrayList<String> tags = new java.util.ArrayList();
+
     private AddonSettings addonSettings;
+
     private static final String basePath = "./Interface/AddOns/";
+
     private static final String versionFile = "/self.idrinth";
 
     /**
