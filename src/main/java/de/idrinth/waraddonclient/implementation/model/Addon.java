@@ -16,7 +16,7 @@
  */
 package de.idrinth.waraddonclient.implementation.model;
 
-public class Addon {
+public class Addon implements de.idrinth.waraddonclient.interfaces.model.Addon {
 
     private java.util.Hashtable<String, String> descriptions = new java.util.Hashtable();
 

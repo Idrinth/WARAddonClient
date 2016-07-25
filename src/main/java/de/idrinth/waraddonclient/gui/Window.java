@@ -20,7 +20,7 @@ public class Window extends javax.swing.JFrame {
 
     private javax.swing.table.TableRowSorter sorter;
 
-    private de.idrinth.waraddonclient.implementation.model.Addon activeAddon = null;
+    private de.idrinth.waraddonclient.interfaces.model.Addon activeAddon = new de.idrinth.waraddonclient.implementation.model.NoAddon();
 
     private String language = "en";
 
@@ -52,19 +52,15 @@ public class Window extends javax.swing.JFrame {
      */
     private final void finishGuiBuilding() {
         AddonList.getSelectionModel().addListSelectionListener(new tableListener());
-        Description.setText("<html><h1>Welcome to the client.</h1><p>To get something more useful here, select an addon to the left.</p>");
-        InstallButton.setEnabled(false);
-        RemoveButton.setEnabled(false);
         setIconImage(java.awt.Toolkit.getDefaultToolkit().getImage(getClass().getResource("/Images/logo.png")));
         sorter = new javax.swing.table.TableRowSorter(AddonList.getModel());
         AddonList.setRowSorter(sorter);
-        setTitle(baseTitle);
-        rightSide.setEnabledAt(1, false);
         Description.addHyperlinkListener(new hyperlinkListener());
         localVersion.setText(de.idrinth.waraddonclient.configuration.Version.getLocalVersion());
         tagList = new de.idrinth.waraddonclient.implementation.list.Tag(Tags);
         new java.lang.Thread(tagList).start();
         new java.lang.Thread(new de.idrinth.waraddonclient.configuration.Version()).start();
+        (new tableListener()).updateUi();
     }
 
     /**
@@ -546,7 +542,8 @@ public class Window extends javax.swing.JFrame {
      * @param evt
      */
     private void AboutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_AboutActionPerformed
-        // TODO add your handling code here:
+        de.idrinth.factory.Logger.build().log(evt.getActionCommand() + " " + evt.paramString(), de.idrinth.Logger.levelInfo);
+        javax.swing.JOptionPane.showMessageDialog(this, "Not yet avaible, sorry. For more information visit github at https://github.com/Idrinth/WARAddonClient .");
     }//GEN-LAST:event_AboutActionPerformed
 
     /**
@@ -595,6 +592,7 @@ public class Window extends javax.swing.JFrame {
      * @param evt
      */
     private void Refresh3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Refresh3ActionPerformed
+        de.idrinth.factory.Logger.build().log(evt.getActionCommand() + " " + evt.paramString(), de.idrinth.Logger.levelInfo);
         changeRefreshTo(60);
     }//GEN-LAST:event_Refresh3ActionPerformed
 
@@ -734,12 +732,16 @@ public class Window extends javax.swing.JFrame {
         /**
          * Updates the ui to show the current addon's data
          */
-        protected void updateUi() {
+        public void updateUi() {
+            boolean isAnAddon = !"".equals(activeAddon.getVersion());
             Description.setText(activeAddon.getDescription(language));
             Title.setText(activeAddon.getName());
-            InstallButton.setEnabled(true);
-            RemoveButton.setEnabled(true);
+            InstallButton.setEnabled(isAnAddon);
+            RemoveButton.setEnabled(isAnAddon);
             setTitle(activeAddon.getName() + " - " + baseTitle);
+            if (!isAnAddon) {
+                return;
+            }
             de.idrinth.waraddonclient.implementation.model.AddonSettings settings = activeAddon.getUploadData();
             rightSide.setEnabledAt(1, settings.showSettings());
             UploadReason.setText(settings.getReason());
