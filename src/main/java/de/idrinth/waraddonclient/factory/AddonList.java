@@ -16,7 +16,7 @@
  */
 package de.idrinth.waraddonclient.factory;
 
-public class AddonList {
+public final class AddonList {
 
     private static de.idrinth.waraddonclient.implementation.list.Addon instance;
 

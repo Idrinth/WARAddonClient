@@ -16,7 +16,7 @@
  */
 package de.idrinth.waraddonclient.factory;
 
-public class Interface {
+public final class Interface {
 
     private static de.idrinth.waraddonclient.gui.Window instance;
 

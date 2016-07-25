@@ -16,7 +16,7 @@
  */
 package de.idrinth.waraddonclient.factory;
 
-public class User {
+public final class User {
 
     private static de.idrinth.waraddonclient.implementation.model.User instance;
 

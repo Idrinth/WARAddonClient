@@ -16,7 +16,7 @@
  */
 package de.idrinth.waraddonclient.factory;
 
-public class RemoteRequest {
+public final class RemoteRequest {
 
     private static de.idrinth.waraddonclient.implementation.service.Request instance;
 

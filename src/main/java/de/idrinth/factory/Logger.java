@@ -16,9 +16,16 @@
  */
 package de.idrinth.factory;
 
-public class Logger {
+public final class Logger {
 
     private static de.idrinth.Logger instance;
+
+    /**
+     * Prevent objects of this class
+     */
+    private Logger() {
+        //not mean to be used
+    }
 
     /**
      *

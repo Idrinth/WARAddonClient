@@ -16,17 +16,15 @@
  */
 package de.idrinth.waraddonclient.implementation.model;
 
-import java.util.ArrayList;
-
 public class NoAddon implements de.idrinth.waraddonclient.interfaces.model.Addon {
 
     /**
      *
-     * @return ArrayList<String>
+     * @return java.util.ArrayList
      */
     @Override
-    public ArrayList<String> getTags() {
-        return new ArrayList<>();
+    public java.util.ArrayList<String> getTags() {
+        return new java.util.ArrayList<>();
     }
 
     /**
@@ -88,21 +86,21 @@ public class NoAddon implements de.idrinth.waraddonclient.interfaces.model.Addon
     /**
      * does NOT install the none existing addon
      *
-     * @throws Exception
+     * @throws java.lang.Exception
      */
     @Override
-    public void install() throws Exception {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public void install() throws java.lang.Exception {
+        throw new UnsupportedOperationException("You can not uninstall an addon that doesn't exist.");
     }
 
     /**
      * does NOT uninstall the not existing addon
      *
-     * @throws Exception
+     * @throws java.lang.Exception
      */
     @Override
-    public void uninstall() throws Exception {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public void uninstall() throws java.lang.Exception {
+        throw new UnsupportedOperationException("You can not uninstall an addon that doesn't exist");
     }
 
 }
