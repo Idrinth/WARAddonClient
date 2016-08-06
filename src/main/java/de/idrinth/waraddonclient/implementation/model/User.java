@@ -20,11 +20,17 @@ public class User {
 
     private org.w3c.dom.Document xml;
 
+    private final String xmlPath = "./idrinth.xml";
+
+    private final String addonTag = "AddOn";
+
+    private final String enabledAttribute = "enabled";
+
     /**
      *
      */
     public User() {
-        java.io.File file = new java.io.File("./idrinth.xml");
+        java.io.File file = new java.io.File(xmlPath);
         try {
             if (file.exists()) {
                 xml = javax.xml.parsers.DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(file);
@@ -35,7 +41,7 @@ public class User {
         try {
             if (xml == null) {
                 xml = javax.xml.parsers.DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
-                xml.appendChild(xml.createElement("AddOns"));
+                xml.appendChild(xml.createElement(addonTag + "s"));
             }
         } catch (javax.xml.parsers.ParserConfigurationException exception) {
             de.idrinth.factory.Logger.build().log(exception.getMessage(), de.idrinth.Logger.levelError);
@@ -49,10 +55,10 @@ public class User {
      * @return boolean
      */
     public boolean getEnabled(String name) {
-        org.w3c.dom.NodeList list = xml.getElementsByTagName("AddOn");
+        org.w3c.dom.NodeList list = xml.getElementsByTagName(addonTag);
         for (int counter = 0; counter < list.getLength(); counter++) {
             if (name.equalsIgnoreCase(list.item(counter).getTextContent())) {
-                return list.item(counter).getAttributes().item(0).getTextContent().equalsIgnoreCase("true");
+                return java.lang.Boolean.parseBoolean(list.item(counter).getAttributes().getNamedItem(enabledAttribute).getTextContent());
             }
         }
         return false;
@@ -65,7 +71,7 @@ public class User {
         try {
             javax.xml.transform.TransformerFactory.newInstance().newTransformer().transform(
                     new javax.xml.transform.dom.DOMSource(xml),
-                    new javax.xml.transform.stream.StreamResult(new java.io.File("./idrinth.xml"))
+                    new javax.xml.transform.stream.StreamResult(new java.io.File(xmlPath))
             );
         } catch (javax.xml.transform.TransformerException exception) {
             de.idrinth.factory.Logger.build().log(exception.getMessage(), de.idrinth.Logger.levelError);
@@ -79,16 +85,26 @@ public class User {
      * @param isEnabled
      */
     public void setEnabled(String name, boolean isEnabled) {
-        org.w3c.dom.NodeList list = xml.getElementsByTagName("AddOn");
+        setEnabled(name, java.lang.Boolean.toString(isEnabled));
+    }
+
+    /**
+     * Set the enabled flag to signify that an addon may upload data
+     *
+     * @param name
+     * @param isEnabled
+     */
+    private void setEnabled(String name, String isEnabled) {
+        org.w3c.dom.NodeList list = xml.getElementsByTagName(addonTag);
         for (int counter = 0; counter < list.getLength(); counter++) {
             if (name.equalsIgnoreCase(list.item(counter).getTextContent())) {
-                list.item(counter).getAttributes().item(0).setNodeValue(isEnabled ? "true" : "false");
+                list.item(counter).getAttributes().getNamedItem(enabledAttribute).setNodeValue(isEnabled);
                 writeDocument();
                 return;
             }
         }
-        org.w3c.dom.Element node = xml.createElement("AddOn");
-        node.setAttribute("enabled", isEnabled ? "true" : "false");
+        org.w3c.dom.Element node = xml.createElement(addonTag);
+        node.setAttribute(enabledAttribute, isEnabled);
         node.setTextContent(name);
         xml.getFirstChild().appendChild(node);
         writeDocument();
