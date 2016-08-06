@@ -186,7 +186,9 @@ public class Addon implements java.lang.Runnable {
     public class watchedFile implements java.lang.Runnable {
 
         private boolean active;
+
         private java.io.File file;
+
         private final java.util.ArrayList<de.idrinth.waraddonclient.implementation.model.Addon> list = new java.util.ArrayList();
 
         /**

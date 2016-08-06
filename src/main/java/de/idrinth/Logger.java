@@ -74,7 +74,6 @@ public class Logger {
         String formattedMessage = buildMessage(message, severity);
         try {
             org.apache.commons.io.FileUtils.writeStringToFile(output, formattedMessage, null, true);
-            return;
         } catch (Exception exception) {
             de.idrinth.waraddonclient.factory.Interface.build().exitWithError(formattedMessage + "\n" + exception.getMessage());
         }
