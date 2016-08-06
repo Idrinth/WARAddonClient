@@ -54,11 +54,30 @@ public class FileWatcher implements java.lang.Runnable {
     private void handleEvents() throws InterruptedException {
         while (true) {
             java.nio.file.WatchKey key = watcher.take();
-            key.pollEvents().stream().filter((event) -> (event.kind() == java.nio.file.StandardWatchEventKinds.ENTRY_CREATE
-                    || event.kind() == java.nio.file.StandardWatchEventKinds.ENTRY_MODIFY)).map((event) -> new java.io.File("./logs/" + event.context().toString())).filter((file) -> (de.idrinth.waraddonclient.factory.AddonList.build().getWatchedFiles().containsKey(file.getName().toLowerCase()))).forEach((file) -> {
+            key.pollEvents().stream().filter((event) -> (isValidEvent(event))).map((event) -> new java.io.File("./logs/" + event.context().toString())).filter((file) -> (isValidFile(file))).forEach((file) -> {
                 de.idrinth.waraddonclient.factory.AddonList.build().getWatchedFiles().get(file.getName().toLowerCase()).setFileToProcess(file);
             });
             key.reset();
         }
+    }
+
+    /**
+     * is this an event to process?
+     *
+     * @param event
+     * @return
+     */
+    private boolean isValidEvent(java.nio.file.WatchEvent event) {
+        return event.kind() == java.nio.file.StandardWatchEventKinds.ENTRY_CREATE || event.kind() == java.nio.file.StandardWatchEventKinds.ENTRY_MODIFY;
+    }
+
+    /**
+     * is this a file to process?
+     *
+     * @param file
+     * @return
+     */
+    private boolean isValidFile(java.io.File file) {
+        return de.idrinth.waraddonclient.factory.AddonList.build().getWatchedFiles().containsKey(file.getName().toLowerCase());
     }
 }
