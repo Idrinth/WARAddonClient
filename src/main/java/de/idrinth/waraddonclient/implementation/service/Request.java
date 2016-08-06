@@ -34,7 +34,7 @@ public class Request {
     public Request() throws java.lang.Exception {
         de.idrinth.ssl.TrustManager manager = new de.idrinth.ssl.TrustManager();
         sslContext = org.apache.http.ssl.SSLContextBuilder.create().loadTrustMaterial(
-                manager.keyStore,
+                manager.getKeyStore(),
                 manager
         ).build();
     }

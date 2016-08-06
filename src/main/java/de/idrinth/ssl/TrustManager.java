@@ -18,7 +18,7 @@ package de.idrinth.ssl;
 
 public class TrustManager implements org.apache.http.ssl.TrustStrategy {
 
-    public java.security.KeyStore keyStore;
+    private java.security.KeyStore keyStore;
 
     private javax.net.ssl.X509TrustManager manager;
 
@@ -32,10 +32,10 @@ public class TrustManager implements org.apache.http.ssl.TrustStrategy {
         addCertToStore("StartComClass2IVServerCA");
         addCertToStore("IdrinthDe");
 
-        javax.net.ssl.TrustManagerFactory trustManagerFactory = javax.net.ssl.TrustManagerFactory.getInstance("PKIX");
-        trustManagerFactory.init(keyStore);
+        javax.net.ssl.TrustManagerFactory factory = javax.net.ssl.TrustManagerFactory.getInstance("PKIX");
+        factory.init(keyStore);
 
-        for (javax.net.ssl.TrustManager trustManager : trustManagerFactory.getTrustManagers()) {
+        for (javax.net.ssl.TrustManager trustManager : factory.getTrustManagers()) {
             if (trustManager instanceof javax.net.ssl.X509TrustManager) {
                 manager = (javax.net.ssl.X509TrustManager) trustManager;
                 return;
@@ -47,37 +47,26 @@ public class TrustManager implements org.apache.http.ssl.TrustStrategy {
 
     /**
      *
+     * @return java.security.KeyStore
+     */
+    public final java.security.KeyStore getKeyStore() {
+        return keyStore;
+    }
+
+    /**
+     *
      * @throws java.lang.Exception
      */
     private final void getStore() throws java.lang.Exception {
-        String fileSep = System.getProperty("file.separator");
-        java.io.File file = new java.io.File(System.getProperty("sun.boot.library.path"));
-        while (!(new java.io.File(file.getAbsoluteFile() + fileSep + "lib").exists())) {
-            file = file.getParentFile();
-        }
-        keyStore = java.security.KeyStore.getInstance(java.security.KeyStore.getDefaultType());
-        System.setProperty("javax.net.ssl.trustStore", java.security.KeyStore.getDefaultType());
-        System.setProperty("javax.net.ssl.keyStore", java.security.KeyStore.getDefaultType());
-        file = new java.io.File(file.getAbsolutePath() + fileSep + "lib" + fileSep + "security");
-        keyStore.load(
-                new java.io.BufferedInputStream(
-                        new java.io.FileInputStream(
-                                new java.io.File(
-                                        file.getAbsolutePath() + fileSep + "jssecacerts"
-                                ).exists()
-                                        ? file.getAbsolutePath() + fileSep + "jssecacerts"
-                                        : file.getAbsolutePath() + fileSep + "cacerts"
-                        )
-                ),
-                "changeit".toCharArray()
-        );
+        String password = "changeit";
+        keyStore = new KeystoreFinder().getKeystore(password);
         javax.net.ssl.TrustManagerFactory trustManagerFactory = javax.net.ssl.TrustManagerFactory.getInstance(javax.net.ssl.TrustManagerFactory.getDefaultAlgorithm());
         trustManagerFactory.init(keyStore);
         javax.net.ssl.TrustManager[] trustManagers = trustManagerFactory.getTrustManagers();
-        javax.net.ssl.SSLContext sc = javax.net.ssl.SSLContext.getInstance("TLS");
-        sc.init(null, trustManagers, null);
-        javax.net.ssl.SSLContext.setDefault(sc);
-        System.setProperty("javax.net.ssl.trustStorePassword", "changeit");
+        javax.net.ssl.SSLContext sslContext = javax.net.ssl.SSLContext.getInstance("TLS");
+        sslContext.init(null, trustManagers, null);
+        javax.net.ssl.SSLContext.setDefault(sslContext);
+        System.setProperty("javax.net.ssl.trustStorePassword", password);
     }
 
     /**
@@ -108,5 +97,38 @@ public class TrustManager implements org.apache.http.ssl.TrustStrategy {
             de.idrinth.factory.Logger.build().log(e.getMessage(), de.idrinth.Logger.levelWarn);
         }
         return false;
+    }
+
+    class KeystoreFinder {
+
+        public java.security.KeyStore getKeystore(String password) throws java.lang.Exception {
+            java.security.KeyStore keyStore = java.security.KeyStore.getInstance(java.security.KeyStore.getDefaultType());
+            System.setProperty("javax.net.ssl.trustStore", java.security.KeyStore.getDefaultType());
+            System.setProperty("javax.net.ssl.keyStore", java.security.KeyStore.getDefaultType());
+            keyStore.load(
+                    new java.io.BufferedInputStream(
+                            new java.io.FileInputStream(fileForKeystore())
+                    ),
+                    password.toCharArray()
+            );
+            return keyStore;
+        }
+
+        private String fileForKeystore() {
+            String path = findStoreFolder().getAbsolutePath() + System.getProperty("file.separator");
+            String prefered = path + "jssecacerts";
+            String alternative = path + "cacerts";
+            return new java.io.File(prefered).exists() ? prefered : alternative;
+        }
+
+        private java.io.File findStoreFolder() {
+            String[] folders = "lib/security".split("/");
+            String fileSep = System.getProperty("file.separator");
+            java.io.File file = new java.io.File(System.getProperty("sun.boot.library.path"));
+            while (!(new java.io.File(file.getAbsoluteFile() + fileSep + folders[0]).exists())) {
+                file = file.getParentFile();
+            }
+            return new java.io.File(file.getAbsolutePath() + fileSep + folders[0] + fileSep + folders[1]);
+        }
     }
 }
