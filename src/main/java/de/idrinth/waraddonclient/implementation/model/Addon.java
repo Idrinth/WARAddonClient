@@ -151,15 +151,15 @@ public class Addon implements de.idrinth.waraddonclient.interfaces.model.Addon {
      * @return String
      */
     public String getDescription(String language) {
-        if (descriptions.containsKey(language) && !descriptions.get(language).isEmpty()) {
-            return "<html>" + descriptions.get(language);
-        }
-        if (!descriptions.get("en").isEmpty()) {
-            return "<html>" + descriptions.get("en");
-        }
-        return "<html><p><strong>There is currently no Description for " + name + ".</strong></p>"
+        String description = "<p><strong>There is currently no Description for " + name + ".</strong></p>"
                 + "<p>You can help by adding one at <a href=\"http://tools.idrinth.de/addons/" + slug
                 + "/\">http://tools.idrinth.de/addons/" + slug + "/</a>.</p>";
+        if (descriptions.containsKey(language) && !descriptions.get(language).isEmpty()) {
+            description = descriptions.get(language);
+        } else if (!descriptions.get("en").isEmpty()) {
+            description = descriptions.get("en");
+        }
+        return "<html>" + description;
     }
 
     /**
