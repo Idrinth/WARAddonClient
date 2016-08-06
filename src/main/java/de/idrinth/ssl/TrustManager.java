@@ -101,6 +101,12 @@ public class TrustManager implements org.apache.http.ssl.TrustStrategy {
 
     class KeystoreFinder {
 
+        /**
+         *
+         * @param password
+         * @return java.security.KeyStore
+         * @throws java.lang.Exception
+         */
         public java.security.KeyStore getKeystore(String password) throws java.lang.Exception {
             java.security.KeyStore keyStore = java.security.KeyStore.getInstance(java.security.KeyStore.getDefaultType());
             System.setProperty("javax.net.ssl.trustStore", java.security.KeyStore.getDefaultType());
@@ -114,6 +120,10 @@ public class TrustManager implements org.apache.http.ssl.TrustStrategy {
             return keyStore;
         }
 
+        /**
+         *
+         * @return String
+         */
         private String fileForKeystore() {
             String path = findStoreFolder().getAbsolutePath() + System.getProperty("file.separator");
             String prefered = path + "jssecacerts";
@@ -121,6 +131,10 @@ public class TrustManager implements org.apache.http.ssl.TrustStrategy {
             return new java.io.File(prefered).exists() ? prefered : alternative;
         }
 
+        /**
+         *
+         * @return java.io.File
+         */
         private java.io.File findStoreFolder() {
             String[] folders = "lib/security".split("/");
             String fileSep = System.getProperty("file.separator");
