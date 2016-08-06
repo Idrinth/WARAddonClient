@@ -101,6 +101,19 @@ public class TrustManager implements org.apache.http.ssl.TrustStrategy {
 
     class KeystoreFinder {
 
+        private final String fileSeperator;
+
+        private final String preferedCerts = "jssecacerts";
+
+        private final String alternateCerts = "cacerts";
+
+        /**
+         * checks for the fileSeperator used multiple times
+         */
+        public KeystoreFinder() {
+            fileSeperator = System.getProperty("file.separator");
+        }
+
         /**
          *
          * @param password
@@ -108,16 +121,16 @@ public class TrustManager implements org.apache.http.ssl.TrustStrategy {
          * @throws java.lang.Exception
          */
         public java.security.KeyStore getKeystore(String password) throws java.lang.Exception {
-            java.security.KeyStore keyStore = java.security.KeyStore.getInstance(java.security.KeyStore.getDefaultType());
+            java.security.KeyStore store = java.security.KeyStore.getInstance(java.security.KeyStore.getDefaultType());
             System.setProperty("javax.net.ssl.trustStore", java.security.KeyStore.getDefaultType());
             System.setProperty("javax.net.ssl.keyStore", java.security.KeyStore.getDefaultType());
-            keyStore.load(
+            store.load(
                     new java.io.BufferedInputStream(
                             new java.io.FileInputStream(fileForKeystore())
                     ),
                     password.toCharArray()
             );
-            return keyStore;
+            return store;
         }
 
         /**
@@ -125,9 +138,9 @@ public class TrustManager implements org.apache.http.ssl.TrustStrategy {
          * @return String
          */
         private String fileForKeystore() {
-            String path = findStoreFolder().getAbsolutePath() + System.getProperty("file.separator");
-            String prefered = path + "jssecacerts";
-            String alternative = path + "cacerts";
+            String path = findStoreFolder().getAbsolutePath() + fileSeperator;
+            String prefered = path + preferedCerts;
+            String alternative = path + alternateCerts;
             return new java.io.File(prefered).exists() ? prefered : alternative;
         }
 
@@ -137,12 +150,11 @@ public class TrustManager implements org.apache.http.ssl.TrustStrategy {
          */
         private java.io.File findStoreFolder() {
             String[] folders = "lib/security".split("/");
-            String fileSep = System.getProperty("file.separator");
             java.io.File file = new java.io.File(System.getProperty("sun.boot.library.path"));
-            while (!(new java.io.File(file.getAbsoluteFile() + fileSep + folders[0]).exists())) {
+            while (!(new java.io.File(file.getAbsoluteFile() + fileSeperator + folders[0]).exists())) {
                 file = file.getParentFile();
             }
-            return new java.io.File(file.getAbsolutePath() + fileSep + folders[0] + fileSep + folders[1]);
+            return new java.io.File(file.getAbsolutePath() + fileSeperator + folders[0] + fileSeperator + folders[1]);
         }
     }
 }
