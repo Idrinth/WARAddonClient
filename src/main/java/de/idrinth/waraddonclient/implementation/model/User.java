@@ -37,7 +37,7 @@ public class User {
                 xml = javax.xml.parsers.DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(file);
             }
         } catch (java.io.IOException | javax.xml.parsers.ParserConfigurationException | org.xml.sax.SAXException exception) {
-            de.idrinth.factory.Logger.build().log(exception.getMessage(), de.idrinth.Logger.levelError);
+            de.idrinth.factory.Logger.build().log(exception, de.idrinth.Logger.levelError);
         }
         try {
             if (xml == null) {
@@ -45,7 +45,7 @@ public class User {
                 xml.appendChild(xml.createElement(addonTag + "s"));
             }
         } catch (javax.xml.parsers.ParserConfigurationException exception) {
-            de.idrinth.factory.Logger.build().log(exception.getMessage(), de.idrinth.Logger.levelError);
+            de.idrinth.factory.Logger.build().log(exception, de.idrinth.Logger.levelError);
         }
     }
 
@@ -75,7 +75,7 @@ public class User {
                     new javax.xml.transform.stream.StreamResult(new java.io.File(xmlPath))
             );
         } catch (javax.xml.transform.TransformerException exception) {
-            de.idrinth.factory.Logger.build().log(exception.getMessage(), de.idrinth.Logger.levelError);
+            de.idrinth.factory.Logger.build().log(exception, de.idrinth.Logger.levelError);
         }
     }
 

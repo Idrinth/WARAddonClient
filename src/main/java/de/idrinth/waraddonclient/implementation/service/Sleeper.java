@@ -35,7 +35,7 @@ public final class Sleeper {
         try {
             Thread.sleep(duration);
         } catch (java.lang.InterruptedException exception) {
-            de.idrinth.factory.Logger.build().log(exception.getMessage(), de.idrinth.Logger.levelInfo);
+            de.idrinth.factory.Logger.build().log(exception, de.idrinth.Logger.levelInfo);
         }
     }
 }

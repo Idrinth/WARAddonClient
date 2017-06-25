@@ -100,7 +100,7 @@ public class Addon implements java.lang.Runnable {
                 new JsonProcessor(de.idrinth.waraddonclient.factory.RemoteRequest.build().getAddonList()).run();
                 failuresInARow = 0;
             } catch (Exception exception) {
-                de.idrinth.factory.Logger.build().log(exception.getMessage(), de.idrinth.Logger.levelError);
+                de.idrinth.factory.Logger.build().log(exception, de.idrinth.Logger.levelError);
                 failuresInARow++;
                 if (failuresInARow > 5) {
                     de.idrinth.waraddonclient.factory.Interface.build().exitWithError(exception.getMessage());
@@ -139,7 +139,7 @@ public class Addon implements java.lang.Runnable {
          * @param addon
          * @return javax.swing.table.DefaultTableMode
          */
-        private javax.swing.table.DefaultTableModel existingAddon(javax.swing.table.DefaultTableModel model, de.idrinth.waraddonclient.implementation.model.Addon addon) {
+        private javax.swing.table.DefaultTableModel newAddon(javax.swing.table.DefaultTableModel model, de.idrinth.waraddonclient.implementation.model.Addon addon) {
             add(addon);
             model.addRow(addon.getTableRow());
             if (!addon.getUploadData().getFile().isEmpty()) {
@@ -170,7 +170,7 @@ public class Addon implements java.lang.Runnable {
          * @param addon
          * @return javax.swing.table.DefaultTableMode
          */
-        private javax.swing.table.DefaultTableModel newAddon(javax.swing.table.DefaultTableModel model, de.idrinth.waraddonclient.implementation.model.Addon addon) {
+        private javax.swing.table.DefaultTableModel existingAddon(javax.swing.table.DefaultTableModel model, de.idrinth.waraddonclient.implementation.model.Addon addon) {
             if (!list.containsKey(addon.getName())) {
                 return model;
             }

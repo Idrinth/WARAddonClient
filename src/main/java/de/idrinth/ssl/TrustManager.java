@@ -29,9 +29,12 @@ public class TrustManager implements org.apache.http.ssl.TrustStrategy {
      */
     public TrustManager() throws java.lang.Exception {
         getStore();
-        addCertToStore("StartComCertificationAuthority");
-        addCertToStore("StartComClass2IVServerCA");
-        addCertToStore("IdrinthDe");
+        //tools.idrinth.de
+        addCertToStore("DST Root CA X3");
+        addCertToStore("Let's Encrypt Authority X1");
+        //imgur
+        addCertToStore("DigiCert");
+        addCertToStore("DigiCert SHA2 Secure Server CA");
 
         javax.net.ssl.TrustManagerFactory factory = javax.net.ssl.TrustManagerFactory.getInstance("PKIX");
         factory.init(keyStore);
@@ -95,7 +98,7 @@ public class TrustManager implements org.apache.http.ssl.TrustStrategy {
             manager.checkServerTrusted(chain, authType);
             return true;
         } catch (java.security.cert.CertificateException e) {
-            de.idrinth.factory.Logger.build().log(e.getMessage(), de.idrinth.Logger.levelWarn);
+            de.idrinth.factory.Logger.build().log(e, de.idrinth.Logger.levelWarn);
         }
         return false;
     }

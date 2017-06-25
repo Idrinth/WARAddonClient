@@ -78,4 +78,15 @@ public class Logger {
             de.idrinth.waraddonclient.factory.Interface.build().exitWithError(formattedMessage + "\n" + exception.getMessage());
         }
     }
+
+    /**
+     * writes a message to file or if that files to system.out
+     *
+     * @param message
+     * @param severity
+     */
+    public final void log(Throwable message, int severity) {
+        log(message.getLocalizedMessage(),severity);
+        message.printStackTrace();
+    }
 }

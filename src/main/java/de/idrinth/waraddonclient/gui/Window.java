@@ -72,7 +72,7 @@ public class Window extends javax.swing.JFrame {
             javax.swing.RowFilter rf = new de.idrinth.waraddonclient.gui.tablefilter.TextCategory(Search.getText(), tagList.getActiveTags());
             sorter.setRowFilter(rf);
         } catch (java.util.regex.PatternSyntaxException exception) {
-            de.idrinth.factory.Logger.build().log(exception.getMessage(), de.idrinth.Logger.levelError);
+            de.idrinth.factory.Logger.build().log(exception, de.idrinth.Logger.levelError);
         }
     }
 
@@ -479,7 +479,7 @@ public class Window extends javax.swing.JFrame {
             updateList();
             javax.swing.JOptionPane.showMessageDialog(this, "The requested Addon was installed.");
         } catch (java.lang.Exception exception) {
-            de.idrinth.factory.Logger.build().log(exception.getMessage(), de.idrinth.Logger.levelError);
+            de.idrinth.factory.Logger.build().log(exception, de.idrinth.Logger.levelError);
             javax.swing.JOptionPane.showMessageDialog(this, "Sadly Installing failed, check if the folder is writeable.");
         }
     }//GEN-LAST:event_InstallButtonActionPerformed
@@ -514,7 +514,7 @@ public class Window extends javax.swing.JFrame {
         try {
             activeAddon.uninstall();
         } catch (Exception exception) {
-            de.idrinth.factory.Logger.build().log(exception.getMessage(), de.idrinth.Logger.levelError);
+            de.idrinth.factory.Logger.build().log(exception, de.idrinth.Logger.levelError);
         }
         updateList();
     }//GEN-LAST:event_RemoveButtonActionPerformed
@@ -703,7 +703,7 @@ public class Window extends javax.swing.JFrame {
                 try {
                     java.awt.Desktop.getDesktop().browse(event.getURL().toURI());
                 } catch (java.net.URISyntaxException | java.io.IOException exception) {
-                    de.idrinth.factory.Logger.build().log(exception.getMessage(), de.idrinth.Logger.levelError);
+                    de.idrinth.factory.Logger.build().log(exception, de.idrinth.Logger.levelError);
                 }
             }
 
@@ -721,7 +721,7 @@ public class Window extends javax.swing.JFrame {
             try {
                 activeAddon = de.idrinth.waraddonclient.factory.AddonList.build().get(AddonList.convertRowIndexToModel(AddonList.getSelectedRow()));
             } catch (java.lang.ArrayIndexOutOfBoundsException exception) {
-                de.idrinth.factory.Logger.build().log(exception.getMessage(), de.idrinth.Logger.levelError);
+                de.idrinth.factory.Logger.build().log(exception, de.idrinth.Logger.levelError);
                 return;
             }
             if (activeAddon == null) {

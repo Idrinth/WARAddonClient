@@ -25,7 +25,7 @@ public class Version implements java.lang.Runnable {
      * @return String
      */
     public static String getLocalVersion() {
-        return "1.3.0";
+        return "1.3.1";
     }
 
     /**
@@ -37,7 +37,7 @@ public class Version implements java.lang.Runnable {
         try {
             de.idrinth.waraddonclient.factory.Interface.build().getRemoteVersionLabel().setText(de.idrinth.waraddonclient.factory.RemoteRequest.build().getVersion());
         } catch (java.lang.Exception exception) {
-            de.idrinth.factory.Logger.build().log(exception.getMessage(), de.idrinth.Logger.levelError);
+            de.idrinth.factory.Logger.build().log(exception, de.idrinth.Logger.levelError);
         }
     }
 }

@@ -208,7 +208,7 @@ public class Addon implements de.idrinth.waraddonclient.interfaces.model.Addon {
             try {
                 de.idrinth.waraddonclient.factory.RemoteRequest.build().upload(addonSettings.getUrl(), file);
             } catch (Exception exception) {
-                de.idrinth.factory.Logger.build().log(exception.getMessage(), de.idrinth.Logger.levelWarn);
+                de.idrinth.factory.Logger.build().log(exception, de.idrinth.Logger.levelWarn);
             }
         }
     }
@@ -310,7 +310,7 @@ public class Addon implements de.idrinth.waraddonclient.interfaces.model.Addon {
                         installed = list.item(0).getAttributes().getNamedItem("version").getTextContent();
                         return true;
                     } catch (javax.xml.parsers.ParserConfigurationException | javax.xml.parsers.FactoryConfigurationError | org.xml.sax.SAXException | java.io.IOException exception) {
-                        de.idrinth.factory.Logger.build().log(exception.getMessage(), de.idrinth.Logger.levelError);
+                        de.idrinth.factory.Logger.build().log(exception, de.idrinth.Logger.levelError);
                     }
                 }
             }
@@ -327,7 +327,7 @@ public class Addon implements de.idrinth.waraddonclient.interfaces.model.Addon {
                     org.w3c.dom.NodeList list = javax.xml.parsers.DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(file).getElementsByTagName("version");
                     installed = list.item(0).getTextContent();
                 } catch (javax.xml.parsers.ParserConfigurationException | javax.xml.parsers.FactoryConfigurationError | org.xml.sax.SAXException | java.io.IOException exception) {
-                    de.idrinth.factory.Logger.build().log(exception.getMessage(), de.idrinth.Logger.levelError);
+                    de.idrinth.factory.Logger.build().log(exception, de.idrinth.Logger.levelError);
                 }
             }
 
