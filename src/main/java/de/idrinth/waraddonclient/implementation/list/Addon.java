@@ -179,6 +179,7 @@ public class Addon implements java.lang.Runnable {
             model.setValueAt(data[0], rows.indexOf(list.get(addon.getName())), 0);
             model.setValueAt(data[1], rows.indexOf(list.get(addon.getName())), 1);
             model.setValueAt(data[2], rows.indexOf(list.get(addon.getName())), 2);
+            model.setValueAt(data[3], rows.indexOf(list.get(addon.getName())), 3);
             return model;
         }
     }

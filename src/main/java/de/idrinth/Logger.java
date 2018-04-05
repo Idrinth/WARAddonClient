@@ -73,7 +73,7 @@ public class Logger {
     public final void log(String message, int severity) {
         String formattedMessage = buildMessage(message, severity);
         try {
-            org.apache.commons.io.FileUtils.writeStringToFile(output, formattedMessage, null, true);
+            org.apache.commons.io.FileUtils.writeStringToFile(output, formattedMessage, java.nio.charset.StandardCharsets.UTF_8, true);
         } catch (Exception exception) {
             de.idrinth.waraddonclient.factory.Interface.build().exitWithError(formattedMessage + "\n" + exception.getMessage());
         }

@@ -104,4 +104,9 @@ public class NoAddon implements de.idrinth.waraddonclient.interfaces.model.Addon
         throw new UnsupportedOperationException("You can not uninstall an addon that doesn't exist");
     }
 
+    @Override
+    public String getStatus() {
+        return "unknown";
+    }
+
 }

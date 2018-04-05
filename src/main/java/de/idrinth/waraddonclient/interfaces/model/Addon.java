@@ -71,6 +71,13 @@ public interface Addon {
     public String getName();
 
     /**
+     * get addon status
+     *
+     * @return String
+     */
+    public String getStatus();
+
+    /**
      * downloads a zip and unpacks it
      *
      * @throws java.lang.Exception
