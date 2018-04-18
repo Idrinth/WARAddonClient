@@ -17,6 +17,13 @@
 
 package de.idrinth;
 
+import java.io.File;
+import de.idrinth.waraddonclient.factory.Interface;
+import java.nio.charset.StandardCharsets;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import org.apache.commons.io.FileUtils;
+
 public class Logger {
 
     public final static int levelInfo = 0;
@@ -25,19 +32,19 @@ public class Logger {
 
     public final static int levelError = 2;
 
-    private java.io.File output;
+    private File output;
 
     /**
      * tries to initialize an output file
      */
     public Logger() {
         try {
-            output = new java.io.File("idrinth.log");
+            output = new File("idrinth.log");
             if (!output.exists()) {
                 output.createNewFile();
             }
-        } catch (java.lang.Exception exception) {
-            de.idrinth.waraddonclient.factory.Interface.build().exitWithError(exception.getMessage());
+        } catch (Exception exception) {
+            Interface.build().exitWithError(exception.getMessage());
         }
     }
 
@@ -61,7 +68,7 @@ public class Logger {
                 severityLabel = "[Error]";
                 break;
         }
-        return "[" + (new java.text.SimpleDateFormat("YYYY-MM-dd HH:mm:ss z")).format(java.util.Calendar.getInstance().getTime()) + "]" + severityLabel + " " + message + "\n";
+        return "[" + (new SimpleDateFormat("YYYY-MM-dd HH:mm:ss z")).format(Calendar.getInstance().getTime()) + "]" + severityLabel + " " + message + "\n";
     }
 
     /**
@@ -73,9 +80,9 @@ public class Logger {
     public final void log(String message, int severity) {
         String formattedMessage = buildMessage(message, severity);
         try {
-            org.apache.commons.io.FileUtils.writeStringToFile(output, formattedMessage, java.nio.charset.StandardCharsets.UTF_8, true);
+            FileUtils.writeStringToFile(output, formattedMessage, StandardCharsets.UTF_8, true);
         } catch (Exception exception) {
-            de.idrinth.waraddonclient.factory.Interface.build().exitWithError(formattedMessage + "\n" + exception.getMessage());
+            Interface.build().exitWithError(formattedMessage + "\n" + exception.getMessage());
         }
     }
 
@@ -87,6 +94,5 @@ public class Logger {
      */
     public final void log(Throwable message, int severity) {
         log(message.getLocalizedMessage(),severity);
-        message.printStackTrace();
     }
 }

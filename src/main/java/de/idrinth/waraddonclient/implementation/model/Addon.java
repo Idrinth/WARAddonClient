@@ -138,10 +138,10 @@ public class Addon implements de.idrinth.waraddonclient.interfaces.model.Addon {
      */
     public String[] getTableRow() {
         String[] row = new String[4];
-        row[0] = this.name;
-        row[1] = this.version;
-        row[2] = this.installed;
-        row[3] = this.getStatus();
+        row[0] = this.getStatus();
+        row[1] = this.name;
+        row[2] = this.version;
+        row[3] = this.installed;
         return row;
     }
 
@@ -234,9 +234,9 @@ public class Addon implements de.idrinth.waraddonclient.interfaces.model.Addon {
     @Override
     public String getStatus() {
         if("-".equals(getInstalled())) {
-            return "uninstalled";
+            return " ";
         }
-        return getVersion().equals(getInstalled()) ? "current" : "outdated";
+        return getVersion().equals(getInstalled()) ? "✓" : "X";
     }
 
     private class Updater {
