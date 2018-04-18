@@ -23,7 +23,7 @@ public class Main {
      * make sure there is no main object around
      */
     private Main() {
-        //no to be used
+        //not to be used
     }
 
     /**

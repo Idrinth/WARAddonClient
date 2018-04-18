@@ -184,14 +184,14 @@ public class Window extends javax.swing.JFrame {
 
             },
             new String [] {
-                "Name", "Version", "Installed"
+                "Status", "Name", "Version", "Installed"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.String.class, java.lang.String.class, java.lang.String.class
+                java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false, false
+                false, false, false, false
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -202,16 +202,12 @@ public class Window extends javax.swing.JFrame {
                 return canEdit [columnIndex];
             }
         });
+        AddonList.setColumnSelectionAllowed(true);
         AddonList.setMaximumSize(null);
+        AddonList.setName(""); // NOI18N
         AddonList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
-        AddonList.getTableHeader().setReorderingAllowed(false);
         jScrollPane2.setViewportView(AddonList);
         AddonList.getColumnModel().getSelectionModel().setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
-        if (AddonList.getColumnModel().getColumnCount() > 0) {
-            AddonList.getColumnModel().getColumn(0).setResizable(false);
-            AddonList.getColumnModel().getColumn(1).setResizable(false);
-            AddonList.getColumnModel().getColumn(2).setResizable(false);
-        }
 
         javax.swing.GroupLayout leftSideLayout = new javax.swing.GroupLayout(leftSide);
         leftSide.setLayout(leftSideLayout);
