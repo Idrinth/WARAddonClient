@@ -49,7 +49,7 @@
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpcomponents-core</artifactId>
-            <version>4.4.12</version>
+            <version>4.4.13</version>
             <type>pom</type>
         </dependency>
         <dependency>
