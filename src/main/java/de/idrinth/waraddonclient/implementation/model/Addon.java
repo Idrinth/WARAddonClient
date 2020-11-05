@@ -286,7 +286,7 @@ public class Addon implements de.idrinth.waraddonclient.interfaces.model.Addon {
          */
         private void install() throws java.lang.Exception {
             java.io.File file = getZip();
-            (new net.lingala.zip4j.core.ZipFile(file)).extractAll(basePath);
+            (new net.lingala.zip4j.ZipFile(file)).extractAll(basePath);
             org.apache.commons.io.FileUtils.deleteQuietly(file);
             org.apache.commons.io.FileUtils.writeStringToFile(new java.io.File(basePath + name + versionFile), "<?xml version=\"1.0\" encoding=\"UTF-8\"?><UiMod><name>" + name + "</name><version>" + version + "(sys)</version></UiMod>");
         }
