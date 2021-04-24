@@ -41,7 +41,10 @@ public class TextCategory extends javax.swing.RowFilter {
      */
     @Override
     public boolean include(Entry entry) {
-        de.idrinth.waraddonclient.implementation.model.Addon addon = de.idrinth.waraddonclient.factory.AddonList.build().get(entry.getStringValue(0));
+        de.idrinth.waraddonclient.implementation.model.Addon addon = de.idrinth.waraddonclient.factory.AddonList.build().get(entry.getStringValue(1));
+        if (addon == null) {
+            return false;
+        }
         if (!textfilter.matcher(addon.getName()).find()) {
             return false;
         }
@@ -55,7 +58,7 @@ public class TextCategory extends javax.swing.RowFilter {
      * @return boolean
      */
     private boolean isInAllowedCategory(de.idrinth.waraddonclient.implementation.model.Addon addon) {
-        return tags.stream().anyMatch((tag) -> (addon.hasTag(tag)));
+        return tags.isEmpty() || tags.stream().anyMatch((tag) -> (addon.hasTag(tag)));
     }
 
 }

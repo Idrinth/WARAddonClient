@@ -19,11 +19,11 @@ package de.idrinth.waraddonclient.implementation.list;
 
 public class Addon implements java.lang.Runnable {
 
-    private java.util.HashMap<String, de.idrinth.waraddonclient.implementation.model.Addon> list = new java.util.HashMap();
+    private final java.util.HashMap<String, de.idrinth.waraddonclient.implementation.model.Addon> list = new java.util.HashMap();
 
-    private java.util.ArrayList<de.idrinth.waraddonclient.implementation.model.Addon> rows = new java.util.ArrayList();
+    private final java.util.ArrayList<de.idrinth.waraddonclient.implementation.model.Addon> rows = new java.util.ArrayList();
 
-    private java.util.Hashtable<String, watchedFile> watchedFilesMap = new java.util.Hashtable();
+    private final java.util.Hashtable<String, watchedFile> watchedFilesMap = new java.util.Hashtable();
 
     private int duration = 15;
 
