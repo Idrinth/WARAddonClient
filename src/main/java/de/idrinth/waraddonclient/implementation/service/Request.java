@@ -25,7 +25,7 @@ public class Request {
 
     private org.apache.http.impl.client.CloseableHttpClient client;
 
-    private javax.net.ssl.SSLContext sslContext;
+    private final javax.net.ssl.SSLContext sslContext;
 
     /**
      * Throws an exception if there's issues with the ssl-certificates

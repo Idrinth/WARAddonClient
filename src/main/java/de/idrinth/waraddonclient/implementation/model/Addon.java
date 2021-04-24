@@ -329,17 +329,18 @@ public class Addon implements de.idrinth.waraddonclient.interfaces.model.Addon {
         /**
          * tries to find and set the default version
          */
-        private void getDownloadVersion() {
+        private boolean getDownloadVersion() {
             java.io.File file = new java.io.File(folder.getPath() + versionFile);
             if (file.exists()) {
                 try {
                     org.w3c.dom.NodeList list = javax.xml.parsers.DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(file).getElementsByTagName("version");
                     installed = list.item(0).getTextContent();
+                    return true;
                 } catch (javax.xml.parsers.ParserConfigurationException | javax.xml.parsers.FactoryConfigurationError | org.xml.sax.SAXException | java.io.IOException exception) {
                     de.idrinth.factory.Logger.build().log(exception, de.idrinth.Logger.levelError);
                 }
             }
-
+            return false;
         }
 
         /**
@@ -349,11 +350,9 @@ public class Addon implements de.idrinth.waraddonclient.interfaces.model.Addon {
             if (folder == null || !folder.exists()) {
                 return;
             }
-            installed = "unknown";
-            if (processDirectory()) {
-                return;
+            if (!getDownloadVersion() && !processDirectory()) {
+                installed = "unknown";
             }
-            getDownloadVersion();
         }
     }
 }
