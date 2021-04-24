@@ -122,6 +122,7 @@ public class Window extends javax.swing.JFrame {
         Search = new javax.swing.JTextField();
         jScrollPane2 = new javax.swing.JScrollPane();
         AddonList = new javax.swing.JTable();
+        DeleteSearch = new javax.swing.JButton();
         rightSide = new javax.swing.JTabbedPane();
         jPanel1 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
@@ -209,19 +210,31 @@ public class Window extends javax.swing.JFrame {
         jScrollPane2.setViewportView(AddonList);
         AddonList.getColumnModel().getSelectionModel().setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
 
+        DeleteSearch.setText("X");
+        DeleteSearch.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                DeleteSearchMouseClicked(evt);
+            }
+        });
+
         javax.swing.GroupLayout leftSideLayout = new javax.swing.GroupLayout(leftSide);
         leftSide.setLayout(leftSideLayout);
         leftSideLayout.setHorizontalGroup(
             leftSideLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 199, Short.MAX_VALUE)
-            .addComponent(Search)
+            .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+            .addGroup(leftSideLayout.createSequentialGroup()
+                .addComponent(Search, javax.swing.GroupLayout.PREFERRED_SIZE, 151, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(DeleteSearch))
         );
         leftSideLayout.setVerticalGroup(
             leftSideLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(leftSideLayout.createSequentialGroup()
-                .addComponent(Search, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(leftSideLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(Search, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(DeleteSearch))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 391, Short.MAX_VALUE))
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 388, Short.MAX_VALUE))
         );
 
         jSplitPane2.setLeftComponent(leftSide);
@@ -603,6 +616,12 @@ public class Window extends javax.swing.JFrame {
         changeRefreshTo(180);
     }//GEN-LAST:event_Refresh4ActionPerformed
 
+    private void DeleteSearchMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_DeleteSearchMouseClicked
+        de.idrinth.factory.Logger.build().log(evt.paramString(), de.idrinth.Logger.levelInfo);
+        Search.setText("");
+        SearchActionPerformed(new java.awt.event.ActionEvent(evt.getSource(), 1001, "reset"));
+    }//GEN-LAST:event_DeleteSearchMouseClicked
+
     /**
      * handles actual changing of languages
      *
@@ -640,7 +659,8 @@ public class Window extends javax.swing.JFrame {
     private void updateList() {
         for (int position = 0; position < AddonList.getRowCount(); position++) {
             if (de.idrinth.waraddonclient.factory.AddonList.build().get(AddonList.convertRowIndexToModel(position)).getName().equalsIgnoreCase(activeAddon.getName())) {
-                AddonList.setValueAt(activeAddon.getInstalled(), position, 2);
+                AddonList.setValueAt(activeAddon.getInstalled(), position, 3);
+                AddonList.setValueAt(activeAddon.getStatus(), position, 0);
             }
         }
     }
@@ -649,6 +669,7 @@ public class Window extends javax.swing.JFrame {
     private javax.swing.JMenuItem About;
     private javax.swing.JTable AddonList;
     private javax.swing.JLabel CurTags;
+    private javax.swing.JButton DeleteSearch;
     private javax.swing.JEditorPane Description;
     private javax.swing.JRadioButtonMenuItem Deutsch;
     private javax.swing.JRadioButtonMenuItem English;

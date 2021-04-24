@@ -263,6 +263,7 @@ public class Addon implements de.idrinth.waraddonclient.interfaces.model.Addon {
             java.io.File addonFolder = new java.io.File(basePath + name);
             emptyFolder(addonFolder);
             addonFolder.delete();
+            installed="-";
         }
 
         /**
@@ -288,7 +289,8 @@ public class Addon implements de.idrinth.waraddonclient.interfaces.model.Addon {
             java.io.File file = getZip();
             (new net.lingala.zip4j.ZipFile(file)).extractAll(basePath);
             org.apache.commons.io.FileUtils.deleteQuietly(file);
-            org.apache.commons.io.FileUtils.writeStringToFile(new java.io.File(basePath + name + versionFile), "<?xml version=\"1.0\" encoding=\"UTF-8\"?><UiMod><name>" + name + "</name><version>" + version + "(sys)</version></UiMod>");
+            org.apache.commons.io.FileUtils.writeStringToFile(new java.io.File(basePath + name + versionFile), "<?xml version=\"1.0\" encoding=\"UTF-8\"?><UiMod><name>" + name + "</name><version>" + version + "</version></UiMod>");
+            installed=version;
         }
 
     }
@@ -334,7 +336,7 @@ public class Addon implements de.idrinth.waraddonclient.interfaces.model.Addon {
             if (file.exists()) {
                 try {
                     org.w3c.dom.NodeList list = javax.xml.parsers.DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(file).getElementsByTagName("version");
-                    installed = list.item(0).getTextContent();
+                    installed = list.item(0).getTextContent().replace("(sys)", "");
                     return true;
                 } catch (javax.xml.parsers.ParserConfigurationException | javax.xml.parsers.FactoryConfigurationError | org.xml.sax.SAXException | java.io.IOException exception) {
                     de.idrinth.factory.Logger.build().log(exception, de.idrinth.Logger.levelError);
