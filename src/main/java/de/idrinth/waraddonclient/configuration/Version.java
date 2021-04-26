@@ -25,7 +25,7 @@ public class Version implements java.lang.Runnable {
      * @return String
      */
     public static String getLocalVersion() {
-        return "1.5.0";
+        return "1.6.0";
     }
 
     /**

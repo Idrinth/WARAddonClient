@@ -17,6 +17,9 @@
 
 package de.idrinth.waraddonclient.gui;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 public class Window extends javax.swing.JFrame {
 
     private javax.swing.table.TableRowSorter sorter;
@@ -123,6 +126,7 @@ public class Window extends javax.swing.JFrame {
         jScrollPane2 = new javax.swing.JScrollPane();
         AddonList = new javax.swing.JTable();
         DeleteSearch = new javax.swing.JButton();
+        UpdateAll = new javax.swing.JButton();
         rightSide = new javax.swing.JTabbedPane();
         jPanel1 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
@@ -161,7 +165,7 @@ public class Window extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jSplitPane2.setDividerLocation(200);
+        jSplitPane2.setDividerLocation(300);
         jSplitPane2.setToolTipText("");
         jSplitPane2.setMinimumSize(new java.awt.Dimension(300, 200));
         jSplitPane2.setName(""); // NOI18N
@@ -217,22 +221,33 @@ public class Window extends javax.swing.JFrame {
             }
         });
 
+        UpdateAll.setText("Update All");
+        UpdateAll.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                UpdateAllMouseClicked(evt);
+            }
+        });
+
         javax.swing.GroupLayout leftSideLayout = new javax.swing.GroupLayout(leftSide);
         leftSide.setLayout(leftSideLayout);
         leftSideLayout.setHorizontalGroup(
             leftSideLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
             .addGroup(leftSideLayout.createSequentialGroup()
                 .addComponent(Search, javax.swing.GroupLayout.PREFERRED_SIZE, 151, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(DeleteSearch))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(DeleteSearch)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(UpdateAll)
+                .addGap(0, 11, Short.MAX_VALUE))
+            .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
         );
         leftSideLayout.setVerticalGroup(
             leftSideLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(leftSideLayout.createSequentialGroup()
                 .addGroup(leftSideLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(Search, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(DeleteSearch))
+                    .addComponent(DeleteSearch)
+                    .addComponent(UpdateAll))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 388, Short.MAX_VALUE))
         );
@@ -278,13 +293,10 @@ public class Window extends javax.swing.JFrame {
                 .addGap(21, 21, 21)
                 .addComponent(InstallButton)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(Title, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(Title, javax.swing.GroupLayout.DEFAULT_SIZE, 249, Short.MAX_VALUE)
                 .addGap(18, 18, 18)
                 .addComponent(RemoveButton)
                 .addGap(24, 24, 24))
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 470, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addComponent(localVersion)
                 .addGap(1, 1, 1)
@@ -293,6 +305,7 @@ public class Window extends javax.swing.JFrame {
                 .addComponent(remoteVersion)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(CurTags, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -353,7 +366,7 @@ public class Window extends javax.swing.JFrame {
                         .addComponent(UploadUrl, javax.swing.GroupLayout.PREFERRED_SIZE, 265, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addComponent(label1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 115, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 132, Short.MAX_VALUE)
                         .addComponent(UploadFile, javax.swing.GroupLayout.PREFERRED_SIZE, 265, javax.swing.GroupLayout.PREFERRED_SIZE))))
         );
         jPanel2Layout.setVerticalGroup(
@@ -466,7 +479,7 @@ public class Window extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jSplitPane2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jSplitPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 800, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -622,6 +635,32 @@ public class Window extends javax.swing.JFrame {
         SearchActionPerformed(new java.awt.event.ActionEvent(evt.getSource(), 1001, "reset"));
     }//GEN-LAST:event_DeleteSearchMouseClicked
 
+    private void UpdateAllMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_UpdateAllMouseClicked
+        de.idrinth.waraddonclient.implementation.list.Addon addonList = de.idrinth.waraddonclient.factory.AddonList.build();
+        int errors = 0;
+        int count = 0;
+        for (int i=0; i < addonList.size(); i++) {
+            de.idrinth.waraddonclient.implementation.model.Addon addon = addonList.get(i);
+            if (addon.getStatus().equals("X")) {
+                count++;
+                try {
+                    addon.install();
+                } catch (Exception ex) {
+                    errors ++;
+                    Logger.getLogger(Window.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        }
+        updateList();
+        if (count == 0) {
+            javax.swing.JOptionPane.showMessageDialog(this, "No Add-ons to update.");
+        } else if (errors == 0) {
+            javax.swing.JOptionPane.showMessageDialog(this, "All "+count+" Add-ons were updated.");
+        } else {
+            javax.swing.JOptionPane.showMessageDialog(this, "Updating "+errors+" out of "+count+" Add-ons failed.");
+        }
+    }//GEN-LAST:event_UpdateAllMouseClicked
+
     /**
      * handles actual changing of languages
      *
@@ -657,11 +696,11 @@ public class Window extends javax.swing.JFrame {
      * updates addon list
      */
     private void updateList() {
+        de.idrinth.waraddonclient.implementation.list.Addon addons = de.idrinth.waraddonclient.factory.AddonList.build();
         for (int position = 0; position < AddonList.getRowCount(); position++) {
-            if (de.idrinth.waraddonclient.factory.AddonList.build().get(AddonList.convertRowIndexToModel(position)).getName().equalsIgnoreCase(activeAddon.getName())) {
-                AddonList.setValueAt(activeAddon.getInstalled(), position, 3);
-                AddonList.setValueAt(activeAddon.getStatus(), position, 0);
-            }
+            de.idrinth.waraddonclient.implementation.model.Addon addon = addons.get(AddonList.convertRowIndexToModel(position));
+            AddonList.setValueAt(addon.getInstalled(), position, 3);
+            AddonList.setValueAt(addon.getStatus(), position, 0);
         }
     }
 
@@ -683,6 +722,7 @@ public class Window extends javax.swing.JFrame {
     private javax.swing.JTextField Search;
     private javax.swing.JMenu Tags;
     private javax.swing.JLabel Title;
+    private javax.swing.JButton UpdateAll;
     private javax.swing.JCheckBox UploadEnable;
     private javax.swing.JTextField UploadFile;
     private javax.swing.JTextArea UploadReason;
@@ -756,7 +796,7 @@ public class Window extends javax.swing.JFrame {
             Title.setText(activeAddon.getName());
             InstallButton.setEnabled(isAnAddon);
             RemoveButton.setEnabled(isAnAddon);
-            setTitle(activeAddon.getName() + " - " + baseTitle);
+            setTitle(activeAddon.getName() + " - " + baseTitle + " " + de.idrinth.waraddonclient.configuration.Version.getLocalVersion());
             if (!isAnAddon) {
                 return;
             }
