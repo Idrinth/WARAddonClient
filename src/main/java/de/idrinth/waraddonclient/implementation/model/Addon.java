@@ -236,7 +236,18 @@ public class Addon implements de.idrinth.waraddonclient.interfaces.model.Addon {
         if("-".equals(getInstalled())) {
             return " ";
         }
-        return getVersion().equals(getInstalled()) ? "✓" : "X";
+        try {
+            com.github.zafarkhaja.semver.Version remote = com.github.zafarkhaja.semver.Version.valueOf(getVersion());
+            com.github.zafarkhaja.semver.Version local = com.github.zafarkhaja.semver.Version.valueOf(getInstalled());
+            if (remote.equals(local)) {
+                return "✓";
+            }
+            if (remote.lessThan(local)) {
+                return "?";
+            }
+        } catch (com.github.zafarkhaja.semver.ParseException e) {
+        }
+        return "X";
     }
 
     private class Updater {

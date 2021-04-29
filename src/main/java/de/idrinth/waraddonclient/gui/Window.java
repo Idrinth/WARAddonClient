@@ -17,8 +17,12 @@
 
 package de.idrinth.waraddonclient.gui;
 
+import de.idrinth.waraddonclient.backup.Backup;
+import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import net.lingala.zip4j.exception.ZipException;
 
 public class Window extends javax.swing.JFrame {
 
@@ -147,6 +151,12 @@ public class Window extends javax.swing.JFrame {
         label1 = new java.awt.Label();
         UploadFile = new javax.swing.JTextField();
         jMenuBar1 = new javax.swing.JMenuBar();
+        jMenu4 = new javax.swing.JMenu();
+        About = new javax.swing.JMenuItem();
+        Tags = new javax.swing.JMenu();
+        Tools = new javax.swing.JMenu();
+        CreateBackup = new javax.swing.JMenuItem();
+        RestoreBackup = new javax.swing.JMenuItem();
         jMenu3 = new javax.swing.JMenu();
         jMenu1 = new javax.swing.JMenu();
         English = new javax.swing.JRadioButtonMenuItem();
@@ -157,9 +167,10 @@ public class Window extends javax.swing.JFrame {
         Refresh2 = new javax.swing.JCheckBoxMenuItem();
         Refresh3 = new javax.swing.JCheckBoxMenuItem();
         Refresh4 = new javax.swing.JCheckBoxMenuItem();
-        Tags = new javax.swing.JMenu();
-        jSeparator1 = new javax.swing.JPopupMenu.Separator();
-        About = new javax.swing.JMenuItem();
+        Links = new javax.swing.JMenu();
+        Guilded = new javax.swing.JMenuItem();
+        BuyMeACoffee = new javax.swing.JMenuItem();
+        Source = new javax.swing.JMenuItem();
 
         jMenuItem1.setText("jMenuItem1");
 
@@ -390,6 +401,42 @@ public class Window extends javax.swing.JFrame {
 
         jSplitPane2.setRightComponent(rightSide);
 
+        jMenu4.setText("File");
+
+        About.setText("About");
+        About.setToolTipText("");
+        About.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                AboutActionPerformed(evt);
+            }
+        });
+        jMenu4.add(About);
+
+        jMenuBar1.add(jMenu4);
+
+        Tags.setText("Tags");
+        jMenuBar1.add(Tags);
+
+        Tools.setText("Tools");
+
+        CreateBackup.setText("Create Backup");
+        CreateBackup.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                CreateBackupActionPerformed(evt);
+            }
+        });
+        Tools.add(CreateBackup);
+
+        RestoreBackup.setText("Restore Backup");
+        RestoreBackup.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                RestoreBackupActionPerformed(evt);
+            }
+        });
+        Tools.add(RestoreBackup);
+
+        jMenuBar1.add(Tools);
+
         jMenu3.setText("Settings");
 
         jMenu1.setText("Language");
@@ -458,20 +505,35 @@ public class Window extends javax.swing.JFrame {
 
         jMenu3.add(jMenu2);
 
-        Tags.setText("Tags");
-        jMenu3.add(Tags);
-        jMenu3.add(jSeparator1);
+        jMenuBar1.add(jMenu3);
 
-        About.setText("About");
-        About.setToolTipText("");
-        About.addActionListener(new java.awt.event.ActionListener() {
+        Links.setText("Links");
+
+        Guilded.setText("Guilded: Idrinth's Addons");
+        Guilded.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                AboutActionPerformed(evt);
+                GuildedActionPerformed(evt);
             }
         });
-        jMenu3.add(About);
+        Links.add(Guilded);
 
-        jMenuBar1.add(jMenu3);
+        BuyMeACoffee.setText("BuyMeACoffee");
+        BuyMeACoffee.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                BuyMeACoffeeActionPerformed(evt);
+            }
+        });
+        Links.add(BuyMeACoffee);
+
+        Source.setText("GitHub:WARAddonClient");
+        Source.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                SourceActionPerformed(evt);
+            }
+        });
+        Links.add(Source);
+
+        jMenuBar1.add(Links);
 
         setJMenuBar(jMenuBar1);
 
@@ -479,7 +541,7 @@ public class Window extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jSplitPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 800, Short.MAX_VALUE)
+            .addComponent(jSplitPane2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -566,7 +628,10 @@ public class Window extends javax.swing.JFrame {
      */
     private void AboutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_AboutActionPerformed
         de.idrinth.factory.Logger.build().log(evt.getActionCommand() + " " + evt.paramString(), de.idrinth.Logger.levelInfo);
-        javax.swing.JOptionPane.showMessageDialog(this, "Not yet avaible, sorry. For more information visit github at https://github.com/Idrinth/WARAddonClient .");
+        javax.swing.JOptionPane.showMessageDialog(this, "This software is provided for free by Björn Büttner.\n"
+                + "If you have ideas or bugs please add them to the issues at GitHub:WARAddonClient.\n"
+                + "If you want to buy me a coffee you can do so at Buy me a coffee.\n"
+                + "If you need support, go to Guilded:Idrinth's Addons", "About", javax.swing.JOptionPane.INFORMATION_MESSAGE);
     }//GEN-LAST:event_AboutActionPerformed
 
     /**
@@ -661,6 +726,58 @@ public class Window extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_UpdateAllMouseClicked
 
+    private void CreateBackupActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CreateBackupActionPerformed
+        try {
+            Backup.create();
+            javax.swing.JOptionPane.showMessageDialog(this, "Saved your profile and addons in backups.");
+        } catch (ZipException ex) {
+            Logger.getLogger(Window.class.getName()).log(Level.SEVERE, null, ex);
+            javax.swing.JOptionPane.showMessageDialog(this, "Failed to save your profile and addons.");
+        }
+    }//GEN-LAST:event_CreateBackupActionPerformed
+
+    private void SourceActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SourceActionPerformed
+        try {
+            java.awt.Desktop.getDesktop().browse(new java.net.URI("https://github.com/Idrinth/WARAddonClient/"));
+        } catch (URISyntaxException|IOException ex) {
+            Logger.getLogger(Window.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_SourceActionPerformed
+
+    private void BuyMeACoffeeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BuyMeACoffeeActionPerformed
+        try {
+            java.awt.Desktop.getDesktop().browse(new java.net.URI("https://buymeacoffee.com/idrinth"));
+        } catch (URISyntaxException|IOException ex) {
+            Logger.getLogger(Window.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_BuyMeACoffeeActionPerformed
+
+    private void GuildedActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_GuildedActionPerformed
+        try {
+            java.awt.Desktop.getDesktop().browse(new java.net.URI("https://guilded.gg/Idrinths-Addons/"));
+        } catch (URISyntaxException|IOException ex) {
+            Logger.getLogger(Window.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_GuildedActionPerformed
+
+    private void RestoreBackupActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_RestoreBackupActionPerformed
+        java.awt.FileDialog dialog = new java.awt.FileDialog(this, "Select backup", java.awt.FileDialog.LOAD);
+        dialog.setVisible(true);
+        if (dialog.getFile() != null) {
+            if (!dialog.getFile().endsWith(".zip")) {
+                javax.swing.JOptionPane.showMessageDialog(this, "Backup has to be a zip-File.");
+                return;
+            }
+            try {
+                Backup.restore(new java.io.File(dialog.getDirectory()+"/"+dialog.getFile()));
+                javax.swing.JOptionPane.showMessageDialog(this, "Backup restored.");
+            } catch (ZipException ex) {
+                Logger.getLogger(Window.class.getName()).log(Level.SEVERE, null, ex);
+                javax.swing.JOptionPane.showMessageDialog(this, "Couldn't restore Backup.");
+            }
+        }
+    }//GEN-LAST:event_RestoreBackupActionPerformed
+
     /**
      * handles actual changing of languages
      *
@@ -707,21 +824,28 @@ public class Window extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuItem About;
     private javax.swing.JTable AddonList;
+    private javax.swing.JMenuItem BuyMeACoffee;
+    private javax.swing.JMenuItem CreateBackup;
     private javax.swing.JLabel CurTags;
     private javax.swing.JButton DeleteSearch;
     private javax.swing.JEditorPane Description;
     private javax.swing.JRadioButtonMenuItem Deutsch;
     private javax.swing.JRadioButtonMenuItem English;
     private javax.swing.JRadioButtonMenuItem Francais;
+    private javax.swing.JMenuItem Guilded;
     private javax.swing.JButton InstallButton;
+    private javax.swing.JMenu Links;
     private javax.swing.JCheckBoxMenuItem Refresh1;
     private javax.swing.JCheckBoxMenuItem Refresh2;
     private javax.swing.JCheckBoxMenuItem Refresh3;
     private javax.swing.JCheckBoxMenuItem Refresh4;
     private javax.swing.JButton RemoveButton;
+    private javax.swing.JMenuItem RestoreBackup;
     private javax.swing.JTextField Search;
+    private javax.swing.JMenuItem Source;
     private javax.swing.JMenu Tags;
     private javax.swing.JLabel Title;
+    private javax.swing.JMenu Tools;
     private javax.swing.JButton UpdateAll;
     private javax.swing.JCheckBox UploadEnable;
     private javax.swing.JTextField UploadFile;
@@ -732,6 +856,7 @@ public class Window extends javax.swing.JFrame {
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenu jMenu2;
     private javax.swing.JMenu jMenu3;
+    private javax.swing.JMenu jMenu4;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JPanel jPanel1;
@@ -739,7 +864,6 @@ public class Window extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
-    private javax.swing.JPopupMenu.Separator jSeparator1;
     private javax.swing.JSplitPane jSplitPane2;
     private java.awt.Label label1;
     private javax.swing.JPanel leftSide;
