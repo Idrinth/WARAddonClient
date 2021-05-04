@@ -17,6 +17,8 @@
 
 package de.idrinth.waraddonclient.factory;
 
+import de.idrinth.waraddonclient.gui.FrameMonitor;
+
 public final class Interface {
 
     private static de.idrinth.waraddonclient.gui.Window instance;
@@ -36,6 +38,7 @@ public final class Interface {
     public synchronized static de.idrinth.waraddonclient.gui.Window build() {
         if (instance == null) {
             instance = new de.idrinth.waraddonclient.gui.Window();
+            FrameMonitor.registerFrame(instance, "window", 0, 0, 800, 450);
         }
         return instance;
     }
