@@ -18,11 +18,18 @@
 package de.idrinth.waraddonclient.gui;
 
 import de.idrinth.waraddonclient.backup.Backup;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.lingala.zip4j.exception.ZipException;
+
+import javax.swing.*;
 
 public class Window extends javax.swing.JFrame {
 
@@ -87,15 +94,54 @@ public class Window extends javax.swing.JFrame {
      * checks if this program is in the correct place
      */
     private void processPosition() {
-        String errors = "";
+        boolean error = false;
+        java.io.File config = new File("./WARAddonClient.cfg");
+        String path = "./";
         if (!new java.io.File("./WAR.exe").exists()) {
-            errors += "Missing WAR.exe here, please put this file in the Warhammer Online directory.";
+            if (! config.exists()) {
+                javax.swing.JOptionPane.showMessageDialog(this, "No WAR.exe found, please select it");
+                JFileChooser j = new JFileChooser();
+                int r = j.showOpenDialog(this);
+
+                // if the user selects a file
+                if (r == JFileChooser.APPROVE_OPTION)
+                {
+                    path = j.getSelectedFile().getParent();
+                    try {
+                        config.createNewFile();
+                        FileWriter writer = new FileWriter(config.getAbsoluteFile());
+                        writer.write("path=" + path);
+                        writer.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    System.setProperty("user.dir", path);
+                    if (!new java.io.File(path + "/WAR.exe").exists()) {
+                        error = true;
+                    }
+                }
+            } else {
+                //load from file
+                try {
+                    Scanner scanner = new Scanner(config);
+                    while (scanner.hasNextLine()) {
+                        String line = scanner.nextLine();
+                        if (line.startsWith("path")) {
+                            path = line.split("=")[1];
+                        }
+                    }
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                }
+                System.setProperty("user.dir", path);
+            }
+
         }
-        if (!new java.io.File("./RoRLauncher.exe").exists()) {
-            errors += "Missing RoRLauncher.exe here, please put this file in the Warhammer Online directory.";
-        }
-        if (errors.length() > 0) {
-            exitWithError(errors);
+        if (error) {
+            if (config.exists()) {
+                config.delete();
+            }
+            exitWithError("Unable to find WAR.exe");
         }
     }
 

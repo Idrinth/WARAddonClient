@@ -36,7 +36,7 @@ public final class FindAddonFolder {
         path[0] = "interface";
         path[1] = "addons";
         path[2] = name;
-        java.io.File folder = new java.io.File("./");
+        java.io.File folder = new java.io.File(System.getProperty("user.dir"));
         for (int counter = 0; counter < 3; counter++) {
             folder = findMatch(folder, path[counter]);
             if (folder == null || !folder.exists()) {
