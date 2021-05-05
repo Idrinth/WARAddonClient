@@ -36,6 +36,5 @@ Obviously, it would be helpful to provide a short explanation to the readers, so
 ## Contributions
 
 I'll happily take contributions, code reviews or improvements.
-If you want to supply code, please don't just import everything and work with fully qualified names to prevent later collisions.
 
-Other than that everyone is invited to grap the current developement .jar and test it, so issues can be fixed as early as possible.
+Other than that everyone is invited to grab the current developement .jar and test it, so issues can be fixed as early as possible.
