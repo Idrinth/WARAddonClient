@@ -103,7 +103,7 @@ public class Window extends javax.swing.JFrame {
      *
      * @todo make it possible to handle most of this via an addon-like object
      */
-    private final void finishGuiBuilding() {
+    private void finishGuiBuilding() {
         AddonList.getSelectionModel().addListSelectionListener(new tableListener());
         setIconImage(java.awt.Toolkit.getDefaultToolkit().getImage(getClass().getResource("/Images/logo.png")));
         sorter = new TableRowSorter(AddonList.getModel());
@@ -131,7 +131,6 @@ public class Window extends javax.swing.JFrame {
         if (new java.io.File("./WAR.exe").exists()) {
             return;
         }
-        boolean error = false;
         File config = new File("./WARAddonClient.cfg");
         String path = "./";
         if (! config.exists()) {
@@ -144,8 +143,10 @@ public class Window extends javax.swing.JFrame {
             {
                 path = j.getSelectedFile().getParent();
                 try {
-                    config.createNewFile();
-                    try (FileWriter writer = new java.io.FileWriter(config.getAbsoluteFile())) {
+                    if (! config.createNewFile()) {
+                        throw new IOException("Unable to create config file");
+                    }
+                    try (FileWriter writer = new FileWriter(config.getAbsoluteFile())) {
                         writer.write("path=" + path);
                     }
                 } catch (IOException exception) {
@@ -163,14 +164,15 @@ public class Window extends javax.swing.JFrame {
                         path = line.split("=")[1];
                     }
                 }
+                scanner.close();
                 System.setProperty("user.dir", path);
                 return;
             } catch (FileNotFoundException exception) {
                 de.idrinth.factory.Logger.build().log(exception, de.idrinth.Logger.levelError);
             }
         }
-        if (config.exists()) {
-            config.delete();
+        if (config.exists() && ! config.delete()) {
+            de.idrinth.factory.Logger.build().log("Unable to delete config file", de.idrinth.Logger.levelError);
         }
         exitWithError("Unable to find WAR.exe");
     }
