@@ -23,6 +23,9 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.prefs.Preferences;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 import net.lingala.zip4j.exception.ZipException;
 
 public class Window extends javax.swing.JFrame {
@@ -36,14 +39,41 @@ public class Window extends javax.swing.JFrame {
     private de.idrinth.waraddonclient.implementation.list.Tag tagList;
 
     private static final String baseTitle = "Idrinth's WAR Addon Client";
+    
+    private final Preferences prefs = Preferences.userRoot().node(this.getClass().getName());
 
     /**
      * Creates new form Wrapper
      */
     public Window() {
+        initTheme();
         initComponents();
         finishGuiBuilding();
         processPosition();
+    }
+    private void initTheme() {
+        switch(prefs.get("theme", "default")) {
+            case "darcula":
+                try {
+                    UIManager.setLookAndFeel(com.bulenkov.darcula.DarculaLaf.class.getName());
+                } catch (ClassNotFoundException|InstantiationException|IllegalAccessException|UnsupportedLookAndFeelException ex) {
+                    Logger.getLogger(Window.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                break;
+            case "system":
+                try {
+                    UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+                } catch (ClassNotFoundException|InstantiationException|IllegalAccessException|UnsupportedLookAndFeelException ex) {
+                    Logger.getLogger(Window.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                break;
+            case "cross-plattform":
+                try {
+                    UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
+                } catch (ClassNotFoundException|InstantiationException|IllegalAccessException|UnsupportedLookAndFeelException ex) {
+                    Logger.getLogger(Window.class.getName()).log(Level.SEVERE, null, ex);
+                }
+        }
     }
 
     /**
@@ -207,6 +237,11 @@ public class Window extends javax.swing.JFrame {
         Refresh2 = new javax.swing.JCheckBoxMenuItem();
         Refresh3 = new javax.swing.JCheckBoxMenuItem();
         Refresh4 = new javax.swing.JCheckBoxMenuItem();
+        jMenu5 = new javax.swing.JMenu();
+        ThemeDefault = new javax.swing.JMenuItem();
+        ThemeDarcula = new javax.swing.JMenuItem();
+        ThemeSystem = new javax.swing.JMenuItem();
+        CrossPlattform = new javax.swing.JMenuItem();
         Links = new javax.swing.JMenu();
         Guilded = new javax.swing.JMenuItem();
         BuyMeACoffee = new javax.swing.JMenuItem();
@@ -545,6 +580,42 @@ public class Window extends javax.swing.JFrame {
 
         jMenu3.add(jMenu2);
 
+        jMenu5.setText("Theme");
+
+        ThemeDefault.setText("Default");
+        ThemeDefault.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                ThemeDefaultActionPerformed(evt);
+            }
+        });
+        jMenu5.add(ThemeDefault);
+
+        ThemeDarcula.setText("Darcula");
+        ThemeDarcula.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                ThemeDarculaActionPerformed(evt);
+            }
+        });
+        jMenu5.add(ThemeDarcula);
+
+        ThemeSystem.setText("System");
+        ThemeSystem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                ThemeSystemActionPerformed(evt);
+            }
+        });
+        jMenu5.add(ThemeSystem);
+
+        CrossPlattform.setText("Cross-Plattform");
+        CrossPlattform.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                CrossPlattformActionPerformed(evt);
+            }
+        });
+        jMenu5.add(CrossPlattform);
+
+        jMenu3.add(jMenu5);
+
         jMenuBar1.add(jMenu3);
 
         Links.setText("Links");
@@ -818,6 +889,26 @@ public class Window extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_RestoreBackupActionPerformed
 
+    private void ThemeDefaultActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ThemeDefaultActionPerformed
+        prefs.put("theme", "default");
+        javax.swing.JOptionPane.showMessageDialog(this, "After restarting you can now enjoy the default Theme.");
+    }//GEN-LAST:event_ThemeDefaultActionPerformed
+
+    private void ThemeDarculaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ThemeDarculaActionPerformed
+        prefs.put("theme", "darcula");
+        javax.swing.JOptionPane.showMessageDialog(this, "After restarting you can now enjoy the darcula Theme.");
+    }//GEN-LAST:event_ThemeDarculaActionPerformed
+
+    private void ThemeSystemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ThemeSystemActionPerformed
+        prefs.put("theme", "system");
+        javax.swing.JOptionPane.showMessageDialog(this, "After restarting you can now enjoy the system Theme.");
+    }//GEN-LAST:event_ThemeSystemActionPerformed
+
+    private void CrossPlattformActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CrossPlattformActionPerformed
+        prefs.put("theme", "cross-plattform");
+        javax.swing.JOptionPane.showMessageDialog(this, "After restarting you can now enjoy the cross-plattform Theme.");
+    }//GEN-LAST:event_CrossPlattformActionPerformed
+
     /**
      * handles actual changing of languages
      *
@@ -866,6 +957,7 @@ public class Window extends javax.swing.JFrame {
     private javax.swing.JTable AddonList;
     private javax.swing.JMenuItem BuyMeACoffee;
     private javax.swing.JMenuItem CreateBackup;
+    private javax.swing.JMenuItem CrossPlattform;
     private javax.swing.JLabel CurTags;
     private javax.swing.JButton DeleteSearch;
     private javax.swing.JEditorPane Description;
@@ -884,6 +976,9 @@ public class Window extends javax.swing.JFrame {
     private javax.swing.JTextField Search;
     private javax.swing.JMenuItem Source;
     private javax.swing.JMenu Tags;
+    private javax.swing.JMenuItem ThemeDarcula;
+    private javax.swing.JMenuItem ThemeDefault;
+    private javax.swing.JMenuItem ThemeSystem;
     private javax.swing.JLabel Title;
     private javax.swing.JMenu Tools;
     private javax.swing.JButton UpdateAll;
@@ -897,6 +992,7 @@ public class Window extends javax.swing.JFrame {
     private javax.swing.JMenu jMenu2;
     private javax.swing.JMenu jMenu3;
     private javax.swing.JMenu jMenu4;
+    private javax.swing.JMenu jMenu5;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JPanel jPanel1;
