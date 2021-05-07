@@ -15,9 +15,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package de.idrinth.waraddonclient.implementation.model;
+package de.idrinth.waraddonclient.model;
 
-public class NoAddon implements de.idrinth.waraddonclient.interfaces.model.Addon {
+public class NoAddon implements de.idrinth.waraddonclient.model.Addon {
 
     /**
      *

@@ -1,4 +1,6 @@
-package de.idrinth.waraddonclient.implementation.service;
+package de.idrinth.waraddonclient.service;
+
+import de.idrinth.waraddonclient.Config;
 
 public class Request {
 
@@ -57,10 +59,10 @@ public class Request {
      */
     private synchronized org.apache.http.HttpResponse executionHandler(org.apache.http.client.methods.HttpRequestBase uri) throws java.lang.Exception {
         uri.setConfig(org.apache.http.client.config.RequestConfig.DEFAULT);
-        uri.setHeader("User-Agent", "IdrinthAddonClient/" + de.idrinth.waraddonclient.configuration.Version.getLocalVersion());
+        uri.setHeader("User-Agent", "IdrinthAddonClient/" + Config.getVersion());
         uri.setHeader("Cache-Control", "no-cache");
         while (requestActive) {
-            de.idrinth.waraddonclient.implementation.service.Sleeper.sleep(150);
+            de.idrinth.waraddonclient.service.Sleeper.sleep(150);
         }
         requestActive = true;
         client = org.apache.http.impl.client.HttpClientBuilder.create()

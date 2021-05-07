@@ -1,4 +1,4 @@
-package de.idrinth.waraddonclient.implementation.service;
+package de.idrinth.waraddonclient.service;
 
 import de.idrinth.waraddonclient.Config;
 import java.io.File;

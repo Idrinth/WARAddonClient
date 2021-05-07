@@ -59,4 +59,15 @@ public class Config {
         );
     }
 
+    public static String getVersion() {
+        return "1.9.0";
+    }
+
+    public static boolean isEnabled(String addon) {
+        return prefs.getBoolean("addon-upload-"+addon, false);
+    }
+
+    public static void setEnabled(String addon, boolean enable) {
+        prefs.putBoolean("addon-upload-"+addon, enable);
+    }
 }

@@ -86,9 +86,9 @@ public class TrustManager implements org.apache.http.ssl.TrustStrategy {
 
         private final String fileSeperator;
 
-        private final String preferedCerts = "jssecacerts";
+        private static final String PREFERED_CERTIFICATES = "jssecacerts";
 
-        private final String alternateCerts = "cacerts";
+        private static final String ALTERNATE_CERTIFICATES = "cacerts";
 
         /**
          * checks for the fileSeperator used multiple times
@@ -122,8 +122,8 @@ public class TrustManager implements org.apache.http.ssl.TrustStrategy {
          */
         private String fileForKeystore() {
             String path = findStoreFolder().getAbsolutePath() + fileSeperator;
-            String prefered = path + preferedCerts;
-            String alternative = path + alternateCerts;
+            String prefered = path + PREFERED_CERTIFICATES;
+            String alternative = path + ALTERNATE_CERTIFICATES;
             return new java.io.File(prefered).exists() ? prefered : alternative;
         }
 

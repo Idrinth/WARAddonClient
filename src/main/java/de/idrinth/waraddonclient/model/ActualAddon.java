@@ -1,4 +1,4 @@
-package de.idrinth.waraddonclient.implementation.model;
+package de.idrinth.waraddonclient.model;
 
 import de.idrinth.waraddonclient.Config;
 import de.idrinth.waraddonclient.Utils;
@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import org.apache.commons.io.FileUtils;
 
-public class ActualAddon implements de.idrinth.waraddonclient.interfaces.model.Addon {
+public class ActualAddon implements de.idrinth.waraddonclient.model.Addon {
 
     private HashMap<String, String> descriptions = new HashMap<>();
 
@@ -216,6 +216,7 @@ public class ActualAddon implements de.idrinth.waraddonclient.interfaces.model.A
                 return "?";
             }
         } catch (com.github.zafarkhaja.semver.ParseException e) {
+            return "X";
         }
         return "X";
     }
@@ -285,7 +286,7 @@ public class ActualAddon implements de.idrinth.waraddonclient.interfaces.model.A
          * @param base
          */
         public VersionFinder() {
-            folder = de.idrinth.waraddonclient.implementation.service.AddonFolderLocator.find(name);
+            folder = de.idrinth.waraddonclient.service.AddonFolderLocator.find(name);
         }
 
         /**

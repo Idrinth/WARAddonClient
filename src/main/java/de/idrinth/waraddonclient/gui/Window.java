@@ -2,8 +2,8 @@ package de.idrinth.waraddonclient.gui;
 
 import de.idrinth.waraddonclient.Config;
 import de.idrinth.waraddonclient.backup.Backup;
-import de.idrinth.waraddonclient.implementation.list.Tag;
-import de.idrinth.waraddonclient.interfaces.model.Addon;
+import de.idrinth.waraddonclient.list.Tag;
+import de.idrinth.waraddonclient.model.Addon;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.logging.Level;
@@ -11,15 +11,16 @@ import java.util.logging.Logger;
 import net.lingala.zip4j.exception.ZipException;
 import javax.swing.table.TableRowSorter;
 import javax.swing.JTable;
-import de.idrinth.waraddonclient.configuration.Version;
+import de.idrinth.waraddonclient.service.Version;
 import de.idrinth.waraddonclient.gui.tablefilter.TextCategory;
-import de.idrinth.waraddonclient.implementation.model.AddonSettings;
+import de.idrinth.waraddonclient.model.AddonSettings;
 import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.FileDialog;
 import java.awt.Point;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.util.ArrayList;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.RowFilter;
@@ -32,9 +33,7 @@ import javax.swing.event.ListSelectionListener;
 
 public class Window extends javax.swing.JFrame {
 
-    private TableRowSorter sorter;
-
-    private Addon activeAddon = new de.idrinth.waraddonclient.implementation.model.NoAddon();
+    private Addon activeAddon = new de.idrinth.waraddonclient.model.NoAddon();
 
     private Tag tagList;
 
@@ -67,10 +66,9 @@ public class Window extends javax.swing.JFrame {
     private void finishGuiBuilding() {
         AddonList.getSelectionModel().addListSelectionListener(new TableListener());
         setIconImage(java.awt.Toolkit.getDefaultToolkit().getImage(getClass().getResource("/Images/logo.png")));
-        sorter = new TableRowSorter(AddonList.getModel());
-        AddonList.setRowSorter(sorter);
+        AddonList.setRowSorter(new TableRowSorter<>(AddonList.getModel()));
         Description.addHyperlinkListener(new HyperlinkListenerImpl());
-        localVersion.setText(Version.getLocalVersion());
+        localVersion.setText(Config.getVersion());
         tagList = new Tag(Tags);
         new java.lang.Thread(tagList).start();
         new java.lang.Thread(new Version()).start();
@@ -79,8 +77,8 @@ public class Window extends javax.swing.JFrame {
 
     public void newFilter() {
         try {
-            RowFilter rf = new TextCategory(Search.getText(), tagList.getActiveTags());
-            sorter.setRowFilter(rf);
+            RowFilter<String, ArrayList<String>> rf = new TextCategory(Search.getText(), tagList.getActiveTags());
+            ((TableRowSorter)AddonList.getRowSorter()).setRowFilter(rf);
         } catch (java.util.regex.PatternSyntaxException exception) {
             de.idrinth.factory.Logger.build().log(exception, de.idrinth.Logger.LEVEL_ERROR);
         }
@@ -702,7 +700,7 @@ public class Window extends javax.swing.JFrame {
     }//GEN-LAST:event_DeleteSearchMouseClicked
 
     private void UpdateAllMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_UpdateAllMouseClicked
-        de.idrinth.waraddonclient.implementation.list.Addon addonList = de.idrinth.waraddonclient.factory.AddonList.build();
+        de.idrinth.waraddonclient.list.Addon addonList = de.idrinth.waraddonclient.factory.AddonList.build();
         int errors = 0;
         int count = 0;
         for (int i = 0; i < addonList.size(); i++) {
@@ -811,9 +809,9 @@ public class Window extends javax.swing.JFrame {
      * updates addon list
      */
     private void updateList() {
-        de.idrinth.waraddonclient.implementation.list.Addon addons = de.idrinth.waraddonclient.factory.AddonList.build();
+        de.idrinth.waraddonclient.list.Addon addons = de.idrinth.waraddonclient.factory.AddonList.build();
         for (int position = 0; position < AddonList.getRowCount(); position++) {
-            de.idrinth.waraddonclient.implementation.model.ActualAddon addon = addons.get(AddonList.convertRowIndexToModel(position));
+            de.idrinth.waraddonclient.model.ActualAddon addon = addons.get(AddonList.convertRowIndexToModel(position));
             AddonList.setValueAt(addon.getInstalled(), position, 3);
             AddonList.setValueAt(addon.getStatus(), position, 0);
         }
@@ -911,7 +909,7 @@ public class Window extends javax.swing.JFrame {
             Title.setText(activeAddon.getName());
             InstallButton.setEnabled(isAnAddon);
             RemoveButton.setEnabled(isAnAddon);
-            setTitle(activeAddon.getName() + " - " + BASE_TITLE + " " + Version.getLocalVersion());
+            setTitle(activeAddon.getName() + " - " + BASE_TITLE + " " + Config.getVersion());
             if (!isAnAddon) {
                 return;
             }

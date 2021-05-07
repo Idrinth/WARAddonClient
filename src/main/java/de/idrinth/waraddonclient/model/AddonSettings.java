@@ -1,4 +1,6 @@
-package de.idrinth.waraddonclient.implementation.model;
+package de.idrinth.waraddonclient.model;
+
+import de.idrinth.waraddonclient.Config;
 
 public class AddonSettings {
 
@@ -14,52 +16,30 @@ public class AddonSettings {
 
     private boolean hasSettings;
 
-    /**
-     *
-     * @return String
-     */
     public String getFile() {
         return file;
     }
 
-    /**
-     * is file upload enabled?
-     *
-     * @return boolean
-     */
     public boolean isEnabled() {
         return enabled;
     }
 
-    /**
-     * activates/deactivates upload
-     *
-     * @param enabled
-     */
     public void setEnabled(boolean enable) {
         this.enabled = enable;
-        de.idrinth.waraddonclient.factory.User.build().setEnabled(name, enable);
+        Config.setEnabled(name, enable);
     }
 
-    /**
-     *
-     * @return String
-     */
     public String getReason() {
         return reason;
     }
 
-    /**
-     *
-     * @return String
-     */
     public String getUrl() {
         return url;
     }
 
     public AddonSettings(String addon) {
         this.name = addon;
-        this.enabled = de.idrinth.waraddonclient.factory.User.build().getEnabled(addon);
+        this.enabled = Config.isEnabled(addon);
         refresh();
     }
 
@@ -67,12 +47,12 @@ public class AddonSettings {
         return hasSettings;
     }
 
-    final public void refresh() {
+    public final void refresh() {
         file = "";
         reason = "";
         url = "";
         hasSettings = false;
-        java.io.File folder = de.idrinth.waraddonclient.implementation.service.AddonFolderLocator.find(name);
+        java.io.File folder = de.idrinth.waraddonclient.service.AddonFolderLocator.find(name);
         if (folder == null || !folder.exists()) {
             return;
         }

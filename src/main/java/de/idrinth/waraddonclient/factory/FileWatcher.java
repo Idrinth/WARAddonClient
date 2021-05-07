@@ -19,7 +19,7 @@ package de.idrinth.waraddonclient.factory;
 
 public final class FileWatcher {
 
-    private static de.idrinth.waraddonclient.implementation.service.FileWatcher instance;
+    private static de.idrinth.waraddonclient.service.FileWatcher instance;
 
     /**
      * prevent initialization
@@ -33,9 +33,9 @@ public final class FileWatcher {
      *
      * @return de.idrinth.waraddonclient.implementation.service.FileWatcher
      */
-    public synchronized static de.idrinth.waraddonclient.implementation.service.FileWatcher build() {
+    public synchronized static de.idrinth.waraddonclient.service.FileWatcher build() {
         if (instance == null) {
-            instance = new de.idrinth.waraddonclient.implementation.service.FileWatcher();
+            instance = new de.idrinth.waraddonclient.service.FileWatcher();
             new java.lang.Thread(instance).start();
         }
         return instance;

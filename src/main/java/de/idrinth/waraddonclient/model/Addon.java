@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package de.idrinth.waraddonclient.interfaces.model;
+package de.idrinth.waraddonclient.model;
 
 public interface Addon {
 
@@ -53,7 +53,7 @@ public interface Addon {
      *
      * @return AddonSettings
      */
-    public de.idrinth.waraddonclient.implementation.model.AddonSettings getUploadData();
+    public de.idrinth.waraddonclient.model.AddonSettings getUploadData();
 
     /**
      * return a languages description if avaible, otherwise a default

@@ -1,10 +1,10 @@
-package de.idrinth.waraddonclient.implementation.list;
+package de.idrinth.waraddonclient.list;
 
 public class Tag implements java.lang.Runnable {
 
     private final javax.swing.JMenu menu;
 
-    private final java.util.HashMap<String, de.idrinth.waraddonclient.implementation.model.Tag> tags = new java.util.HashMap();
+    private final java.util.HashMap<String, de.idrinth.waraddonclient.model.Tag> tags = new java.util.HashMap();
 
     private final java.util.ArrayList<String> tagNames = new java.util.ArrayList();
 
@@ -21,7 +21,7 @@ public class Tag implements java.lang.Runnable {
         for (int counter = 0; counter < de.idrinth.waraddonclient.factory.AddonList.build().size(); counter++) {
             for (String tag : de.idrinth.waraddonclient.factory.AddonList.build().get(counter).getTags()) {
                 if (!tags.containsKey(tag)) {
-                    tags.put(tag, new de.idrinth.waraddonclient.implementation.model.Tag(tag));
+                    tags.put(tag, new de.idrinth.waraddonclient.model.Tag(tag));
                 }
                 tags.get(tag).addMember(de.idrinth.waraddonclient.factory.AddonList.build().get(counter));
                 if (!tagNames.contains(tag)) {
@@ -65,10 +65,10 @@ public class Tag implements java.lang.Runnable {
      */
     @Override
     public void run() {
-        de.idrinth.waraddonclient.implementation.service.Sleeper.sleep(10000);
+        de.idrinth.waraddonclient.service.Sleeper.sleep(10000);
         while (true) {
             while (System.currentTimeMillis() < lastRefreshed + 300000) {
-                de.idrinth.waraddonclient.implementation.service.Sleeper.sleep(1000000);
+                de.idrinth.waraddonclient.service.Sleeper.sleep(1000000);
             }
             processAddons();
             processTags();

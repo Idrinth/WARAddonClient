@@ -1,4 +1,4 @@
-package de.idrinth.waraddonclient.implementation.model;
+package de.idrinth.waraddonclient.model;
 
 public class Tag {
 

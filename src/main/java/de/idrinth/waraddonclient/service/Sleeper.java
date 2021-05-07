@@ -1,4 +1,4 @@
-package de.idrinth.waraddonclient.implementation.service;
+package de.idrinth.waraddonclient.service;
 
 public final class Sleeper {
 

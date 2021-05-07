@@ -2,7 +2,7 @@ package de.idrinth.waraddonclient.factory;
 
 public final class AddonList {
 
-    private static de.idrinth.waraddonclient.implementation.list.Addon instance;
+    private static de.idrinth.waraddonclient.list.Addon instance;
 
     /**
      * prevent initialization
@@ -16,9 +16,9 @@ public final class AddonList {
      *
      * @return de.idrinth.waraddonclient.implementation.list.Addon
      */
-    public synchronized static de.idrinth.waraddonclient.implementation.list.Addon build() {
+    public synchronized static de.idrinth.waraddonclient.list.Addon build() {
         if (instance == null) {
-            instance = new de.idrinth.waraddonclient.implementation.list.Addon();
+            instance = new de.idrinth.waraddonclient.list.Addon();
             new java.lang.Thread(instance).start();
         }
         return instance;
