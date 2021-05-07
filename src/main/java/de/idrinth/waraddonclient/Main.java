@@ -14,34 +14,21 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package de.idrinth.waraddonclient;
+
+import java.io.File;
+import java.io.IOException;
+import java.lang.management.ManagementFactory;
 
 public class Main {
 
-    /**
-     * make sure there is no main object around
-     */
+    private static final String SUN_JAVA_COMMAND = "sun.java.command";
+
     private Main() {
         //not to be used
     }
 
-    /**
-     *
-     * @param args
-     */
     public static void main(String args[]) {
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(de.idrinth.waraddonclient.factory.Interface.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(() -> {
             de.idrinth.factory.Logger.build().log("Starting", de.idrinth.Logger.levelInfo);
@@ -49,5 +36,38 @@ public class Main {
             de.idrinth.waraddonclient.factory.FileWatcher.build();
             de.idrinth.waraddonclient.factory.Interface.build().setVisible(true);
         });
+    }
+
+    public static void restart() throws IOException {
+        try {
+            StringBuilder cmd = new StringBuilder("\"" + System.getProperty("java.home") + "/bin/java\" ");
+            ManagementFactory.getRuntimeMXBean().getInputArguments().stream().filter(arg -> (!arg.contains("-agentlib"))).map(arg -> {
+                cmd.append(arg);
+                return arg;
+            }).forEachOrdered(_item -> {
+                cmd.append(" ");
+            });
+
+            String[] mainCommand = System.getProperty(SUN_JAVA_COMMAND).split(" ");
+            cmd.append("-jar " );
+            cmd.append(new File(mainCommand[0]).getPath());
+            for (int i = 1; i < mainCommand.length; i++) {
+                cmd.append(" ");
+                cmd.append(mainCommand[i]);
+            }
+            Runtime.getRuntime().addShutdownHook(new Thread() {
+                @Override
+                public void run() {
+                    try {
+                        Runtime.getRuntime().exec(cmd.toString());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+            System.exit(0);
+        } catch (Exception e) {
+            throw new IOException("Error while trying to restart the application", e);
+        }
     }
 }
