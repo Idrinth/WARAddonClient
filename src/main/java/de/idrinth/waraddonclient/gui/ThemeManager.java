@@ -34,7 +34,7 @@ public final class ThemeManager {
                 try {
                     Main.restart();
                 } catch (IOException ex) {
-                    de.idrinth.factory.Logger.build().log("Failed to restart", de.idrinth.Logger.levelError);
+                    de.idrinth.factory.Logger.build().log("Failed to restart", de.idrinth.Logger.LEVEL_ERROR);
                 }
             });
             menu.add(item);
@@ -50,7 +50,7 @@ public final class ThemeManager {
                     UIManager.setLookAndFeel(info.getClassName());
                     break;
                 } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException ex) {
-                    de.idrinth.factory.Logger.build().log("Unable to load theme " + info.getName(), de.idrinth.Logger.levelError);
+                    de.idrinth.factory.Logger.build().log("Unable to load theme " + info.getName(), de.idrinth.Logger.LEVEL_ERROR);
                 }
             }
         }

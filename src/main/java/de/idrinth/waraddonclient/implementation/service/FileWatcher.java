@@ -42,7 +42,7 @@ public class FileWatcher implements java.lang.Runnable {
                     com.sun.nio.file.ExtendedWatchEventModifier.FILE_TREE);
             handleEvents();
         } catch (InterruptedException | java.io.IOException exception) {
-            de.idrinth.factory.Logger.build().log(exception, de.idrinth.Logger.levelError);
+            de.idrinth.factory.Logger.build().log(exception, de.idrinth.Logger.LEVEL_ERROR);
         }
     }
 

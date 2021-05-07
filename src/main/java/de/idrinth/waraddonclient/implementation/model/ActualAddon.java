@@ -1,48 +1,32 @@
-/*
- * Copyright (C) 2016 Björn Büttner
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-
 package de.idrinth.waraddonclient.implementation.model;
 
-public class Addon implements de.idrinth.waraddonclient.interfaces.model.Addon {
+import java.util.ArrayList;
+import java.util.HashMap;
 
-    private java.util.Hashtable<String, String> descriptions = new java.util.Hashtable();
+public class ActualAddon implements de.idrinth.waraddonclient.interfaces.model.Addon {
+
+    private HashMap<String, String> descriptions = new HashMap<>();
 
     private String version;
 
-    private String slug;
+    private final String slug;
 
-    private String name;
+    private final String name;
 
     private String installed = "-";
 
-    private java.util.ArrayList<String> tags = new java.util.ArrayList();
+    private ArrayList<String> tags = new ArrayList<>();
 
-    private AddonSettings addonSettings;
+    private final AddonSettings addonSettings;
 
-    private static final String basePath = "./Interface/AddOns/";
+    private static final String BASE_PATH = "./Interface/AddOns/";
 
-    private static final String versionFile = "/self.idrinth";
+    private static final String VERSION_FILE = "/self.idrinth";
 
     /**
-     * Initialize from a json object
-     *
      * @param addon
      */
-    public Addon(javax.json.JsonObject addon) {
+    public ActualAddon(javax.json.JsonObject addon) {
         descriptions.put("en", getStringFromObject("description", addon));
         descriptions.put("fr", getStringFromObject("description_fr", addon));
         descriptions.put("de", getStringFromObject("description_de", addon));
@@ -83,7 +67,7 @@ public class Addon implements de.idrinth.waraddonclient.interfaces.model.Addon {
      *
      * @param addon
      */
-    public void update(Addon addon) {
+    public void update(ActualAddon addon) {
         version = addon.getVersion();
         tags = addon.getTags();
         descriptions = addon.getDescriptions();
@@ -166,9 +150,9 @@ public class Addon implements de.idrinth.waraddonclient.interfaces.model.Addon {
     /**
      * get a list of descriptions
      *
-     * @return java.util.Hashtable
+     * @return java.util.HashMap
      */
-    public java.util.Hashtable<String, String> getDescriptions() {
+    public java.util.HashMap<String, String> getDescriptions() {
         return descriptions;
     }
 
@@ -209,7 +193,7 @@ public class Addon implements de.idrinth.waraddonclient.interfaces.model.Addon {
             try {
                 de.idrinth.waraddonclient.factory.RemoteRequest.build().upload(addonSettings.getUrl(), file);
             } catch (Exception exception) {
-                de.idrinth.factory.Logger.build().log(exception, de.idrinth.Logger.levelWarn);
+                de.idrinth.factory.Logger.build().log(exception, de.idrinth.Logger.LEVEL_WARN);
             }
         }
     }
@@ -271,7 +255,7 @@ public class Addon implements de.idrinth.waraddonclient.interfaces.model.Addon {
          * removes all data of this addon from the harddrive
          */
         private void uninstall() {
-            java.io.File addonFolder = new java.io.File(basePath + name);
+            java.io.File addonFolder = new java.io.File(BASE_PATH + name);
             emptyFolder(addonFolder);
             addonFolder.delete();
             installed="-";
@@ -284,7 +268,7 @@ public class Addon implements de.idrinth.waraddonclient.interfaces.model.Addon {
          * @throws java.lang.Exception
          */
         private java.io.File getZip() throws java.lang.Exception {
-            java.io.File file = new java.io.File(basePath + slug + ".zip");
+            java.io.File file = new java.io.File(BASE_PATH + slug + ".zip");
             try (java.io.InputStream stream = de.idrinth.waraddonclient.factory.RemoteRequest.build().getAddonDownload(slug + "/download/" + version.replace(".", "-") + "/")) {
                 org.apache.commons.io.FileUtils.copyInputStreamToFile(stream, file);
             }
@@ -298,9 +282,9 @@ public class Addon implements de.idrinth.waraddonclient.interfaces.model.Addon {
          */
         private void install() throws java.lang.Exception {
             java.io.File file = getZip();
-            (new net.lingala.zip4j.ZipFile(file)).extractAll(basePath);
+            (new net.lingala.zip4j.ZipFile(file)).extractAll(BASE_PATH);
             org.apache.commons.io.FileUtils.deleteQuietly(file);
-            org.apache.commons.io.FileUtils.writeStringToFile(new java.io.File(basePath + name + versionFile), "<?xml version=\"1.0\" encoding=\"UTF-8\"?><UiMod><name>" + name + "</name><version>" + version + "</version></UiMod>");
+            org.apache.commons.io.FileUtils.writeStringToFile(new java.io.File(BASE_PATH + name + VERSION_FILE), "<?xml version=\"1.0\" encoding=\"UTF-8\"?><UiMod><name>" + name + "</name><version>" + version + "</version></UiMod>");
             installed=version;
         }
 
@@ -332,7 +316,7 @@ public class Addon implements de.idrinth.waraddonclient.interfaces.model.Addon {
                         installed = list.item(0).getAttributes().getNamedItem("version").getTextContent();
                         return true;
                     } catch (javax.xml.parsers.ParserConfigurationException | javax.xml.parsers.FactoryConfigurationError | org.xml.sax.SAXException | java.io.IOException exception) {
-                        de.idrinth.factory.Logger.build().log(exception, de.idrinth.Logger.levelError);
+                        de.idrinth.factory.Logger.build().log(exception, de.idrinth.Logger.LEVEL_ERROR);
                     }
                 }
             }
@@ -343,14 +327,14 @@ public class Addon implements de.idrinth.waraddonclient.interfaces.model.Addon {
          * tries to find and set the default version
          */
         private boolean getDownloadVersion() {
-            java.io.File file = new java.io.File(folder.getPath() + versionFile);
+            java.io.File file = new java.io.File(folder.getPath() + VERSION_FILE);
             if (file.exists()) {
                 try {
                     org.w3c.dom.NodeList list = javax.xml.parsers.DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(file).getElementsByTagName("version");
                     installed = list.item(0).getTextContent().replace("(sys)", "");
                     return true;
                 } catch (javax.xml.parsers.ParserConfigurationException | javax.xml.parsers.FactoryConfigurationError | org.xml.sax.SAXException | java.io.IOException exception) {
-                    de.idrinth.factory.Logger.build().log(exception, de.idrinth.Logger.levelError);
+                    de.idrinth.factory.Logger.build().log(exception, de.idrinth.Logger.LEVEL_ERROR);
                 }
             }
             return false;

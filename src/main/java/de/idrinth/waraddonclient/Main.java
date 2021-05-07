@@ -14,7 +14,7 @@ public final class Main {
 
     public static void main(String args[]) {
         java.awt.EventQueue.invokeLater(() -> {
-            de.idrinth.factory.Logger.build().log("Starting", de.idrinth.Logger.levelInfo);
+            de.idrinth.factory.Logger.build().log("Starting", de.idrinth.Logger.LEVEL_INFO);
             de.idrinth.waraddonclient.factory.AddonList.build();
             de.idrinth.waraddonclient.factory.FileWatcher.build();
             de.idrinth.waraddonclient.factory.Interface.build().setVisible(true);

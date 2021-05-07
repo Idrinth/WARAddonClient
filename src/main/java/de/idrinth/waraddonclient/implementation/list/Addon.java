@@ -2,9 +2,9 @@ package de.idrinth.waraddonclient.implementation.list;
 
 public class Addon implements java.lang.Runnable {
 
-    private final java.util.HashMap<String, de.idrinth.waraddonclient.implementation.model.Addon> list = new java.util.HashMap();
+    private final java.util.HashMap<String, de.idrinth.waraddonclient.implementation.model.ActualAddon> list = new java.util.HashMap();
 
-    private final java.util.ArrayList<de.idrinth.waraddonclient.implementation.model.Addon> rows = new java.util.ArrayList();
+    private final java.util.ArrayList<de.idrinth.waraddonclient.implementation.model.ActualAddon> rows = new java.util.ArrayList();
 
     private final java.util.Hashtable<String, watchedFile> watchedFilesMap = new java.util.Hashtable();
 
@@ -25,20 +25,20 @@ public class Addon implements java.lang.Runnable {
      * returns the addon at the list-position i
      *
      * @param position
-     * @return de.idrinth.waraddonclient.implementation.model.Addon
+     * @return de.idrinth.waraddonclient.implementation.model.ActualAddon
      */
-    public de.idrinth.waraddonclient.implementation.model.Addon get(int position) {
-        return (de.idrinth.waraddonclient.implementation.model.Addon) rows.get(position);
+    public de.idrinth.waraddonclient.implementation.model.ActualAddon get(int position) {
+        return (de.idrinth.waraddonclient.implementation.model.ActualAddon) rows.get(position);
     }
 
     /**
      * return the addon with the given name
      *
      * @param name
-     * @return de.idrinth.waraddonclient.implementation.model.Addon
+     * @return de.idrinth.waraddonclient.implementation.model.ActualAddon
      */
-    public de.idrinth.waraddonclient.implementation.model.Addon get(String name) {
-        return (de.idrinth.waraddonclient.implementation.model.Addon) list.get(name);
+    public de.idrinth.waraddonclient.implementation.model.ActualAddon get(String name) {
+        return (de.idrinth.waraddonclient.implementation.model.ActualAddon) list.get(name);
     }
 
     /**
@@ -55,7 +55,7 @@ public class Addon implements java.lang.Runnable {
      *
      * @param addon
      */
-    public void add(de.idrinth.waraddonclient.implementation.model.Addon addon) {
+    public void add(de.idrinth.waraddonclient.implementation.model.ActualAddon addon) {
         list.put(addon.getName(), addon);
         rows.add(addon);
     }
@@ -83,7 +83,7 @@ public class Addon implements java.lang.Runnable {
                 new JsonProcessor(de.idrinth.waraddonclient.factory.RemoteRequest.build().getAddonList()).run();
                 failuresInARow = 0;
             } catch (Exception exception) {
-                de.idrinth.factory.Logger.build().log(exception, de.idrinth.Logger.levelError);
+                de.idrinth.factory.Logger.build().log(exception, de.idrinth.Logger.LEVEL_ERROR);
                 failuresInARow++;
                 if (failuresInARow > 5) {
                     de.idrinth.waraddonclient.factory.Interface.build().exitWithError(exception.getMessage());
@@ -112,7 +112,7 @@ public class Addon implements java.lang.Runnable {
             }
             javax.swing.table.DefaultTableModel model = (javax.swing.table.DefaultTableModel) de.idrinth.waraddonclient.factory.Interface.build().getAddonTable().getModel();
             for (int counter = json.size(); counter > 0; counter--) {
-                model = processJsonAddon(model, new de.idrinth.waraddonclient.implementation.model.Addon(json.getJsonObject(counter - 1)));
+                model = processJsonAddon(model, new de.idrinth.waraddonclient.implementation.model.ActualAddon(json.getJsonObject(counter - 1)));
             }
         }
 
@@ -122,7 +122,7 @@ public class Addon implements java.lang.Runnable {
          * @param addon
          * @return javax.swing.table.DefaultTableMode
          */
-        private javax.swing.table.DefaultTableModel newAddon(javax.swing.table.DefaultTableModel model, de.idrinth.waraddonclient.implementation.model.Addon addon) {
+        private javax.swing.table.DefaultTableModel newAddon(javax.swing.table.DefaultTableModel model, de.idrinth.waraddonclient.implementation.model.ActualAddon addon) {
             add(addon);
             model.addRow(addon.getTableRow());
             if (!addon.getUploadData().getFile().isEmpty()) {
@@ -140,7 +140,7 @@ public class Addon implements java.lang.Runnable {
          * @param addon
          * @return javax.swing.table.DefaultTableMode
          */
-        private javax.swing.table.DefaultTableModel processJsonAddon(javax.swing.table.DefaultTableModel model, de.idrinth.waraddonclient.implementation.model.Addon addon) {
+        private javax.swing.table.DefaultTableModel processJsonAddon(javax.swing.table.DefaultTableModel model, de.idrinth.waraddonclient.implementation.model.ActualAddon addon) {
             if (list.containsKey(addon.getName())) {
                 return existingAddon(model, addon);
             }
@@ -153,7 +153,7 @@ public class Addon implements java.lang.Runnable {
          * @param addon
          * @return javax.swing.table.DefaultTableMode
          */
-        private javax.swing.table.DefaultTableModel existingAddon(javax.swing.table.DefaultTableModel model, de.idrinth.waraddonclient.implementation.model.Addon addon) {
+        private javax.swing.table.DefaultTableModel existingAddon(javax.swing.table.DefaultTableModel model, de.idrinth.waraddonclient.implementation.model.ActualAddon addon) {
             if (!list.containsKey(addon.getName())) {
                 return model;
             }
@@ -173,14 +173,14 @@ public class Addon implements java.lang.Runnable {
 
         private java.io.File file;
 
-        private final java.util.ArrayList<de.idrinth.waraddonclient.implementation.model.Addon> list = new java.util.ArrayList();
+        private final java.util.ArrayList<de.idrinth.waraddonclient.implementation.model.ActualAddon> list = new java.util.ArrayList();
 
         /**
          * Adds an addon to watch an be handled here
          *
          * @param addon
          */
-        public void addAddon(de.idrinth.waraddonclient.implementation.model.Addon addon) {
+        public void addAddon(de.idrinth.waraddonclient.implementation.model.ActualAddon addon) {
             list.add(addon);
         }
 

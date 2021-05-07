@@ -16,10 +16,6 @@ import de.idrinth.waraddonclient.gui.tablefilter.TextCategory;
 import de.idrinth.waraddonclient.implementation.model.AddonSettings;
 import java.awt.Desktop;
 import java.awt.FileDialog;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileWriter;
-import java.util.Scanner;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.RowFilter;
@@ -80,7 +76,18 @@ public class Window extends javax.swing.JFrame {
             RowFilter rf = new TextCategory(Search.getText(), tagList.getActiveTags());
             sorter.setRowFilter(rf);
         } catch (java.util.regex.PatternSyntaxException exception) {
-            de.idrinth.factory.Logger.build().log(exception, de.idrinth.Logger.levelError);
+            de.idrinth.factory.Logger.build().log(exception, de.idrinth.Logger.LEVEL_ERROR);
+        }
+    }
+
+    private void requestPosition() {
+        JOptionPane.showMessageDialog(this, "No WAR.exe found, please select it");
+        JFileChooser j = new javax.swing.JFileChooser();
+        int r = j.showOpenDialog(this);
+
+        // if the user selects a file
+        if (r == JFileChooser.APPROVE_OPTION) {
+            prefs.put("war-path", j.getSelectedFile().getParent());
         }
     }
 
@@ -88,50 +95,12 @@ public class Window extends javax.swing.JFrame {
      * checks if this program is in the correct place
      */
     private void processPosition() {
-        if (new java.io.File("./WAR.exe").exists()) {
+        if (new java.io.File(prefs.get("war-path", ".") + "/WAR.exe").exists()) {
             return;
         }
-        File config = new File("./WARAddonClient.cfg");
-        String path = "./";
-        if (!config.exists()) {
-            JOptionPane.showMessageDialog(this, "No WAR.exe found, please select it");
-            JFileChooser j = new javax.swing.JFileChooser();
-            int r = j.showOpenDialog(this);
-
-            // if the user selects a file
-            if (r == JFileChooser.APPROVE_OPTION) {
-                path = j.getSelectedFile().getParent();
-                try {
-                    if (!config.createNewFile()) {
-                        throw new IOException("Unable to create config file");
-                    }
-                    try ( FileWriter writer = new FileWriter(config.getAbsoluteFile())) {
-                        writer.write("path=" + path);
-                    }
-                } catch (IOException exception) {
-                    de.idrinth.factory.Logger.build().log(exception, de.idrinth.Logger.levelError);
-                }
-            }
-        }
-        if (config.exists()) {
-            //load from file
-            try {
-                try ( Scanner scanner = new Scanner(config)) {
-                    while (scanner.hasNextLine()) {
-                        String line = scanner.nextLine();
-                        if (line.startsWith("path")) {
-                            path = line.split("=")[1];
-                        }
-                    }
-                }
-                System.setProperty("user.dir", path);
-                return;
-            } catch (FileNotFoundException exception) {
-                de.idrinth.factory.Logger.build().log(exception, de.idrinth.Logger.levelError);
-            }
-        }
-        if (config.exists() && !config.delete()) {
-            de.idrinth.factory.Logger.build().log("Unable to delete config file", de.idrinth.Logger.levelError);
+        requestPosition();
+        if (new java.io.File(prefs.get("war-path", ".") + "/WAR.exe").exists()) {
+            return;
         }
         exitWithError("Unable to find WAR.exe");
     }
@@ -603,7 +572,7 @@ public class Window extends javax.swing.JFrame {
             updateList();
             JOptionPane.showMessageDialog(this, "The requested Addon was installed.");
         } catch (java.lang.Exception exception) {
-            de.idrinth.factory.Logger.build().log(exception, de.idrinth.Logger.levelError);
+            de.idrinth.factory.Logger.build().log(exception, de.idrinth.Logger.LEVEL_ERROR);
             JOptionPane.showMessageDialog(this, "Sadly Installing failed, check if the folder is writeable.");
         }
     }//GEN-LAST:event_InstallButtonActionPerformed
@@ -635,7 +604,7 @@ public class Window extends javax.swing.JFrame {
         try {
             activeAddon.uninstall();
         } catch (Exception exception) {
-            de.idrinth.factory.Logger.build().log(exception, de.idrinth.Logger.levelError);
+            de.idrinth.factory.Logger.build().log(exception, de.idrinth.Logger.LEVEL_ERROR);
         }
         updateList();
     }//GEN-LAST:event_RemoveButtonActionPerformed
@@ -739,7 +708,7 @@ public class Window extends javax.swing.JFrame {
                     addon.install();
                 } catch (Exception ex) {
                     errors++;
-                    de.idrinth.factory.Logger.build().log(ex, de.idrinth.Logger.levelError);
+                    de.idrinth.factory.Logger.build().log(ex, de.idrinth.Logger.LEVEL_ERROR);
                 }
             }
         }
@@ -842,7 +811,7 @@ public class Window extends javax.swing.JFrame {
     private void updateList() {
         de.idrinth.waraddonclient.implementation.list.Addon addons = de.idrinth.waraddonclient.factory.AddonList.build();
         for (int position = 0; position < AddonList.getRowCount(); position++) {
-            de.idrinth.waraddonclient.implementation.model.Addon addon = addons.get(AddonList.convertRowIndexToModel(position));
+            de.idrinth.waraddonclient.implementation.model.ActualAddon addon = addons.get(AddonList.convertRowIndexToModel(position));
             AddonList.setValueAt(addon.getInstalled(), position, 3);
             AddonList.setValueAt(addon.getStatus(), position, 0);
         }
@@ -908,7 +877,7 @@ public class Window extends javax.swing.JFrame {
                 try {
                     Desktop.getDesktop().browse(event.getURL().toURI());
                 } catch (java.net.URISyntaxException | java.io.IOException exception) {
-                    de.idrinth.factory.Logger.build().log(exception, de.idrinth.Logger.levelError);
+                    de.idrinth.factory.Logger.build().log(exception, de.idrinth.Logger.LEVEL_ERROR);
                 }
             }
 
@@ -922,7 +891,7 @@ public class Window extends javax.swing.JFrame {
             try {
                 activeAddon = de.idrinth.waraddonclient.factory.AddonList.build().get(AddonList.convertRowIndexToModel(AddonList.getSelectedRow()));
             } catch (java.lang.ArrayIndexOutOfBoundsException exception) {
-                de.idrinth.factory.Logger.build().log(exception, de.idrinth.Logger.levelError);
+                de.idrinth.factory.Logger.build().log(exception, de.idrinth.Logger.LEVEL_ERROR);
                 return;
             }
             if (activeAddon == null) {

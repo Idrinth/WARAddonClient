@@ -30,16 +30,12 @@ public class IdrinthLookAndFeel extends NimbusLookAndFeel {
             return uiDefaults;
         }
         uiDefaults = super.getDefaults();
-        addColor("dark", 50, 50, 50, 255);
+        addColor("dark", 25, 20, 20, 255);
         addColor("light", 200, 200, 200, 255);
         addColor("grey", 100, 100, 100, 255);
         addColor("colored", 50, 0, 0, 255);
-        overwriteSynth();
         overwriteNimbus();
         return uiDefaults;
-    }
-
-    private void overwriteSynth() {
     }
 
     private void overwriteNimbus() {
@@ -64,14 +60,14 @@ public class IdrinthLookAndFeel extends NimbusLookAndFeel {
         addColor("textInactiveText", "grey");
         addColor("menuText", "light");
         addColor("menu", "grey");
-        addColor("scrollbar", "nimbusBlueGrey", 0.006944418f, 0.07296763f, -0.09019607f, 0);
         addColor("nimbusBlueGrey", "colored", -0.1f, -0.1f, -0.1f, 0f);
+        addColor("scrollbar", "colored");
         addColor("nimbusBorder", "nimbusBlueGrey", 0.0f, 0.017358616f, 0.11372548f, 0);
-        addColor("infoText", "text");
-        addColor("textForeground", "text");
-        addColor("textBackground", "nimbusSelectionBackground");
-        addColor("background", "control");
-        addColor("nimbusSelection", "nimbusBase", 0.010750473f, 0.04875779f, 0.007843137f, 0);
+        addColor("infoText", "light");
+        addColor("textForeground", "light");
+        addColor("textBackground", "colored");
+        addColor("background", "dark");
+        addColor("nimbusSelection", "grey", 0.010750473f, 0.04875779f, 0.007843137f, 0);
         addColor("controlHighlight", "nimbusBlueGrey", 0.0f, 0.07333623f, -0.20392156f, 0);
         addColor("controlLHighlight", "nimbusBlueGrey", 0.0f, 0.098526314f, -0.2352941f, 0);
         addColor("controlShadow", "nimbusBlueGrey", 0.0027777553f, 0.0212406f, -0.13333333f, 0);
@@ -176,7 +172,7 @@ public class IdrinthLookAndFeel extends NimbusLookAndFeel {
         //Initialize TabbedPane
         addColor("TabbedPane.shadow", "nimbusDisabledText");
         addColor("TabbedPane.darkShadow", "text");
-        addColor("TabbedPane.highlight", "nimbusLightBackground");
+        addColor("TabbedPane.highlight", "colored");
         addColor("TabbedPane:TabbedPaneTab[Disabled].textForeground", "nimbusDisabledText");
         addColor("TabbedPane:TabbedPaneTab[Pressed+Selected].textForeground", "dark");
         addColor("TabbedPane:TabbedPaneTab[Focused+Pressed+Selected].textForeground", "dark");

@@ -77,7 +77,7 @@ public class TrustManager implements org.apache.http.ssl.TrustStrategy {
             manager.checkServerTrusted(chain, authType);
             return true;
         } catch (java.security.cert.CertificateException e) {
-            de.idrinth.factory.Logger.build().log(e, de.idrinth.Logger.levelWarn);
+            de.idrinth.factory.Logger.build().log(e, de.idrinth.Logger.LEVEL_WARN);
         }
         return false;
     }

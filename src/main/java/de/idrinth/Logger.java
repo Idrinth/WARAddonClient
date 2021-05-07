@@ -9,11 +9,11 @@ import org.apache.commons.io.FileUtils;
 
 public class Logger {
 
-    public final static int levelInfo = 0;
+    public static final int LEVEL_INFO = 0;
 
-    public final static int levelWarn = 1;
+    public static final int LEVEL_WARN = 1;
 
-    public final static int levelError = 2;
+    public static final int LEVEL_ERROR = 2;
 
     private File output;
 
