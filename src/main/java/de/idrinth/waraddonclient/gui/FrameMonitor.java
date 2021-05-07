@@ -10,7 +10,7 @@ import java.util.prefs.Preferences;
 import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 
-public class FrameMonitor {
+public final class FrameMonitor {
 
     public static void registerFrame(javax.swing.JFrame frame, String frameUniqueId, int defaultX, int defaultY, int defaultW, int defaultH) {
         Preferences prefs = Preferences.userRoot().node(FrameMonitor.class.getName() + "-" + frameUniqueId);
@@ -59,8 +59,8 @@ public class FrameMonitor {
 
         private final DelayedRunner updater;
 
-        public Adapter(DelayedRunner updater) {
-            this.updater = updater;
+        public Adapter(DelayedRunner runner) {
+            this.updater = runner;
         }
 
         @Override

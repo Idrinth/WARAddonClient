@@ -1,20 +1,3 @@
-/*
- * Copyright (C) 2016 Björn Büttner
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-
 package de.idrinth.waraddonclient.implementation.model;
 
 public class AddonSettings {
@@ -27,7 +10,7 @@ public class AddonSettings {
 
     private String url = "";
 
-    private String name;
+    private final String name;
 
     private boolean hasSettings;
 
@@ -53,9 +36,9 @@ public class AddonSettings {
      *
      * @param enabled
      */
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
-        de.idrinth.waraddonclient.factory.User.build().setEnabled(name, enabled);
+    public void setEnabled(boolean enable) {
+        this.enabled = enable;
+        de.idrinth.waraddonclient.factory.User.build().setEnabled(name, enable);
     }
 
     /**
@@ -74,28 +57,16 @@ public class AddonSettings {
         return url;
     }
 
-    /**
-     * initialises from addon-name
-     *
-     * @param name
-     */
-    public AddonSettings(String name) {
-        this.name = name;
-        this.enabled = de.idrinth.waraddonclient.factory.User.build().getEnabled(name);
+    public AddonSettings(String addon) {
+        this.name = addon;
+        this.enabled = de.idrinth.waraddonclient.factory.User.build().getEnabled(addon);
         refresh();
     }
 
-    /**
-     *
-     * @return boolean
-     */
     public boolean showSettings() {
         return hasSettings;
     }
 
-    /**
-     * refres
-     */
     final public void refresh() {
         file = "";
         reason = "";
@@ -113,10 +84,6 @@ public class AddonSettings {
         }
     }
 
-    /**
-     *
-     * @param fileEntry
-     */
     private void processFile(java.io.File fileEntry) {
         if (fileEntry.isDirectory()) {
             return;
@@ -135,11 +102,6 @@ public class AddonSettings {
         }
     }
 
-    /**
-     * checks if the node has any information that is useful
-     *
-     * @param item
-     */
     private void processNode(org.w3c.dom.Node item) {
         if ("file".equalsIgnoreCase(item.getNodeName())) {
             file = item.getTextContent();

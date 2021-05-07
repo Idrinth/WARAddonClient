@@ -1,6 +1,10 @@
 package de.idrinth.waraddonclient.backup;
 
 public class Backup {
+    private Backup() {
+        //no construction here
+    }
+
     public static void create() throws net.lingala.zip4j.exception.ZipException {
         java.io.File folder = new java.io.File("backups");
         if (!folder.isDirectory()) {

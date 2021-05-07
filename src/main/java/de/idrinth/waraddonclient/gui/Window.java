@@ -1,23 +1,5 @@
-/*
- * Copyright (C) 2016 Björn Büttner
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-
 package de.idrinth.waraddonclient.gui;
 
-import com.bulenkov.darcula.DarculaLookAndFeelInfo;
 import de.idrinth.waraddonclient.backup.Backup;
 import de.idrinth.waraddonclient.implementation.list.Tag;
 import de.idrinth.waraddonclient.interfaces.model.Addon;
@@ -26,8 +8,6 @@ import java.net.URISyntaxException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.prefs.Preferences;
-import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
 import net.lingala.zip4j.exception.ZipException;
 import javax.swing.table.TableRowSorter;
 import javax.swing.JTable;
@@ -36,7 +16,6 @@ import de.idrinth.waraddonclient.gui.tablefilter.TextCategory;
 import de.idrinth.waraddonclient.implementation.model.AddonSettings;
 import java.awt.Desktop;
 import java.awt.FileDialog;
-import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
@@ -60,7 +39,7 @@ public class Window extends javax.swing.JFrame {
     private Tag tagList;
 
     private static final String BASE_TITLE = "Idrinth's WAR Addon Client";
-    
+
     private final Preferences prefs = Preferences.userRoot().node(this.getClass().getName());
 
     /**
@@ -73,6 +52,7 @@ public class Window extends javax.swing.JFrame {
         finishGuiBuilding();
         processPosition();
     }
+
     public JTable getAddonTable() {
         return AddonList;
     }
@@ -94,6 +74,7 @@ public class Window extends javax.swing.JFrame {
         new java.lang.Thread(new Version()).start();
         (new tableListener()).updateUi();
     }
+
     public void newFilter() {
         try {
             RowFilter rf = new TextCategory(Search.getText(), tagList.getActiveTags());
@@ -112,20 +93,19 @@ public class Window extends javax.swing.JFrame {
         }
         File config = new File("./WARAddonClient.cfg");
         String path = "./";
-        if (! config.exists()) {
+        if (!config.exists()) {
             JOptionPane.showMessageDialog(this, "No WAR.exe found, please select it");
             JFileChooser j = new javax.swing.JFileChooser();
             int r = j.showOpenDialog(this);
 
             // if the user selects a file
-            if (r == JFileChooser.APPROVE_OPTION)
-            {
+            if (r == JFileChooser.APPROVE_OPTION) {
                 path = j.getSelectedFile().getParent();
                 try {
-                    if (! config.createNewFile()) {
+                    if (!config.createNewFile()) {
                         throw new IOException("Unable to create config file");
                     }
-                    try (FileWriter writer = new FileWriter(config.getAbsoluteFile())) {
+                    try ( FileWriter writer = new FileWriter(config.getAbsoluteFile())) {
                         writer.write("path=" + path);
                     }
                 } catch (IOException exception) {
@@ -136,7 +116,7 @@ public class Window extends javax.swing.JFrame {
         if (config.exists()) {
             //load from file
             try {
-                try (Scanner scanner = new Scanner(config)) {
+                try ( Scanner scanner = new Scanner(config)) {
                     while (scanner.hasNextLine()) {
                         String line = scanner.nextLine();
                         if (line.startsWith("path")) {
@@ -150,7 +130,7 @@ public class Window extends javax.swing.JFrame {
                 de.idrinth.factory.Logger.build().log(exception, de.idrinth.Logger.levelError);
             }
         }
-        if (config.exists() && ! config.delete()) {
+        if (config.exists() && !config.delete()) {
             de.idrinth.factory.Logger.build().log("Unable to delete config file", de.idrinth.Logger.levelError);
         }
         exitWithError("Unable to find WAR.exe");
@@ -751,14 +731,14 @@ public class Window extends javax.swing.JFrame {
         de.idrinth.waraddonclient.implementation.list.Addon addonList = de.idrinth.waraddonclient.factory.AddonList.build();
         int errors = 0;
         int count = 0;
-        for (int i=0; i < addonList.size(); i++) {
+        for (int i = 0; i < addonList.size(); i++) {
             Addon addon = addonList.get(i);
             if (addon.getStatus().equals("X")) {
                 count++;
                 try {
                     addon.install();
                 } catch (Exception ex) {
-                    errors ++;
+                    errors++;
                     de.idrinth.factory.Logger.build().log(ex, de.idrinth.Logger.levelError);
                 }
             }
@@ -767,9 +747,9 @@ public class Window extends javax.swing.JFrame {
         if (count == 0) {
             JOptionPane.showMessageDialog(this, "No Add-ons to update.");
         } else if (errors == 0) {
-            JOptionPane.showMessageDialog(this, "All "+count+" Add-ons were updated.");
+            JOptionPane.showMessageDialog(this, "All " + count + " Add-ons were updated.");
         } else {
-            JOptionPane.showMessageDialog(this, "Updating "+errors+" out of "+count+" Add-ons failed.");
+            JOptionPane.showMessageDialog(this, "Updating " + errors + " out of " + count + " Add-ons failed.");
         }
     }//GEN-LAST:event_UpdateAllMouseClicked
 
@@ -786,7 +766,7 @@ public class Window extends javax.swing.JFrame {
     private void SourceActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SourceActionPerformed
         try {
             Desktop.getDesktop().browse(new java.net.URI("https://github.com/Idrinth/WARAddonClient/"));
-        } catch (URISyntaxException|IOException ex) {
+        } catch (URISyntaxException | IOException ex) {
             Logger.getLogger(Window.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_SourceActionPerformed
@@ -794,7 +774,7 @@ public class Window extends javax.swing.JFrame {
     private void BuyMeACoffeeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BuyMeACoffeeActionPerformed
         try {
             Desktop.getDesktop().browse(new java.net.URI("https://buymeacoffee.com/idrinth"));
-        } catch (URISyntaxException|IOException ex) {
+        } catch (URISyntaxException | IOException ex) {
             Logger.getLogger(Window.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_BuyMeACoffeeActionPerformed
@@ -802,7 +782,7 @@ public class Window extends javax.swing.JFrame {
     private void GuildedActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_GuildedActionPerformed
         try {
             Desktop.getDesktop().browse(new java.net.URI("https://guilded.gg/Idrinths-Addons/"));
-        } catch (URISyntaxException|IOException ex) {
+        } catch (URISyntaxException | IOException ex) {
             Logger.getLogger(Window.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_GuildedActionPerformed
@@ -816,7 +796,7 @@ public class Window extends javax.swing.JFrame {
                 return;
             }
             try {
-                Backup.restore(new java.io.File(dialog.getDirectory()+"/"+dialog.getFile()));
+                Backup.restore(new java.io.File(dialog.getDirectory() + "/" + dialog.getFile()));
                 JOptionPane.showMessageDialog(this, "Backup restored.");
             } catch (ZipException ex) {
                 Logger.getLogger(Window.class.getName()).log(Level.SEVERE, null, ex);
@@ -921,6 +901,7 @@ public class Window extends javax.swing.JFrame {
     // End of variables declaration//GEN-END:variables
 
     class hyperlinkListener implements HyperlinkListener {
+
         @Override
         public void hyperlinkUpdate(HyperlinkEvent event) {
             if (HyperlinkEvent.EventType.ACTIVATED.equals(event.getEventType())) {
@@ -935,6 +916,7 @@ public class Window extends javax.swing.JFrame {
     }
 
     class tableListener implements ListSelectionListener {
+
         @Override
         public void valueChanged(ListSelectionEvent event) {
             try {

@@ -21,7 +21,7 @@ public class IdrinthLookAndFeel extends NimbusLookAndFeel {
 
     @Override
     public String getDescription() {
-        return "Idrinth Look and Feel";
+        return "Idrinth's Look and Feel";
     }
 
     @Override
@@ -30,8 +30,8 @@ public class IdrinthLookAndFeel extends NimbusLookAndFeel {
             return uiDefaults;
         }
         uiDefaults = super.getDefaults();
-        addColor("white", 50, 50, 50, 255);
-        addColor("black", 200, 200, 200, 255);
+        addColor("dark", 50, 50, 50, 255);
+        addColor("light", 200, 200, 200, 255);
         addColor("grey", 100, 100, 100, 255);
         addColor("colored", 50, 0, 0, 255);
         overwriteSynth();
@@ -48,22 +48,22 @@ public class IdrinthLookAndFeel extends NimbusLookAndFeel {
         addColor("nimbusFocus", "colored");
         addColor("nimbusSelectionBackground", "colored");
         addColor("nimbusDisabledText", "grey");
-        addColor("info", "white");
+        addColor("info", "dark");
         addColor("nimbusOrange", "colored");
         addColor("nimbusGreen", "colored");
         addColor("nimbusRed", "colored");
         addColor("nimbusAlertYellow", "colored");
-        addColor("nimbusLightBackground", "white");
-        addColor("nimbusSelectedText", "white");
+        addColor("nimbusLightBackground", "dark");
+        addColor("nimbusSelectedText", "dark");
         addColor("nimbusInfoBlue", "colored");
-        addColor("control", "white");
-        addColor("text", "black");
+        addColor("control", "dark");
+        addColor("text", "light");
         addColor("controlText", "text");
-        addColor("textHighlight", "nimbusSelectionBackground");
-        addColor("textHighlightText", "nimbusSelectedText");
-        addColor("textInactiveText", "nimbusDisabledText");
-        addColor("menuText", "text");
-        addColor("menu", "nimbusBase");
+        addColor("textHighlight", "colored");
+        addColor("textHighlightText", "dark");
+        addColor("textInactiveText", "grey");
+        addColor("menuText", "light");
+        addColor("menu", "grey");
         addColor("scrollbar", "nimbusBlueGrey", 0.006944418f, 0.07296763f, -0.09019607f, 0);
         addColor("nimbusBlueGrey", "colored", -0.1f, -0.1f, -0.1f, 0f);
         addColor("nimbusBorder", "nimbusBlueGrey", 0.0f, 0.017358616f, 0.11372548f, 0);
@@ -76,7 +76,7 @@ public class IdrinthLookAndFeel extends NimbusLookAndFeel {
         addColor("controlLHighlight", "nimbusBlueGrey", 0.0f, 0.098526314f, -0.2352941f, 0);
         addColor("controlShadow", "nimbusBlueGrey", 0.0027777553f, 0.0212406f, -0.13333333f, 0);
         addColor("controlDkShadow", "nimbusBlueGrey", 0.0027777553f, 0.0018306673f, 0.02352941f, 0);
-        addColor("desktop", "white", 0.009207249f, 0.13984653f, 0.07450983f, 0);
+        addColor("desktop", "dark", 0.009207249f, 0.13984653f, 0.07450983f, 0);
         addColor("activeCaption", "nimbusBlueGrey", 0.0f, 0.049920253f, -0.031372547f, 0);
         addColor("inactiveCaption", "nimbusBlueGrey", 0.00505054f, 0.055526316f, -0.039215684f, 0);
 
@@ -95,7 +95,7 @@ public class IdrinthLookAndFeel extends NimbusLookAndFeel {
         addColor("CheckBox[Disabled].textForeground", "nimbusDisabledText");
 
         //Initialize ColorChooser
-        addColor("ColorChooser.swatchesDefaultRecentColor", "white");
+        addColor("ColorChooser.swatchesDefaultRecentColor", "dark");
 
         //Initialize ComboBox
         addColor("ComboBox:\"ComboBox.textField\"[Disabled].textForeground", "nimbusDisabledText");
@@ -130,37 +130,37 @@ public class IdrinthLookAndFeel extends NimbusLookAndFeel {
         addColor("MenuBar:Menu.background", "colored");
         addColor("MenuBar:Menu[Disabled].textForeground", "nimbusDisabledText");
         addColor("MenuBar:Menu[Enabled].textForeground", "text");
-        addColor("MenuBar:Menu[Selected].textForeground", "white");
+        addColor("MenuBar:Menu[Selected].textForeground", "dark");
 
         //Initialize MenuItem
         addColor("MenuItem.background", "colored");
         addColor("MenuItem[Disabled].textForeground", "nimbusDisabledText");
-        addColor("MenuItem[Enabled].textForeground", "white");
-        addColor("MenuItem[MouseOver].textForeground", "white");
+        addColor("MenuItem[Enabled].textForeground", "dark");
+        addColor("MenuItem[MouseOver].textForeground", "dark");
         addColor("MenuItem:MenuItemAccelerator[Disabled].textForeground", "nimbusDisabledText");
-        addColor("MenuItem:MenuItemAccelerator[MouseOver].textForeground", "white");
+        addColor("MenuItem:MenuItemAccelerator[MouseOver].textForeground", "dark");
 
         //Initialize RadioButtonMenuItem
         addColor("RadioButtonMenuItem.background", "colored");
         addColor("RadioButtonMenuItem[Disabled].textForeground", "nimbusDisabledText");
-        addColor("RadioButtonMenuItem[Enabled].textForeground", "white");
-        addColor("RadioButtonMenuItem[MouseOver].textForeground", "white");
-        addColor("RadioButtonMenuItem[MouseOver+Selected].textForeground", "white");
-        addColor("RadioButtonMenuItem:MenuItemAccelerator[MouseOver].textForeground", "white");
+        addColor("RadioButtonMenuItem[Enabled].textForeground", "dark");
+        addColor("RadioButtonMenuItem[MouseOver].textForeground", "dark");
+        addColor("RadioButtonMenuItem[MouseOver+Selected].textForeground", "dark");
+        addColor("RadioButtonMenuItem:MenuItemAccelerator[MouseOver].textForeground", "dark");
 
         //Initialize CheckBoxMenuItem
         addColor("CheckBoxMenuItem.background", "colored");
-        addColor("CheckBoxMenuItem[Enabled].textForeground", "white");
-        addColor("CheckBoxMenuItem[MouseOver].textForeground", "white");
-        addColor("CheckBoxMenuItem[MouseOver+Selected].textForeground", "white");
-        addColor("CheckBoxMenuItem:MenuItemAccelerator[MouseOver].textForeground", "white");
+        addColor("CheckBoxMenuItem[Enabled].textForeground", "dark");
+        addColor("CheckBoxMenuItem[MouseOver].textForeground", "dark");
+        addColor("CheckBoxMenuItem[MouseOver+Selected].textForeground", "dark");
+        addColor("CheckBoxMenuItem:MenuItemAccelerator[MouseOver].textForeground", "dark");
 
         //Initialize Menu
         addColor("Menu.background", "colored");
         addColor("Menu[Disabled].textForeground", "nimbusDisabledText");
-        addColor("Menu[Enabled].textForeground", "white");
-        addColor("Menu[Enabled+Selected].textForeground", "white");
-        addColor("Menu:MenuItemAccelerator[MouseOver].textForeground", "white");
+        addColor("Menu[Enabled].textForeground", "dark");
+        addColor("Menu[Enabled+Selected].textForeground", "dark");
+        addColor("Menu:MenuItemAccelerator[MouseOver].textForeground", "dark");
 
         //Initialize ProgressBar
         addColor("ProgressBar[Disabled].textForeground", "nimbusDisabledText");
@@ -178,8 +178,8 @@ public class IdrinthLookAndFeel extends NimbusLookAndFeel {
         addColor("TabbedPane.darkShadow", "text");
         addColor("TabbedPane.highlight", "nimbusLightBackground");
         addColor("TabbedPane:TabbedPaneTab[Disabled].textForeground", "nimbusDisabledText");
-        addColor("TabbedPane:TabbedPaneTab[Pressed+Selected].textForeground", "white");
-        addColor("TabbedPane:TabbedPaneTab[Focused+Pressed+Selected].textForeground", "white");
+        addColor("TabbedPane:TabbedPaneTab[Pressed+Selected].textForeground", "dark");
+        addColor("TabbedPane:TabbedPaneTab[Focused+Pressed+Selected].textForeground", "dark");
 
         //Initialize Table
         addColor("Table.textForeground", "text");
@@ -247,7 +247,7 @@ public class IdrinthLookAndFeel extends NimbusLookAndFeel {
         addColor("Tree.dropLineColor", "nimbusFocus");
         addColor("Tree:TreeCell[Enabled].background", "nimbusLightBackground");
         addColor("Tree:TreeCell[Enabled+Focused].background", "nimbusLightBackground");
-        addColor("Tree:TreeCell[Focused+Selected].textForeground", "white");
+        addColor("Tree:TreeCell[Focused+Selected].textForeground", "dark");
         addColor("Tree:\"Tree.cellRenderer\"[Disabled].textForeground", "nimbusDisabledText");
 
         //Initialize RootPane

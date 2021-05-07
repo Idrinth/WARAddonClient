@@ -10,7 +10,7 @@ import javax.swing.JMenu;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
-public class ThemeManager {
+public final class ThemeManager {
 
     private ThemeManager() {
         //not to be used
