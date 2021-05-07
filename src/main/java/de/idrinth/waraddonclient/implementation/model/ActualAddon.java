@@ -1,7 +1,10 @@
 package de.idrinth.waraddonclient.implementation.model;
 
+import de.idrinth.waraddonclient.Config;
+import de.idrinth.waraddonclient.Utils;
 import java.util.ArrayList;
 import java.util.HashMap;
+import org.apache.commons.io.FileUtils;
 
 public class ActualAddon implements de.idrinth.waraddonclient.interfaces.model.Addon {
 
@@ -19,7 +22,7 @@ public class ActualAddon implements de.idrinth.waraddonclient.interfaces.model.A
 
     private final AddonSettings addonSettings;
 
-    private static final String BASE_PATH = "./Interface/AddOns/";
+    private static final String BASE_PATH = "/Interface/AddOns/";
 
     private static final String VERSION_FILE = "/self.idrinth";
 
@@ -198,23 +201,6 @@ public class ActualAddon implements de.idrinth.waraddonclient.interfaces.model.A
         }
     }
 
-    /**
-     * empties a folder
-     *
-     * @param folder
-     */
-    private void emptyFolder(java.io.File folder) {
-        if (folder == null || !folder.exists()) {
-            return;
-        }
-        for (java.io.File file : folder.listFiles()) {
-            if (file.isDirectory()) {
-                emptyFolder(file);
-            }
-            file.delete();
-        }
-    }
-
     @Override
     public String getStatus() {
         if("-".equals(getInstalled())) {
@@ -255,8 +241,8 @@ public class ActualAddon implements de.idrinth.waraddonclient.interfaces.model.A
          * removes all data of this addon from the harddrive
          */
         private void uninstall() {
-            java.io.File addonFolder = new java.io.File(BASE_PATH + name);
-            emptyFolder(addonFolder);
+            java.io.File addonFolder = new java.io.File(Config.getWARPath() + BASE_PATH + name);
+            Utils.emptyFolder(addonFolder);
             addonFolder.delete();
             installed="-";
         }
@@ -268,7 +254,7 @@ public class ActualAddon implements de.idrinth.waraddonclient.interfaces.model.A
          * @throws java.lang.Exception
          */
         private java.io.File getZip() throws java.lang.Exception {
-            java.io.File file = new java.io.File(BASE_PATH + slug + ".zip");
+            java.io.File file = new java.io.File(Config.getWARPath() + BASE_PATH + slug + ".zip");
             try (java.io.InputStream stream = de.idrinth.waraddonclient.factory.RemoteRequest.build().getAddonDownload(slug + "/download/" + version.replace(".", "-") + "/")) {
                 org.apache.commons.io.FileUtils.copyInputStreamToFile(stream, file);
             }
@@ -282,9 +268,9 @@ public class ActualAddon implements de.idrinth.waraddonclient.interfaces.model.A
          */
         private void install() throws java.lang.Exception {
             java.io.File file = getZip();
-            (new net.lingala.zip4j.ZipFile(file)).extractAll(BASE_PATH);
+            (new net.lingala.zip4j.ZipFile(file)).extractAll(Config.getWARPath() + BASE_PATH);
             org.apache.commons.io.FileUtils.deleteQuietly(file);
-            org.apache.commons.io.FileUtils.writeStringToFile(new java.io.File(BASE_PATH + name + VERSION_FILE), "<?xml version=\"1.0\" encoding=\"UTF-8\"?><UiMod><name>" + name + "</name><version>" + version + "</version></UiMod>");
+            org.apache.commons.io.FileUtils.writeStringToFile(new java.io.File(Config.getWARPath() + BASE_PATH + name + VERSION_FILE), "<?xml version=\"1.0\" encoding=\"UTF-8\"?><UiMod><name>" + name + "</name><version>" + version + "</version></UiMod>");
             installed=version;
         }
 
@@ -299,7 +285,7 @@ public class ActualAddon implements de.idrinth.waraddonclient.interfaces.model.A
          * @param base
          */
         public VersionFinder() {
-            folder = de.idrinth.waraddonclient.implementation.service.FindAddonFolder.find(name);
+            folder = de.idrinth.waraddonclient.implementation.service.AddonFolderLocator.find(name);
         }
 
         /**

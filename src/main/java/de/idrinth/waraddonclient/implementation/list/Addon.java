@@ -1,12 +1,16 @@
 package de.idrinth.waraddonclient.implementation.list;
 
+import de.idrinth.waraddonclient.implementation.model.ActualAddon;
+import java.util.ArrayList;
+import java.util.HashMap;
+
 public class Addon implements java.lang.Runnable {
 
-    private final java.util.HashMap<String, de.idrinth.waraddonclient.implementation.model.ActualAddon> list = new java.util.HashMap();
+    private final HashMap<String, ActualAddon> list = new HashMap<>();
 
-    private final java.util.ArrayList<de.idrinth.waraddonclient.implementation.model.ActualAddon> rows = new java.util.ArrayList();
+    private final ArrayList<ActualAddon> rows = new ArrayList<>();
 
-    private final java.util.Hashtable<String, watchedFile> watchedFilesMap = new java.util.Hashtable();
+    private final HashMap<String, WatchedFile> watchedFilesMap = new HashMap<>();
 
     private int duration = 15;
 
@@ -21,24 +25,12 @@ public class Addon implements java.lang.Runnable {
         duration = dur;
     }
 
-    /**
-     * returns the addon at the list-position i
-     *
-     * @param position
-     * @return de.idrinth.waraddonclient.implementation.model.ActualAddon
-     */
-    public de.idrinth.waraddonclient.implementation.model.ActualAddon get(int position) {
-        return (de.idrinth.waraddonclient.implementation.model.ActualAddon) rows.get(position);
+    public ActualAddon get(int position) {
+        return rows.get(position);
     }
 
-    /**
-     * return the addon with the given name
-     *
-     * @param name
-     * @return de.idrinth.waraddonclient.implementation.model.ActualAddon
-     */
-    public de.idrinth.waraddonclient.implementation.model.ActualAddon get(String name) {
-        return (de.idrinth.waraddonclient.implementation.model.ActualAddon) list.get(name);
+    public ActualAddon get(String name) {
+        return list.get(name);
     }
 
     /**
@@ -62,10 +54,8 @@ public class Addon implements java.lang.Runnable {
 
     /**
      * returns a list of files watched
-     *
-     * @return java.util.Hashtable
      */
-    public java.util.Hashtable<String, watchedFile> getWatchedFiles() {
+    public HashMap<String, WatchedFile> getWatchedFiles() {
         return watchedFilesMap;
     }
 
@@ -112,7 +102,7 @@ public class Addon implements java.lang.Runnable {
             }
             javax.swing.table.DefaultTableModel model = (javax.swing.table.DefaultTableModel) de.idrinth.waraddonclient.factory.Interface.build().getAddonTable().getModel();
             for (int counter = json.size(); counter > 0; counter--) {
-                model = processJsonAddon(model, new de.idrinth.waraddonclient.implementation.model.ActualAddon(json.getJsonObject(counter - 1)));
+                model = processJsonAddon(model, new ActualAddon(json.getJsonObject(counter - 1)));
             }
         }
 
@@ -127,7 +117,7 @@ public class Addon implements java.lang.Runnable {
             model.addRow(addon.getTableRow());
             if (!addon.getUploadData().getFile().isEmpty()) {
                 if (!watchedFilesMap.containsKey(addon.getUploadData().getFile().toLowerCase())) {
-                    watchedFilesMap.put(addon.getUploadData().getFile().toLowerCase(), new watchedFile());
+                    watchedFilesMap.put(addon.getUploadData().getFile().toLowerCase(), new WatchedFile());
                 }
                 watchedFilesMap.get(addon.getUploadData().getFile().toLowerCase()).addAddon(addon);
             }
@@ -167,7 +157,7 @@ public class Addon implements java.lang.Runnable {
         }
     }
 
-    public class watchedFile implements java.lang.Runnable {
+    public class WatchedFile implements java.lang.Runnable {
 
         private boolean active;
 
@@ -184,11 +174,6 @@ public class Addon implements java.lang.Runnable {
             list.add(addon);
         }
 
-        /**
-         * sets a file up for uploading checks
-         *
-         * @param file
-         */
         public void setFileToProcess(java.io.File file2process) {
             while (active) {
                 de.idrinth.waraddonclient.implementation.service.Sleeper.sleep(100);

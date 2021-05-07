@@ -72,7 +72,7 @@ public class AddonSettings {
         reason = "";
         url = "";
         hasSettings = false;
-        java.io.File folder = de.idrinth.waraddonclient.implementation.service.FindAddonFolder.find(name);
+        java.io.File folder = de.idrinth.waraddonclient.implementation.service.AddonFolderLocator.find(name);
         if (folder == null || !folder.exists()) {
             return;
         }

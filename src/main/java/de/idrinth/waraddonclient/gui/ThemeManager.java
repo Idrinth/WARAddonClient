@@ -1,11 +1,11 @@
 package de.idrinth.waraddonclient.gui;
 
+import de.idrinth.waraddonclient.Config;
 import de.idrinth.waraddonclient.gui.themes.DarculaLookAndFeelInfo;
 import de.idrinth.waraddonclient.Main;
 import de.idrinth.waraddonclient.gui.themes.IdrinthLookAndFeelInfo;
 import java.awt.event.ActionEvent;
 import java.io.IOException;
-import java.util.prefs.Preferences;
 import javax.swing.JMenu;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
@@ -21,16 +21,16 @@ public final class ThemeManager {
         UIManager.installLookAndFeel(new IdrinthLookAndFeelInfo());
     }
 
-    public static void addTo(JMenu menu, Preferences prefs) {
+    public static void addTo(JMenu menu) {
         for (UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
             javax.swing.JCheckBoxMenuItem item = new javax.swing.JCheckBoxMenuItem();
             item.setText(info.getName());
-            item.setSelected(prefs.get("theme", "Nimbus").equals(info.getName()));
+            item.setSelected(Config.getTheme().equals(info.getName()));
             item.addActionListener((ActionEvent evt) -> {
-                if (prefs.get("theme", "Nimbus").equals(info.getName())) {
+                if (Config.getTheme().equals(info.getName())) {
                     return;
                 }
-                prefs.put("theme", info.getName());
+                Config.setTheme(info.getName());
                 try {
                     Main.restart();
                 } catch (IOException ex) {
@@ -41,9 +41,9 @@ public final class ThemeManager {
         }
     }
 
-    public static void init(Preferences prefs) {
+    public static void init() {
         install();
-        String preference = prefs.get("theme", "Nimbus");
+        String preference = Config.getTheme();
         for (UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
             if (preference.equals(info.getName())) {
                 try {

@@ -1,5 +1,6 @@
 package de.idrinth.waraddonclient.gui;
 
+import de.idrinth.waraddonclient.Config;
 import de.idrinth.waraddonclient.backup.Backup;
 import de.idrinth.waraddonclient.implementation.list.Tag;
 import de.idrinth.waraddonclient.interfaces.model.Addon;
@@ -7,7 +8,6 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.prefs.Preferences;
 import net.lingala.zip4j.exception.ZipException;
 import javax.swing.table.TableRowSorter;
 import javax.swing.JTable;
@@ -15,10 +15,16 @@ import de.idrinth.waraddonclient.configuration.Version;
 import de.idrinth.waraddonclient.gui.tablefilter.TextCategory;
 import de.idrinth.waraddonclient.implementation.model.AddonSettings;
 import java.awt.Desktop;
+import java.awt.Dimension;
 import java.awt.FileDialog;
+import java.awt.Point;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.RowFilter;
+import javax.swing.SwingUtilities;
+import javax.swing.Timer;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 import javax.swing.event.ListSelectionEvent;
@@ -30,23 +36,23 @@ public class Window extends javax.swing.JFrame {
 
     private Addon activeAddon = new de.idrinth.waraddonclient.implementation.model.NoAddon();
 
-    private String language = "en";
-
     private Tag tagList;
 
     private static final String BASE_TITLE = "Idrinth's WAR Addon Client";
-
-    private final Preferences prefs = Preferences.userRoot().node(this.getClass().getName());
 
     /**
      * Creates new form Wrapper
      */
     public Window() {
-        ThemeManager.init(prefs);
+        ThemeManager.init();
         initComponents();
-        ThemeManager.addTo(jMenu5, prefs);
+        ThemeManager.addTo(jMenu5);
         finishGuiBuilding();
+        setLocation(getProcessedLocation());
+        setSize(getProcessedSize());
+        addComponentListener(new Adapter(new DelayedRunner(400, () -> updatePref(this))));
         processPosition();
+        changeLanguageTo(Config.getLanguage());
     }
 
     public JTable getAddonTable() {
@@ -59,16 +65,16 @@ public class Window extends javax.swing.JFrame {
      * @todo make it possible to handle most of this via an addon-like object
      */
     private void finishGuiBuilding() {
-        AddonList.getSelectionModel().addListSelectionListener(new tableListener());
+        AddonList.getSelectionModel().addListSelectionListener(new TableListener());
         setIconImage(java.awt.Toolkit.getDefaultToolkit().getImage(getClass().getResource("/Images/logo.png")));
         sorter = new TableRowSorter(AddonList.getModel());
         AddonList.setRowSorter(sorter);
-        Description.addHyperlinkListener(new hyperlinkListener());
+        Description.addHyperlinkListener(new HyperlinkListenerImpl());
         localVersion.setText(Version.getLocalVersion());
         tagList = new Tag(Tags);
         new java.lang.Thread(tagList).start();
         new java.lang.Thread(new Version()).start();
-        (new tableListener()).updateUi();
+        (new TableListener()).updateUi();
     }
 
     public void newFilter() {
@@ -87,7 +93,7 @@ public class Window extends javax.swing.JFrame {
 
         // if the user selects a file
         if (r == JFileChooser.APPROVE_OPTION) {
-            prefs.put("war-path", j.getSelectedFile().getParent());
+            Config.setWARPath(j.getSelectedFile().getParent());
         }
     }
 
@@ -95,11 +101,11 @@ public class Window extends javax.swing.JFrame {
      * checks if this program is in the correct place
      */
     private void processPosition() {
-        if (new java.io.File(prefs.get("war-path", ".") + "/WAR.exe").exists()) {
+        if (new java.io.File(Config.getWARPath() + "/WAR.exe").exists()) {
             return;
         }
         requestPosition();
-        if (new java.io.File(prefs.get("war-path", ".") + "/WAR.exe").exists()) {
+        if (new java.io.File(Config.getWARPath()+ "/WAR.exe").exists()) {
             return;
         }
         exitWithError("Unable to find WAR.exe");
@@ -627,7 +633,6 @@ public class Window extends javax.swing.JFrame {
     }//GEN-LAST:event_EnglishActionPerformed
 
     /**
-     * @todo implement
      * @param evt
      */
     private void AboutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_AboutActionPerformed
@@ -780,15 +785,12 @@ public class Window extends javax.swing.JFrame {
      * @param lang
      */
     private void changeLanguageTo(String lang) {
-        if (lang.equals(language)) {
-            return;
-        }
         English.setSelected("en".equals(lang));
         Deutsch.setSelected("de".equals(lang));
         Francais.setSelected("fr".equals(lang));
-        language = lang;
+        Config.setLanguage(lang);
         if (activeAddon != null) {
-            Description.setText(activeAddon.getDescription(language));
+            Description.setText(activeAddon.getDescription(lang));
         }
     }
 
@@ -869,7 +871,7 @@ public class Window extends javax.swing.JFrame {
     private javax.swing.JTabbedPane rightSide;
     // End of variables declaration//GEN-END:variables
 
-    class hyperlinkListener implements HyperlinkListener {
+    private class HyperlinkListenerImpl implements HyperlinkListener {
 
         @Override
         public void hyperlinkUpdate(HyperlinkEvent event) {
@@ -884,7 +886,7 @@ public class Window extends javax.swing.JFrame {
         }
     }
 
-    class tableListener implements ListSelectionListener {
+    private class TableListener implements ListSelectionListener {
 
         @Override
         public void valueChanged(ListSelectionEvent event) {
@@ -905,7 +907,7 @@ public class Window extends javax.swing.JFrame {
          */
         public void updateUi() {
             boolean isAnAddon = !"".equals(activeAddon.getVersion());
-            Description.setText(activeAddon.getDescription(language));
+            Description.setText(activeAddon.getDescription(Config.getLanguage()));
             Title.setText(activeAddon.getName());
             InstallButton.setEnabled(isAnAddon);
             RemoveButton.setEnabled(isAnAddon);
@@ -922,6 +924,78 @@ public class Window extends javax.swing.JFrame {
             String taglist = "Tagged: ";
             taglist = activeAddon.getTags().stream().map((tagname) -> tagname + ", ").reduce(taglist, String::concat);
             CurTags.setText(taglist.substring(0, taglist.length() - 2));
+        }
+    }
+
+    private static void updatePref(javax.swing.JFrame frame) {
+        Config.setWindowDimension(frame.getSize());
+        Config.setWindowPosition(frame.getLocation());
+    }
+
+    private Dimension getProcessedSize() {
+        Dimension dimension = Config.getWindowDimension();
+        int width = dimension.width;
+        int height = dimension.height;
+        java.awt.Dimension screen = java.awt.Toolkit.getDefaultToolkit().getScreenSize();
+        if (width <= 0 || width > screen.width) {
+            width = screen.width;
+        }
+        if (height <= 0 || height > screen.height) {
+            height = screen.height;
+        }
+        return new java.awt.Dimension(width, height);
+    }
+
+    private Point getProcessedLocation() {
+        Point point = Config.getWindowPosition();
+        int x = point.x;
+        int y = point.y;
+        java.awt.Dimension screen = java.awt.Toolkit.getDefaultToolkit().getScreenSize();
+        if (x < 0 || x > screen.width) {
+            x = 0;
+        }
+        if (y < 0 || y > screen.height) {
+            y = 0;
+        }
+        return new java.awt.Point(x, y);
+    }
+    
+    private static class Adapter extends ComponentAdapter {
+
+        private final DelayedRunner updater;
+
+        public Adapter(DelayedRunner runner) {
+            this.updater = runner;
+        }
+
+        @Override
+        public void componentResized(ComponentEvent e) {
+            updater.update();
+        }
+
+        @Override
+        public void componentMoved(ComponentEvent e) {
+            updater.update();
+        }
+    }
+
+    private static class DelayedRunner {
+
+        private Timer timer;
+
+        public DelayedRunner(int delay, Runnable callback) {
+            timer = new Timer(delay, e -> {
+                timer.stop();
+                callback.run();
+            });
+        }
+
+        public void update() {
+            if (!SwingUtilities.isEventDispatchThread()) {
+                SwingUtilities.invokeLater(() -> timer.restart());
+            } else {
+                timer.restart();
+            }
         }
     }
 }

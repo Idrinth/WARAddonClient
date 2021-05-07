@@ -17,6 +17,9 @@
 
 package de.idrinth.waraddonclient.implementation.service;
 
+import de.idrinth.waraddonclient.Config;
+import java.io.File;
+
 public class FileWatcher implements java.lang.Runnable {
 
     private java.nio.file.WatchService watcher;
@@ -28,18 +31,19 @@ public class FileWatcher implements java.lang.Runnable {
     @Override
     public void run() {
         try {
-            java.nio.file.Path path = java.nio.file.FileSystems.getDefault().getPath("logs");
-            if (!path.toFile().exists()) {
-                path.toFile().mkdirs();
+            File path = new File(Config.getWARPath() + "/logs");
+            if (!path.exists()) {
+                path.mkdirs();
             }
-            watcher = path.getFileSystem().newWatchService();
+            watcher = path.toPath().getFileSystem().newWatchService();
             java.nio.file.WatchEvent.Kind[] modes = new java.nio.file.WatchEvent.Kind[2];
             modes[0] = java.nio.file.StandardWatchEventKinds.ENTRY_CREATE;
             modes[1] = java.nio.file.StandardWatchEventKinds.ENTRY_MODIFY;
-            path.register(
+            path.toPath().register(
                     watcher,
                     modes,
-                    com.sun.nio.file.ExtendedWatchEventModifier.FILE_TREE);
+                    com.sun.nio.file.ExtendedWatchEventModifier.FILE_TREE
+            );
             handleEvents();
         } catch (InterruptedException | java.io.IOException exception) {
             de.idrinth.factory.Logger.build().log(exception, de.idrinth.Logger.LEVEL_ERROR);
@@ -54,7 +58,7 @@ public class FileWatcher implements java.lang.Runnable {
     private void handleEvents() throws InterruptedException {
         while (true) {
             java.nio.file.WatchKey key = watcher.take();
-            key.pollEvents().stream().filter((event) -> (isValidEvent(event))).map((event) -> new java.io.File("./logs/" + event.context().toString())).filter((file) -> (isValidFile(file))).forEach((file) -> {
+            key.pollEvents().stream().filter((event) -> (isValidEvent(event))).map((event) -> new java.io.File(Config.getWARPath() + "/logs/" + event.context().toString())).filter((file) -> (isValidFile(file))).forEach((file) -> {
                 de.idrinth.waraddonclient.factory.AddonList.build().getWatchedFiles().get(file.getName().toLowerCase()).setFileToProcess(file);
             });
             key.reset();
