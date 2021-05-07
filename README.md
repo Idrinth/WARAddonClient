@@ -4,7 +4,7 @@ A Client to recieve Addon-Data for Warhammer Online and handle the installation,
 This is meant to be a replacement for the Curse-Client, that no longer supports Warhammer Online. The website-version is at http://tools.idrinth.de/addons/ .
 If you got ideas or requests, just open a ticket here :)
 
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/14c96ab0b81b46a7921c74b83bfa61ac)](https://www.codacy.com/app/eldrim/WARAddonClient?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=Idrinth/WARAddonClient&amp;utm_campaign=Badge_Grade)
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/14c96ab0b81b46a7921c74b83bfa61ac)](https://www.codacy.com/gh/Idrinth/WARAddonClient/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=Idrinth/WARAddonClient&amp;utm_campaign=Badge_Grade)
 
 ## Users
 
