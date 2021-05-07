@@ -12,6 +12,7 @@ public class Backup {
         zip.addFolder(new java.io.File("user"));
         zip.addFolder(new java.io.File("Interface"));
     }
+
     public static void restore(java.io.File backup) throws net.lingala.zip4j.exception.ZipException {
         create();
         net.lingala.zip4j.ZipFile zip = new net.lingala.zip4j.ZipFile(backup);
@@ -19,6 +20,7 @@ public class Backup {
         emptyFolder(new java.io.File("user"));
         zip.extractAll(".");
     }
+
     private static void emptyFolder(java.io.File folder) {
         if (folder == null || !folder.exists()) {
             return;

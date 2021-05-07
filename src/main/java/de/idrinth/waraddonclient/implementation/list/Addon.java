@@ -1,20 +1,3 @@
-/*
- * Copyright (C) 2016 Björn Büttner
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-
 package de.idrinth.waraddonclient.implementation.list;
 
 public class Addon implements java.lang.Runnable {
@@ -206,12 +189,12 @@ public class Addon implements java.lang.Runnable {
          *
          * @param file
          */
-        public void setFileToProcess(java.io.File file) {
+        public void setFileToProcess(java.io.File file2process) {
             while (active) {
                 de.idrinth.waraddonclient.implementation.service.Sleeper.sleep(100);
             }
             active = true;
-            this.file = file;
+            file = file2process;
             new java.lang.Thread(this).start();
         }
 

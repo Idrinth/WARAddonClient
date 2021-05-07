@@ -10,21 +10,26 @@ import javax.swing.JMenu;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
-
 public class ThemeManager {
+
     private ThemeManager() {
         //not to be used
     }
+
     private static void install() {
         UIManager.installLookAndFeel(new DarculaLookAndFeelInfo());
         UIManager.installLookAndFeel(new IdrinthLookAndFeelInfo());
     }
+
     public static void addTo(JMenu menu, Preferences prefs) {
         for (UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
             javax.swing.JCheckBoxMenuItem item = new javax.swing.JCheckBoxMenuItem();
             item.setText(info.getName());
             item.setSelected(prefs.get("theme", "Nimbus").equals(info.getName()));
             item.addActionListener((ActionEvent evt) -> {
+                if (prefs.get("theme", "Nimbus").equals(info.getName())) {
+                    return;
+                }
                 prefs.put("theme", info.getName());
                 try {
                     Main.restart();
@@ -35,6 +40,7 @@ public class ThemeManager {
             menu.add(item);
         }
     }
+
     public static void init(Preferences prefs) {
         install();
         String preference = prefs.get("theme", "Nimbus");
@@ -43,8 +49,8 @@ public class ThemeManager {
                 try {
                     UIManager.setLookAndFeel(info.getClassName());
                     break;
-                } catch (ClassNotFoundException|InstantiationException|IllegalAccessException|UnsupportedLookAndFeelException ex) {
-                    de.idrinth.factory.Logger.build().log("Unable to load theme "+info.getName(), de.idrinth.Logger.levelError);
+                } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException ex) {
+                    de.idrinth.factory.Logger.build().log("Unable to load theme " + info.getName(), de.idrinth.Logger.levelError);
                 }
             }
         }
