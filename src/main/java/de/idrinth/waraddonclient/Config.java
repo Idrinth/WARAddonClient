@@ -77,9 +77,9 @@ public class Config {
             return version;
         }
         try {
-            InputStream stream = Config.class.getClass().getResourceAsStream("/txt/version");
+            InputStream stream = Config.class.getResourceAsStream("/version");
             version = IOUtils.toString(stream, StandardCharsets.UTF_8);
-        } catch (NullPointerException|IOException ex) {
+        } catch (IOException ex) {
             return "0.0.0";
         }
         return version;
