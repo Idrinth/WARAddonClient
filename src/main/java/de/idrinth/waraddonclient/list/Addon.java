@@ -192,9 +192,7 @@ public class Addon implements java.lang.Runnable {
                 active = false;
                 return;
             }
-            list.stream().forEach((addon) -> {
-                addon.fileWasChanged(file);
-            });
+            list.stream().forEach(addon -> addon.fileWasChanged(file));
             active = false;
         }
     }
