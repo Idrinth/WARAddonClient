@@ -27,9 +27,7 @@ public final class Main {
             ManagementFactory.getRuntimeMXBean().getInputArguments().stream().filter(arg -> (!arg.contains("-agentlib"))).map(arg -> {
                 cmd.append(arg);
                 return arg;
-            }).forEachOrdered(_item -> {
-                cmd.append(" ");
-            });
+            }).forEachOrdered(item -> cmd.append(" "));
 
             String[] mainCommand = System.getProperty(SUN_JAVA_COMMAND).split(" ");
             cmd.append("-jar " );
