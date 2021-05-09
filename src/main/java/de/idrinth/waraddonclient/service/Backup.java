@@ -1,4 +1,4 @@
-package de.idrinth.waraddonclient.backup;
+package de.idrinth.waraddonclient.service;
 
 import de.idrinth.waraddonclient.Config;
 import de.idrinth.waraddonclient.Utils;

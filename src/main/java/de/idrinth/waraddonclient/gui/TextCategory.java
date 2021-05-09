@@ -1,4 +1,4 @@
-package de.idrinth.waraddonclient.gui.tablefilter;
+package de.idrinth.waraddonclient.gui;
 
 import de.idrinth.waraddonclient.list.AddonList;
 

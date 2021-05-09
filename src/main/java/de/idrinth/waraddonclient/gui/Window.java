@@ -2,7 +2,7 @@ package de.idrinth.waraddonclient.gui;
 
 import de.idrinth.waraddonclient.Config;
 import de.idrinth.waraddonclient.Main;
-import de.idrinth.waraddonclient.backup.Backup;
+import de.idrinth.waraddonclient.service.Backup;
 import de.idrinth.waraddonclient.list.AddonList;
 import de.idrinth.waraddonclient.list.TagList;
 import de.idrinth.waraddonclient.model.Addon;
@@ -10,21 +10,13 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import net.lingala.zip4j.exception.ZipException;
 import javax.swing.table.TableRowSorter;
-import javax.swing.JTable;
 import de.idrinth.waraddonclient.service.Version;
-import de.idrinth.waraddonclient.gui.tablefilter.TextCategory;
 import de.idrinth.waraddonclient.model.AddonSettings;
-import de.idrinth.waraddonclient.service.DelayedRunner;
 import de.idrinth.waraddonclient.service.FileLogger;
 import java.awt.Desktop;
-import java.awt.Dimension;
 import java.awt.FileDialog;
-import java.awt.Point;
 import java.awt.Toolkit;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
 import java.util.ArrayList;
-import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.RowFilter;
 import javax.swing.event.HyperlinkEvent;
@@ -38,8 +30,6 @@ public class Window extends javax.swing.JFrame {
     private Addon activeAddon = new de.idrinth.waraddonclient.model.NoAddon();
 
     private TagList tagList;
-
-    private static final String BASE_TITLE = "Idrinth's WAR Addon Client";
     
     private final AddonList addonList;
     private final FileLogger logger;
@@ -48,19 +38,11 @@ public class Window extends javax.swing.JFrame {
         this.addonList = addonList;
         this.logger = logger;
         initComponents();
-        manager.addTo(jMenu5);
+        manager.addTo(ThemeMenu);
         finishGuiBuilding();
         version.setVersion(remoteVersion);
-        new java.lang.Thread(version).start();
-        setLocation(getProcessedLocation());
-        setSize(getProcessedSize());
-        addComponentListener(new Adapter(new DelayedRunner(400, () -> updatePref(this))));
-        processPosition();
+        new Thread(version).start();
         changeLanguageTo(Config.getLanguage());
-    }
-
-    public JTable getAddonTable() {
-        return AddonList;
     }
 
     /**
@@ -90,46 +72,6 @@ public class Window extends javax.swing.JFrame {
         }
     }
 
-    private void requestPosition() {
-        JOptionPane.showMessageDialog(this, "No WAR.exe found, please select it");
-        JFileChooser j = new javax.swing.JFileChooser();
-        int r = j.showOpenDialog(this);
-
-        // if the user selects a file
-        if (r == JFileChooser.APPROVE_OPTION) {
-            Config.setWARPath(j.getSelectedFile().getParent());
-        }
-    }
-
-    /**
-     * checks if this program is in the correct place
-     */
-    private void processPosition() {
-        if (new java.io.File(Config.getWARPath() + "/WAR.exe").exists()) {
-            return;
-        }
-        requestPosition();
-        if (new java.io.File(Config.getWARPath() + "/WAR.exe").exists()) {
-            return;
-        }
-        exitWithError("Unable to find WAR.exe");
-    }
-
-    /**
-     * Exits after displaying an error message
-     *
-     * @param error
-     */
-    public void exitWithError(String error) {
-        JOptionPane.showMessageDialog(this, error);
-        this.dispose();
-        Runtime.getRuntime().exit(0);
-    }
-
-    public javax.swing.JLabel getRemoteVersionLabel() {
-        return remoteVersion;
-    }
-
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -140,15 +82,15 @@ public class Window extends javax.swing.JFrame {
     private void initComponents() {
 
         jMenuItem1 = new javax.swing.JMenuItem();
-        jSplitPane2 = new javax.swing.JSplitPane();
-        leftSide = new javax.swing.JPanel();
+        javax.swing.JSplitPane jSplitPane2 = new javax.swing.JSplitPane();
+        javax.swing.JPanel leftSide = new javax.swing.JPanel();
         Search = new javax.swing.JTextField();
         jScrollPane2 = new javax.swing.JScrollPane();
         AddonList = new javax.swing.JTable();
         DeleteSearch = new javax.swing.JButton();
         UpdateAll = new javax.swing.JButton();
         rightSide = new javax.swing.JTabbedPane();
-        jPanel1 = new javax.swing.JPanel();
+        javax.swing.JPanel jPanel1 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         Description = new javax.swing.JEditorPane();
         InstallButton = new javax.swing.JButton();
@@ -156,37 +98,37 @@ public class Window extends javax.swing.JFrame {
         Title = new javax.swing.JLabel();
         localVersion = new javax.swing.JLabel();
         remoteVersion = new javax.swing.JLabel();
-        jLabel3 = new javax.swing.JLabel();
+        javax.swing.JLabel jLabel3 = new javax.swing.JLabel();
         CurTags = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         jScrollPane3 = new javax.swing.JScrollPane();
         UploadReason = new javax.swing.JTextArea();
         UploadUrl = new javax.swing.JTextField();
-        jLabel1 = new javax.swing.JLabel();
+        javax.swing.JLabel jLabel1 = new javax.swing.JLabel();
         UploadEnable = new javax.swing.JCheckBox();
-        label1 = new java.awt.Label();
+        java.awt.Label label1 = new java.awt.Label();
         UploadFile = new javax.swing.JTextField();
-        jMenuBar1 = new javax.swing.JMenuBar();
-        jMenu4 = new javax.swing.JMenu();
+        javax.swing.JMenuBar jMenuBar1 = new javax.swing.JMenuBar();
+        javax.swing.JMenu jMenu4 = new javax.swing.JMenu();
         About = new javax.swing.JMenuItem();
         Restart = new javax.swing.JMenuItem();
         Quit = new javax.swing.JMenuItem();
         Tags = new javax.swing.JMenu();
-        Tools = new javax.swing.JMenu();
+        javax.swing.JMenu Tools = new javax.swing.JMenu();
         CreateBackup = new javax.swing.JMenuItem();
         RestoreBackup = new javax.swing.JMenuItem();
-        jMenu3 = new javax.swing.JMenu();
-        jMenu1 = new javax.swing.JMenu();
+        javax.swing.JMenu jMenu3 = new javax.swing.JMenu();
+        javax.swing.JMenu jMenu1 = new javax.swing.JMenu();
         English = new javax.swing.JRadioButtonMenuItem();
         Deutsch = new javax.swing.JRadioButtonMenuItem();
         Francais = new javax.swing.JRadioButtonMenuItem();
-        jMenu2 = new javax.swing.JMenu();
+        javax.swing.JMenu jMenu2 = new javax.swing.JMenu();
         Refresh1 = new javax.swing.JCheckBoxMenuItem();
         Refresh2 = new javax.swing.JCheckBoxMenuItem();
         Refresh3 = new javax.swing.JCheckBoxMenuItem();
         Refresh4 = new javax.swing.JCheckBoxMenuItem();
-        jMenu5 = new javax.swing.JMenu();
-        Links = new javax.swing.JMenu();
+        ThemeMenu = new javax.swing.JMenu();
+        javax.swing.JMenu Links = new javax.swing.JMenu();
         Guilded = new javax.swing.JMenuItem();
         BuyMeACoffee = new javax.swing.JMenuItem();
         Source = new javax.swing.JMenuItem();
@@ -268,7 +210,7 @@ public class Window extends javax.swing.JFrame {
                 .addComponent(DeleteSearch)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(UpdateAll)
-                .addGap(0, 11, Short.MAX_VALUE))
+                .addGap(0, 30, Short.MAX_VALUE))
             .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
         );
         leftSideLayout.setVerticalGroup(
@@ -279,7 +221,8 @@ public class Window extends javax.swing.JFrame {
                     .addComponent(DeleteSearch)
                     .addComponent(UpdateAll))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 387, Short.MAX_VALUE))
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 393, Short.MAX_VALUE)
+                .addContainerGap())
         );
 
         jSplitPane2.setLeftComponent(leftSide);
@@ -323,7 +266,7 @@ public class Window extends javax.swing.JFrame {
                 .addGap(21, 21, 21)
                 .addComponent(InstallButton)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(Title, javax.swing.GroupLayout.DEFAULT_SIZE, 249, Short.MAX_VALUE)
+                .addComponent(Title, javax.swing.GroupLayout.DEFAULT_SIZE, 238, Short.MAX_VALUE)
                 .addGap(18, 18, 18)
                 .addComponent(RemoveButton)
                 .addGap(24, 24, 24))
@@ -396,7 +339,7 @@ public class Window extends javax.swing.JFrame {
                         .addComponent(UploadUrl, javax.swing.GroupLayout.PREFERRED_SIZE, 265, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addComponent(label1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 132, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 113, Short.MAX_VALUE)
                         .addComponent(UploadFile, javax.swing.GroupLayout.PREFERRED_SIZE, 265, javax.swing.GroupLayout.PREFERRED_SIZE))))
         );
         jPanel2Layout.setVerticalGroup(
@@ -540,8 +483,8 @@ public class Window extends javax.swing.JFrame {
 
         jMenu3.add(jMenu2);
 
-        jMenu5.setText("Theme");
-        jMenu3.add(jMenu5);
+        ThemeMenu.setText("Theme");
+        jMenu3.add(ThemeMenu);
 
         jMenuBar1.add(jMenu3);
 
@@ -583,7 +526,7 @@ public class Window extends javax.swing.JFrame {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jSplitPane2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 427, Short.MAX_VALUE)
+            .addComponent(jSplitPane2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         pack();
@@ -866,7 +809,6 @@ public class Window extends javax.swing.JFrame {
     private javax.swing.JRadioButtonMenuItem Francais;
     private javax.swing.JMenuItem Guilded;
     private javax.swing.JButton InstallButton;
-    private javax.swing.JMenu Links;
     private javax.swing.JMenuItem Quit;
     private javax.swing.JCheckBoxMenuItem Refresh1;
     private javax.swing.JCheckBoxMenuItem Refresh2;
@@ -878,30 +820,18 @@ public class Window extends javax.swing.JFrame {
     private javax.swing.JTextField Search;
     private javax.swing.JMenuItem Source;
     private javax.swing.JMenu Tags;
+    private javax.swing.JMenu ThemeMenu;
     private javax.swing.JLabel Title;
-    private javax.swing.JMenu Tools;
     private javax.swing.JButton UpdateAll;
     private javax.swing.JCheckBox UploadEnable;
     private javax.swing.JTextField UploadFile;
     private javax.swing.JTextArea UploadReason;
     private javax.swing.JTextField UploadUrl;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel3;
-    private javax.swing.JMenu jMenu1;
-    private javax.swing.JMenu jMenu2;
-    private javax.swing.JMenu jMenu3;
-    private javax.swing.JMenu jMenu4;
-    private javax.swing.JMenu jMenu5;
-    private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JMenuItem jMenuItem1;
-    private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
-    private javax.swing.JSplitPane jSplitPane2;
-    private java.awt.Label label1;
-    private javax.swing.JPanel leftSide;
     private javax.swing.JLabel localVersion;
     private javax.swing.JLabel remoteVersion;
     private javax.swing.JTabbedPane rightSide;
@@ -948,7 +878,7 @@ public class Window extends javax.swing.JFrame {
             InstallButton.setEnabled(isAnAddon);
             RemoveButton.setEnabled(isAnAddon);
             rightSide.setEnabledAt(1, false);
-            setTitle(activeAddon.getName() + " - " + BASE_TITLE + " " + Config.getVersion());
+            setTitle(activeAddon.getName() + " - Idrinth's WAR Addon Client " + Config.getVersion());
             if (!isAnAddon) {
                 return;
             }
@@ -961,58 +891,6 @@ public class Window extends javax.swing.JFrame {
             String taglist = "Tagged: ";
             taglist = activeAddon.getTags().stream().map(tagname -> tagname + ", ").reduce(taglist, String::concat);
             CurTags.setText(taglist.substring(0, taglist.length() - 2));
-        }
-    }
-
-    private static void updatePref(javax.swing.JFrame frame) {
-        Config.setWindowDimension(frame.getSize());
-        Config.setWindowPosition(frame.getLocation());
-    }
-
-    private Dimension getProcessedSize() {
-        Dimension dimension = Config.getWindowDimension();
-        int width = dimension.width;
-        int height = dimension.height;
-        java.awt.Dimension screen = java.awt.Toolkit.getDefaultToolkit().getScreenSize();
-        if (width <= 0 || width > screen.width) {
-            width = screen.width;
-        }
-        if (height <= 0 || height > screen.height) {
-            height = screen.height;
-        }
-        return new java.awt.Dimension(width, height);
-    }
-
-    private Point getProcessedLocation() {
-        Point point = Config.getWindowPosition();
-        int x = point.x;
-        int y = point.y;
-        java.awt.Dimension screen = java.awt.Toolkit.getDefaultToolkit().getScreenSize();
-        if (x < 0 || x > screen.width) {
-            x = 0;
-        }
-        if (y < 0 || y > screen.height) {
-            y = 0;
-        }
-        return new java.awt.Point(x, y);
-    }
-
-    private static class Adapter extends ComponentAdapter {
-
-        private final DelayedRunner updater;
-
-        public Adapter(DelayedRunner runner) {
-            this.updater = runner;
-        }
-
-        @Override
-        public void componentResized(ComponentEvent e) {
-            updater.update();
-        }
-
-        @Override
-        public void componentMoved(ComponentEvent e) {
-            updater.update();
         }
     }
 }
