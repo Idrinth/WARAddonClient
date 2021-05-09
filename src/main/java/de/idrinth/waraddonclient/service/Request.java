@@ -43,7 +43,7 @@ public class Request {
         uri.setHeader("User-Agent", "IdrinthsWARAddonClient/" + Config.getVersion());
         uri.setHeader("Cache-Control", "no-cache");
         while (requestActive) {
-            Utils.sleep(150);
+            Utils.sleep(150, logger);
         }
         requestActive = true;
         client = org.apache.http.impl.client.HttpClientBuilder.create()
