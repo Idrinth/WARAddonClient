@@ -8,6 +8,13 @@ If you got ideas or requests, just open a ticket here :)
 
 ## Users
 
+### Fully Packaged
+
+The only file you need is the <a href="https://github.com/Idrinth/WARAddonClient/releases/latest">exe-file in the latest Release</a>. Download it and install the WARAddonClient on your computer.
+This is an optional way of installing it and BUGs may or may not be fixed.
+
+## JAR-Release (Prefered)
+
 This is a java-Application, so you'll need to be able to run .jar files on the system you desire to use this on.
 The only file you need is the <a href="https://github.com/Idrinth/WARAddonClient/releases/latest">jar-file in the latest Release</a>.
 After downloading it, copy it to your Warhammer Online directory and run it.
