@@ -1,5 +1,6 @@
 package de.idrinth.waraddonclient.service;
 
+import de.idrinth.waraddonclient.Utils;
 import javax.swing.JLabel;
 
 public class Version implements java.lang.Runnable {
@@ -18,7 +19,7 @@ public class Version implements java.lang.Runnable {
 
     @Override
     public void run() {
-        de.idrinth.waraddonclient.service.Sleeper.sleep(2500);
+        Utils.sleep(2500, logger);
         try {
             label.setText(client.getVersion());
         } catch (java.lang.Exception exception) {
