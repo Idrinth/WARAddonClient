@@ -1,5 +1,7 @@
 package de.idrinth.waraddonclient.model;
 
+import java.awt.event.ActionListener;
+
 public class Tag {
 
     private final String name;
@@ -8,14 +10,12 @@ public class Tag {
 
     private final javax.swing.JCheckBoxMenuItem item;
 
-    public Tag(String tag) {
+    public Tag(String tag, ActionListener update) {
         this.name = tag;
         item = new javax.swing.JCheckBoxMenuItem();
         item.setText(name);
         item.setSelected(true);
-        item.addActionListener((java.awt.event.ActionEvent evt) -> {
-            de.idrinth.waraddonclient.factory.Interface.build().newFilter();
-        });
+        item.addActionListener(update);
     }
 
     public javax.swing.JCheckBoxMenuItem getMenu() {

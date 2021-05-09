@@ -1,7 +1,5 @@
 package de.idrinth.waraddonclient;
 
-import de.idrinth.waraddonclient.factory.Interface;
-import de.idrinth.waraddonclient.factory.Logger;
 import de.idrinth.waraddonclient.gui.ThemeManager;
 import de.idrinth.waraddonclient.gui.Window;
 import de.idrinth.waraddonclient.list.AddonList;
@@ -17,7 +15,6 @@ import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
-import java.util.logging.Level;
 import javax.swing.JOptionPane;
 
 public final class Main {
@@ -34,14 +31,13 @@ public final class Main {
             logger.info("Starting");
             Request client = new Request(new TrustManager(logger), logger);
             AddonList addonList = new AddonList(client);
-            new Thread(addonList).start();
             FileWatcher watcher = new FileWatcher(addonList);
             new Thread(watcher).start();
             ThemeManager.init();
             java.awt.EventQueue.invokeLater(() -> {
                 Version version = new Version(client);
-                Interface.set(new Window(addonList, version));
-                Interface.build().setVisible(true);
+                Window window = new Window(addonList, version);
+                window.setVisible(true);
             });
         } catch (IOException|CertificateException|KeyManagementException|KeyStoreException|NoSuchAlgorithmException ex) {
             JOptionPane.showMessageDialog(null, ex.getLocalizedMessage());

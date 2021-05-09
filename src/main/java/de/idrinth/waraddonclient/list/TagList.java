@@ -2,6 +2,7 @@ package de.idrinth.waraddonclient.list;
 
 import de.idrinth.waraddonclient.model.Tag;
 import de.idrinth.waraddonclient.service.Sleeper;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.HashMap;
 import javax.swing.JMenu;
@@ -17,10 +18,13 @@ public class TagList implements java.lang.Runnable {
     private final AddonList addonList;
 
     private long lastRefreshed;
+    
+    private final ActionListener listener;
 
-    public TagList(JMenu jmenu, AddonList addonList) {
+    public TagList(JMenu jmenu, AddonList addonList, ActionListener listener) {
         this.menu = jmenu;
         this.addonList = addonList;
+        this.listener = listener;
     }
 
     /**
@@ -30,7 +34,7 @@ public class TagList implements java.lang.Runnable {
         for (int counter = 0; counter < addonList.size(); counter++) {
             for (String tag : addonList.get(counter).getTags()) {
                 if (!tags.containsKey(tag)) {
-                    tags.put(tag, new Tag(tag));
+                    tags.put(tag, new Tag(tag, listener));
                 }
                 tags.get(tag).addMember(addonList.get(counter));
                 if (!tagNames.contains(tag)) {

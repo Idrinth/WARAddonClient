@@ -30,6 +30,7 @@ import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.table.DefaultTableModel;
 
 public class Window extends javax.swing.JFrame {
 
@@ -68,14 +69,16 @@ public class Window extends javax.swing.JFrame {
         AddonList.getSelectionModel().addListSelectionListener(new TableListener());
         setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/Images/logo.png")));
         AddonList.setRowSorter(new TableRowSorter<>(AddonList.getModel()));
+        addonList.setModel((DefaultTableModel) AddonList.getModel());
         Description.addHyperlinkListener(new HyperlinkListenerImpl());
         localVersion.setText(Config.getVersion());
-        tagList = new TagList(Tags, addonList);
-        new java.lang.Thread(tagList).start();
+        tagList = new TagList(Tags, addonList, (java.awt.event.ActionEvent evt) -> newFilter());
+        new Thread(tagList).start();
+        new Thread(addonList).start();
         (new TableListener()).updateUi();
     }
 
-    public void newFilter() {
+    private void newFilter() {
         try {
             RowFilter<String, ArrayList<String>> rf = new TextCategory(Search.getText(), tagList.getActiveTags(), addonList);
             ((TableRowSorter) AddonList.getRowSorter()).setRowFilter(rf);
