@@ -1,18 +1,17 @@
 package de.idrinth.waraddonclient.gui;
 
-import de.idrinth.waraddonclient.list.AddonList;
+import de.idrinth.waraddonclient.model.AddonList;
+import de.idrinth.waraddonclient.model.ActualAddon;
+import java.util.List;
 
 public class TextCategory extends javax.swing.RowFilter {
 
     private final java.util.regex.Pattern textfilter;
-
-    private final java.util.ArrayList<String> tags;
     
     private final AddonList addonList;
 
-    public TextCategory(String text, java.util.ArrayList<String> tagList, AddonList addonList) {
+    public TextCategory(String text, AddonList addonList) {
         textfilter = java.util.regex.Pattern.compile("(?i)" + java.util.regex.Pattern.quote(text));
-        tags = tagList;
         this.addonList = addonList;
     }
 
@@ -24,7 +23,7 @@ public class TextCategory extends javax.swing.RowFilter {
      */
     @Override
     public boolean include(Entry entry) {
-        de.idrinth.waraddonclient.model.ActualAddon addon = addonList.get(entry.getStringValue(1));
+        ActualAddon addon = addonList.get(entry.getStringValue(1));
         if (addon == null) {
             return false;
         }
@@ -40,7 +39,8 @@ public class TextCategory extends javax.swing.RowFilter {
      * @param addon
      * @return boolean
      */
-    private boolean isInAllowedCategory(de.idrinth.waraddonclient.model.ActualAddon addon) {
+    private boolean isInAllowedCategory(ActualAddon addon) {
+        List<String> tags = addonList.getActiveTags();
         return tags.isEmpty() || tags.stream().anyMatch((tag) -> (addon.hasTag(tag)));
     }
 

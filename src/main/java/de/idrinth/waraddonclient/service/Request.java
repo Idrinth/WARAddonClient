@@ -14,7 +14,7 @@ public class Request {
     private org.apache.http.impl.client.CloseableHttpClient client;
 
     private final javax.net.ssl.SSLContext sslContext;
-    
+
     private final FileLogger logger;
 
     public Request(TrustManager manager, FileLogger logger) {
@@ -71,12 +71,6 @@ public class Request {
         return false;
     }
 
-    /**
-     * gets the version string from github
-     *
-     * @return String
-     * @throws java.lang.Exception
-     */
     public String getVersion() {
         org.apache.http.client.methods.HttpGet request = new org.apache.http.client.methods.HttpGet("https://api.github.com/repos/Idrinth/WARAddonClient/releases/latest");
         org.apache.http.HttpResponse response = executionHandler(request);

@@ -1,13 +1,15 @@
-package de.idrinth.waraddonclient.list;
+package de.idrinth.waraddonclient.model;
 
 import de.idrinth.waraddonclient.Utils;
 import de.idrinth.waraddonclient.model.ActualAddon;
+import de.idrinth.waraddonclient.model.Tag;
 import de.idrinth.waraddonclient.service.FileLogger;
 import de.idrinth.waraddonclient.service.Request;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.HashMap;
 import javax.json.JsonArray;
-import javax.swing.JOptionPane;
+import javax.swing.JMenu;
 import javax.swing.table.DefaultTableModel;
 
 public class AddonList implements java.lang.Runnable {
@@ -17,10 +19,6 @@ public class AddonList implements java.lang.Runnable {
     private final ArrayList<ActualAddon> rows = new ArrayList<>();
 
     private final HashMap<String, WatchedFile> watchedFilesMap = new HashMap<>();
-
-    private int duration = 15;
-
-    private long lastRefreshed;
     
     private final Request client;
     
@@ -28,22 +26,26 @@ public class AddonList implements java.lang.Runnable {
     
     private final FileLogger logger;
 
+    private JMenu menu;
+
+    private final HashMap<String, Tag> tags = new HashMap<>();
+
+    private final ArrayList<String> tagNames = new ArrayList<>();
+    
+    private ActionListener listener;
+
     public AddonList(Request client, FileLogger logger) {
         this.client = client;
         this.logger = logger;
     }
 
-    public void setModel(DefaultTableModel model) {
-        this.model = model;
+    public void setMenu(JMenu menu, ActionListener listener) {
+        this.menu = menu;
+        this.listener = listener;
     }
 
-    /**
-     * set the refresh frequency
-     *
-     * @param dur
-     */
-    public void setDuration(int dur) {
-        duration = dur;
+    public void setModel(DefaultTableModel model) {
+        this.model = model;
     }
 
     public ActualAddon get(int position) {
@@ -81,27 +83,57 @@ public class AddonList implements java.lang.Runnable {
     }
 
     /**
-     * handles updating the addonlists
+     * processes the addon lst to see what addon is tagged with a specific tag
      */
-    @Override
-    public void run() {
-        int failuresInARow = 0;
-        while (true) {
-            while (System.currentTimeMillis() < lastRefreshed + duration * 60000) {
-                Utils.sleep(250, logger);
-            }
-            try {
-                new JsonProcessor(client.getAddonList(), model).run();
-                failuresInARow = 0;
-                lastRefreshed = System.currentTimeMillis();
-            } catch (Exception exception) {
-                logger.error(exception);
-                failuresInARow++;
-                if (failuresInARow > 5) {
-                    JOptionPane.showMessageDialog(null, exception.getLocalizedMessage());
-                    Runtime.getRuntime().exit(0);
+    private void processAddons() {
+        for (int counter = 0; counter < size(); counter++) {
+            for (String tag : get(counter).getTags()) {
+                if (!tags.containsKey(tag)) {
+                    tags.put(tag, new Tag(tag, listener));
+                }
+                tags.get(tag).addMember(get(counter));
+                if (!tagNames.contains(tag)) {
+                    tagNames.add(tag);
                 }
             }
+        }
+    }
+
+    /**
+     * get the selected tags
+     */
+    public java.util.ArrayList<String> getActiveTags() {
+        java.util.ArrayList<String> active = new ArrayList<>();
+        tagNames.stream().filter(tag -> (tags.get(tag).isActive())).forEach(tag -> active.add(tag));
+        return active;
+    }
+
+    /**
+     * removes unneeded tags and adds new tags to the menu
+     */
+    private void processTags() {
+        tagNames.stream().map(name -> {
+            tags.get(name).checkMembers();
+            return name;
+        }).forEach(name -> {
+            if (!tags.get(name).hasMembers()) {
+                menu.remove(tags.get(name).getMenu());
+                tags.remove(name);
+                tagNames.remove(name);
+            } else if (tags.get(name).getMenu().getParent() == null) {
+                menu.add(tags.get(name).getMenu());
+            }
+        });
+    }
+
+    @Override
+    public void run() {
+        try {
+            new JsonProcessor(client.getAddonList(), model).run();
+            processAddons();
+            processTags();
+        } catch (Exception exception) {
+            logger.error(exception);
         }
     }
 
