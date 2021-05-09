@@ -5,6 +5,11 @@ import de.idrinth.waraddonclient.Utils;
 import java.io.File;
 import java.io.IOException;
 import de.idrinth.waraddonclient.model.TrustManager;
+import java.security.KeyManagementException;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpGet;
 
 public class Request {
 
@@ -18,7 +23,7 @@ public class Request {
 
     private final FileLogger logger;
 
-    public Request(TrustManager manager, FileLogger logger) {
+    public Request(TrustManager manager, FileLogger logger) throws NoSuchAlgorithmException, KeyStoreException, KeyManagementException {
         this.logger = logger;
         sslContext = org.apache.http.ssl.SSLContextBuilder.create().loadTrustMaterial(
                 manager.getKeyStore(),
@@ -73,10 +78,10 @@ public class Request {
     }
 
     public String getVersion() {
-        org.apache.http.client.methods.HttpGet request = new org.apache.http.client.methods.HttpGet("https://api.github.com/repos/Idrinth/WARAddonClient/releases/latest");
-        org.apache.http.HttpResponse response = executionHandler(request);
         String version = "";
         try {
+            HttpGet request = new HttpGet("https://api.github.com/repos/Idrinth/WARAddonClient/releases/latest");
+            HttpResponse response = executionHandler(request);
             if (response != null) {
                 javax.json.JsonObject data = javax.json.Json.createReader(response.getEntity().getContent()).readObject();
                 version = data.getString("tag_name");
