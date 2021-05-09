@@ -4,22 +4,21 @@ import com.sun.nio.file.ExtendedWatchEventModifier;
 import de.idrinth.waraddonclient.Config;
 import de.idrinth.waraddonclient.list.AddonList;
 import java.io.File;
+import java.io.IOException;
 
 public class FileWatcher implements java.lang.Runnable {
 
     private java.nio.file.WatchService watcher;
     
     private final AddonList addonList;
+    
+    private final FileLogger logger;
 
-    public FileWatcher(AddonList addonList) {
+    public FileWatcher(AddonList addonList, FileLogger logger) {
         this.addonList = addonList;
+        this.logger = logger;
     }
     
-
-    /**
-     * initialises the filwatchin for the log-folder so uploads of changed data
-     * may happen
-     */
     @Override
     public void run() {
         try {
@@ -37,8 +36,8 @@ public class FileWatcher implements java.lang.Runnable {
                     ExtendedWatchEventModifier.FILE_TREE
             );
             handleEvents();
-        } catch (InterruptedException | java.io.IOException exception) {
-            de.idrinth.waraddonclient.factory.Logger.build().error(exception);
+        } catch (InterruptedException | IOException exception) {
+            logger.error(exception);
         }
     }
 

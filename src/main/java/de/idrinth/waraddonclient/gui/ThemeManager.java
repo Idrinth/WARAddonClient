@@ -21,6 +21,7 @@ import de.idrinth.waraddonclient.gui.themes.JTattooMintLookAndFeelInfo;
 import de.idrinth.waraddonclient.gui.themes.JTattooNoireLookAndFeelInfo;
 import de.idrinth.waraddonclient.gui.themes.JTattooSmartLookAndFeelInfo;
 import de.idrinth.waraddonclient.gui.themes.JTattooTextureLookAndFeelInfo;
+import de.idrinth.waraddonclient.service.FileLogger;
 import java.awt.event.ActionEvent;
 import java.io.IOException;
 import javax.swing.JMenu;
@@ -29,11 +30,25 @@ import javax.swing.UnsupportedLookAndFeelException;
 
 public final class ThemeManager {
 
-    private ThemeManager() {
-        //not to be used
+    private final FileLogger logger;
+
+    public ThemeManager(FileLogger logger) {
+        this.logger = logger;
+        install();
+        String preference = Config.getTheme();
+        for (UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
+            if (preference.equals(info.getName())) {
+                try {
+                    UIManager.setLookAndFeel(info.getClassName());
+                    break;
+                } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException ex) {
+                    logger.warn("Unable to load theme " + info.getName());
+                }
+            }
+        }
     }
 
-    private static void install() {
+    private void install() {
         UIManager.installLookAndFeel(new DarculaLookAndFeelInfo());
         UIManager.installLookAndFeel(new IdrinthLookAndFeelInfo());
         UIManager.installLookAndFeel(new JTattooAcrylLookAndFeelInfo());
@@ -55,7 +70,7 @@ public final class ThemeManager {
         UIManager.installLookAndFeel(new FlatDarculaLookAndFeelInfo());
     }
 
-    public static void addTo(JMenu menu) {
+    public void addTo(JMenu menu) {
         for (UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
             javax.swing.JCheckBoxMenuItem item = new javax.swing.JCheckBoxMenuItem();
             item.setText(info.getName());
@@ -68,25 +83,10 @@ public final class ThemeManager {
                 try {
                     Main.restart();
                 } catch (IOException ex) {
-                    de.idrinth.waraddonclient.factory.Logger.build().error("Failed to restart");
+                    logger.error("Failed to restart");
                 }
             });
             menu.add(item);
-        }
-    }
-
-    public static void init() {
-        install();
-        String preference = Config.getTheme();
-        for (UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
-            if (preference.equals(info.getName())) {
-                try {
-                    UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException ex) {
-                    de.idrinth.waraddonclient.factory.Logger.build().warn("Unable to load theme " + info.getName());
-                }
-            }
         }
     }
 }

@@ -5,9 +5,11 @@ import javax.swing.JLabel;
 public class Version implements java.lang.Runnable {
     private final Request client;
     private JLabel label;
+    private final FileLogger logger;
 
-    public Version(Request client) {
+    public Version(Request client, FileLogger logger) {
         this.client = client;
+        this.logger = logger;
     }
 
     public void setVersion(JLabel version) {
@@ -20,7 +22,7 @@ public class Version implements java.lang.Runnable {
         try {
             label.setText(client.getVersion());
         } catch (java.lang.Exception exception) {
-            de.idrinth.waraddonclient.factory.Logger.build().error(exception);
+            logger.error(exception);
         }
     }
 }

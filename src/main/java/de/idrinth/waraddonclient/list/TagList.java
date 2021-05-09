@@ -1,7 +1,8 @@
 package de.idrinth.waraddonclient.list;
 
+import de.idrinth.waraddonclient.Utils;
 import de.idrinth.waraddonclient.model.Tag;
-import de.idrinth.waraddonclient.service.Sleeper;
+import de.idrinth.waraddonclient.service.FileLogger;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -20,11 +21,14 @@ public class TagList implements java.lang.Runnable {
     private long lastRefreshed;
     
     private final ActionListener listener;
+    
+    private final FileLogger logger;
 
-    public TagList(JMenu jmenu, AddonList addonList, ActionListener listener) {
+    public TagList(JMenu jmenu, AddonList addonList, ActionListener listener, FileLogger logger) {
         this.menu = jmenu;
         this.addonList = addonList;
         this.listener = listener;
+        this.logger = logger;
     }
 
     /**
@@ -76,10 +80,10 @@ public class TagList implements java.lang.Runnable {
      */
     @Override
     public void run() {
-        Sleeper.sleep(10000);
+        Utils.sleep(10000, logger);
         while (true) {
             while (System.currentTimeMillis() < lastRefreshed + 300000) {
-                de.idrinth.waraddonclient.service.Sleeper.sleep(1000000);
+                Utils.sleep(1000000, logger);
             }
             processAddons();
             processTags();

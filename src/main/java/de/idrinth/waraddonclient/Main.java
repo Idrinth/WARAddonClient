@@ -29,14 +29,14 @@ public final class Main {
         try {
             FileLogger logger = new FileLogger(new File(Config.getLogFile()));
             logger.info("Starting");
+            ThemeManager themes = new ThemeManager(logger);
             Request client = new Request(new TrustManager(logger), logger);
-            AddonList addonList = new AddonList(client);
-            FileWatcher watcher = new FileWatcher(addonList);
+            AddonList addonList = new AddonList(client, logger);
+            FileWatcher watcher = new FileWatcher(addonList, logger);
             new Thread(watcher).start();
-            ThemeManager.init();
             java.awt.EventQueue.invokeLater(() -> {
-                Version version = new Version(client);
-                Window window = new Window(addonList, version);
+                Version version = new Version(client, logger);
+                Window window = new Window(addonList, version, themes, logger);
                 window.setVisible(true);
             });
         } catch (IOException|CertificateException|KeyManagementException|KeyStoreException|NoSuchAlgorithmException ex) {

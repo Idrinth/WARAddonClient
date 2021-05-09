@@ -15,6 +15,7 @@ import de.idrinth.waraddonclient.service.Version;
 import de.idrinth.waraddonclient.gui.tablefilter.TextCategory;
 import de.idrinth.waraddonclient.model.AddonSettings;
 import de.idrinth.waraddonclient.service.DelayedRunner;
+import de.idrinth.waraddonclient.service.FileLogger;
 import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.FileDialog;
@@ -41,11 +42,13 @@ public class Window extends javax.swing.JFrame {
     private static final String BASE_TITLE = "Idrinth's WAR Addon Client";
     
     private final AddonList addonList;
+    private final FileLogger logger;
 
-    public Window(AddonList addonList, Version version) {
+    public Window(AddonList addonList, Version version, ThemeManager manager, FileLogger logger) {
         this.addonList = addonList;
+        this.logger = logger;
         initComponents();
-        ThemeManager.addTo(jMenu5);
+        manager.addTo(jMenu5);
         finishGuiBuilding();
         version.setVersion(remoteVersion);
         new java.lang.Thread(version).start();
@@ -72,7 +75,7 @@ public class Window extends javax.swing.JFrame {
         addonList.setModel((DefaultTableModel) AddonList.getModel());
         Description.addHyperlinkListener(new HyperlinkListenerImpl());
         localVersion.setText(Config.getVersion());
-        tagList = new TagList(Tags, addonList, (java.awt.event.ActionEvent evt) -> newFilter());
+        tagList = new TagList(Tags, addonList, (java.awt.event.ActionEvent evt) -> newFilter(), logger);
         new Thread(tagList).start();
         new Thread(addonList).start();
         (new TableListener()).updateUi();
@@ -83,7 +86,7 @@ public class Window extends javax.swing.JFrame {
             RowFilter<String, ArrayList<String>> rf = new TextCategory(Search.getText(), tagList.getActiveTags(), addonList);
             ((TableRowSorter) AddonList.getRowSorter()).setRowFilter(rf);
         } catch (java.util.regex.PatternSyntaxException exception) {
-            de.idrinth.waraddonclient.factory.Logger.build().error(exception);
+            logger.error(exception);
         }
     }
 
@@ -597,7 +600,7 @@ public class Window extends javax.swing.JFrame {
             updateList();
             JOptionPane.showMessageDialog(this, "The requested Addon was installed.");
         } catch (java.lang.Exception exception) {
-            de.idrinth.waraddonclient.factory.Logger.build().error(exception);
+            logger.error(exception);
             JOptionPane.showMessageDialog(this, "Sadly Installing failed, check if the folder is writeable.");
         }
     }//GEN-LAST:event_InstallButtonActionPerformed
@@ -629,7 +632,7 @@ public class Window extends javax.swing.JFrame {
         try {
             activeAddon.uninstall();
         } catch (Exception exception) {
-            de.idrinth.waraddonclient.factory.Logger.build().error(exception);
+            logger.error(exception);
         }
         updateList();
     }//GEN-LAST:event_RemoveButtonActionPerformed
@@ -731,7 +734,7 @@ public class Window extends javax.swing.JFrame {
                     addon.install();
                 } catch (Exception ex) {
                     errors++;
-                    de.idrinth.waraddonclient.factory.Logger.build().error(ex);
+                    logger.error(ex);
                 }
             }
         }
@@ -750,7 +753,7 @@ public class Window extends javax.swing.JFrame {
             Backup.create();
             JOptionPane.showMessageDialog(this, "Saved your profile and addons in backups.");
         } catch (ZipException ex) {
-            de.idrinth.waraddonclient.factory.Logger.build().error(ex);
+            logger.error(ex);
             JOptionPane.showMessageDialog(this, "Failed to save your profile and addons.");
         }
     }//GEN-LAST:event_CreateBackupActionPerformed
@@ -759,7 +762,7 @@ public class Window extends javax.swing.JFrame {
         try {
             Desktop.getDesktop().browse(new java.net.URI("https://github.com/Idrinth/WARAddonClient/"));
         } catch (URISyntaxException | IOException ex) {
-            de.idrinth.waraddonclient.factory.Logger.build().error(ex);
+            logger.error(ex);
         }
     }//GEN-LAST:event_SourceActionPerformed
 
@@ -767,7 +770,7 @@ public class Window extends javax.swing.JFrame {
         try {
             Desktop.getDesktop().browse(new java.net.URI("https://buymeacoffee.com/idrinth"));
         } catch (URISyntaxException | IOException ex) {
-            de.idrinth.waraddonclient.factory.Logger.build().error(ex);
+            logger.error(ex);
         }
     }//GEN-LAST:event_BuyMeACoffeeActionPerformed
 
@@ -775,7 +778,7 @@ public class Window extends javax.swing.JFrame {
         try {
             Desktop.getDesktop().browse(new java.net.URI("https://guilded.gg/Idrinths-Addons/"));
         } catch (URISyntaxException | IOException ex) {
-            de.idrinth.waraddonclient.factory.Logger.build().error(ex);
+            logger.error(ex);
         }
     }//GEN-LAST:event_GuildedActionPerformed
 
@@ -791,7 +794,7 @@ public class Window extends javax.swing.JFrame {
                 Backup.restore(new java.io.File(dialog.getDirectory() + "/" + dialog.getFile()));
                 JOptionPane.showMessageDialog(this, "Backup restored.");
             } catch (ZipException ex) {
-                de.idrinth.waraddonclient.factory.Logger.build().error(ex);
+                logger.error(ex);
                 JOptionPane.showMessageDialog(this, "Couldn't restore Backup.");
             }
         }
@@ -801,7 +804,7 @@ public class Window extends javax.swing.JFrame {
         try {
             Main.restart();
         } catch (IOException ex) {
-            de.idrinth.waraddonclient.factory.Logger.build().error(ex);
+            logger.error(ex);
             JOptionPane.showMessageDialog(this, "Couldn't restart app.");
         }
     }//GEN-LAST:event_QuitActionPerformed
@@ -912,7 +915,7 @@ public class Window extends javax.swing.JFrame {
                 try {
                     Desktop.getDesktop().browse(event.getURL().toURI());
                 } catch (java.net.URISyntaxException | java.io.IOException exception) {
-                    de.idrinth.waraddonclient.factory.Logger.build().error(exception);
+                    logger.error(exception);
                 }
             }
 
@@ -926,7 +929,7 @@ public class Window extends javax.swing.JFrame {
             try {
                 activeAddon = addonList.get(AddonList.convertRowIndexToModel(AddonList.getSelectedRow()));
             } catch (java.lang.ArrayIndexOutOfBoundsException exception) {
-                de.idrinth.waraddonclient.factory.Logger.build().error(exception);
+                logger.error(exception);
                 return;
             }
             if (activeAddon == null) {

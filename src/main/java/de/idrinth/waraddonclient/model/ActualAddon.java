@@ -2,6 +2,7 @@ package de.idrinth.waraddonclient.model;
 
 import de.idrinth.waraddonclient.Config;
 import de.idrinth.waraddonclient.Utils;
+import de.idrinth.waraddonclient.service.FileLogger;
 import de.idrinth.waraddonclient.service.Request;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -29,8 +30,11 @@ public class ActualAddon implements de.idrinth.waraddonclient.model.Addon {
 
     private final Request client;
     
-    public ActualAddon(javax.json.JsonObject addon, Request client) {
+    private final FileLogger logger;
+    
+    public ActualAddon(javax.json.JsonObject addon, Request client, FileLogger logger) {
         this.client = client;
+        this.logger = logger;
         descriptions.put("en", getStringFromObject("description", addon));
         descriptions.put("fr", getStringFromObject("description_fr", addon));
         descriptions.put("de", getStringFromObject("description_de", addon));
@@ -44,7 +48,7 @@ public class ActualAddon implements de.idrinth.waraddonclient.model.Addon {
             counter++;
         }
         new VersionFinder().run();
-        addonSettings = new AddonSettings(name);
+        addonSettings = new AddonSettings(name, logger);
     }
 
     /**
@@ -197,7 +201,7 @@ public class ActualAddon implements de.idrinth.waraddonclient.model.Addon {
             try {
                 client.upload(addonSettings.getUrl(), file);
             } catch (Exception exception) {
-                de.idrinth.waraddonclient.factory.Logger.build().warn(exception);
+                logger.warn(exception);
             }
         }
     }
@@ -304,7 +308,7 @@ public class ActualAddon implements de.idrinth.waraddonclient.model.Addon {
                         installed = list.item(0).getAttributes().getNamedItem("version").getTextContent();
                         return true;
                     } catch (javax.xml.parsers.ParserConfigurationException | javax.xml.parsers.FactoryConfigurationError | org.xml.sax.SAXException | java.io.IOException exception) {
-                        de.idrinth.waraddonclient.factory.Logger.build().error(exception);
+                        logger.error(exception);
                     }
                 }
             }
@@ -322,7 +326,7 @@ public class ActualAddon implements de.idrinth.waraddonclient.model.Addon {
                     installed = list.item(0).getTextContent().replace("(sys)", "");
                     return true;
                 } catch (javax.xml.parsers.ParserConfigurationException | javax.xml.parsers.FactoryConfigurationError | org.xml.sax.SAXException | java.io.IOException exception) {
-                    de.idrinth.waraddonclient.factory.Logger.build().error(exception);
+                    logger.error(exception);
                 }
             }
             return false;

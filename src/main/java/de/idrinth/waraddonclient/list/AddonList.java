@@ -1,6 +1,8 @@
 package de.idrinth.waraddonclient.list;
 
+import de.idrinth.waraddonclient.Utils;
 import de.idrinth.waraddonclient.model.ActualAddon;
+import de.idrinth.waraddonclient.service.FileLogger;
 import de.idrinth.waraddonclient.service.Request;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -23,9 +25,12 @@ public class AddonList implements java.lang.Runnable {
     private final Request client;
     
     private DefaultTableModel model;
+    
+    private final FileLogger logger;
 
-    public AddonList(Request client) {
+    public AddonList(Request client, FileLogger logger) {
         this.client = client;
+        this.logger = logger;
     }
 
     public void setModel(DefaultTableModel model) {
@@ -83,14 +88,14 @@ public class AddonList implements java.lang.Runnable {
         int failuresInARow = 0;
         while (true) {
             while (System.currentTimeMillis() < lastRefreshed + duration * 60000) {
-                de.idrinth.waraddonclient.service.Sleeper.sleep(250);
+                Utils.sleep(250, logger);
             }
             try {
                 new JsonProcessor(client.getAddonList(), model).run();
                 failuresInARow = 0;
                 lastRefreshed = System.currentTimeMillis();
             } catch (Exception exception) {
-                de.idrinth.waraddonclient.factory.Logger.build().error(exception);
+                logger.error(exception);
                 failuresInARow++;
                 if (failuresInARow > 5) {
                     JOptionPane.showMessageDialog(null, exception.getLocalizedMessage());
@@ -121,7 +126,7 @@ public class AddonList implements java.lang.Runnable {
                 throw new java.lang.Exception("no content in json");
             }
             for (int counter = json.size(); counter > 0; counter--) {
-                processJsonAddon(new ActualAddon(json.getJsonObject(counter - 1), client));
+                processJsonAddon(new ActualAddon(json.getJsonObject(counter - 1), client, logger));
             }
         }
 
@@ -182,7 +187,7 @@ public class AddonList implements java.lang.Runnable {
 
         public void setFileToProcess(java.io.File file2process) {
             while (active) {
-                de.idrinth.waraddonclient.service.Sleeper.sleep(100);
+                Utils.sleep(100, logger);
             }
             active = true;
             file = file2process;

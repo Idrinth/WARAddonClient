@@ -1,6 +1,7 @@
 package de.idrinth.waraddonclient.model;
 
 import de.idrinth.waraddonclient.Config;
+import de.idrinth.waraddonclient.service.FileLogger;
 
 public class AddonSettings {
 
@@ -15,6 +16,8 @@ public class AddonSettings {
     private final String name;
 
     private boolean hasSettings;
+    
+    private final FileLogger logger;
 
     public String getFile() {
         return file;
@@ -37,8 +40,9 @@ public class AddonSettings {
         return url;
     }
 
-    public AddonSettings(String addon) {
+    public AddonSettings(String addon, FileLogger logger) {
         this.name = addon;
+        this.logger = logger;
         this.enabled = Config.isEnabled(addon);
         refresh();
     }
@@ -78,7 +82,7 @@ public class AddonSettings {
             }
             hasSettings = true;
         } catch (javax.xml.parsers.ParserConfigurationException | javax.xml.parsers.FactoryConfigurationError | org.xml.sax.SAXException | java.io.IOException exception) {
-            de.idrinth.waraddonclient.factory.Logger.build().error(exception);
+            logger.error(exception);
         }
     }
 
