@@ -11,28 +11,6 @@
         <maven.compiler.target>1.8</maven.compiler.target>
         <mainClass>de.idrinth.waraddonclient.Main</mainClass>
     </properties>
-    <pluginRepositories>
-        <pluginRepository>
-            <id>stevenmz.packr-maven-plugin</id>
-            <name>github</name>
-            <url>https://maven.pkg.github.com/stevenmz/packr-maven-plugin</url>
-        </pluginRepository>
-        <pluginRepository>
-            <id>central</id>
-            <url>https://repo1.maven.org/maven2</url>
-        </pluginRepository>
-    </pluginRepositories>
-    <repositories>
-        <repository>
-            <id>stevenmz.packr-maven-plugin</id>
-            <name>github</name>
-            <url>https://maven.pkg.github.com/stevenmz/packr-maven-plugin</url>
-        </repository>
-        <repository>
-            <id>central</id>
-            <url>https://repo1.maven.org/maven2</url>
-        </repository>
-    </repositories>
     <dependencies>
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
