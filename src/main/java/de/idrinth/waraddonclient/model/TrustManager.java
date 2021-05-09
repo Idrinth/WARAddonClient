@@ -1,7 +1,6 @@
 package de.idrinth.waraddonclient.model;
 
 import de.idrinth.waraddonclient.service.FileLogger;
-import de.idrinth.waraddonclient.factory.Logger;
 import java.io.IOException;
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
@@ -18,7 +17,7 @@ public class TrustManager implements TrustStrategy {
     
     private final FileLogger logger;
 
-    public TrustManager(FileLogger logger) throws java.lang.Exception {
+    public TrustManager(FileLogger logger) throws CertificateException, KeyManagementException, KeyStoreException, IOException, NoSuchAlgorithmException {
         this.logger = logger;
         getStore();
         //tools.idrinth.de
@@ -38,7 +37,7 @@ public class TrustManager implements TrustStrategy {
             }
         }
 
-        throw new java.lang.RuntimeException("Couldn't initialize Trustmanager due to lack of X509TrustManager");
+        throw new KeyStoreException("Couldn't initialize Trustmanager due to lack of X509TrustManager");
     }
 
     public final java.security.KeyStore getKeyStore() {

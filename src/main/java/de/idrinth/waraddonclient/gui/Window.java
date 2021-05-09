@@ -14,6 +14,7 @@ import javax.swing.JTable;
 import de.idrinth.waraddonclient.service.Version;
 import de.idrinth.waraddonclient.gui.tablefilter.TextCategory;
 import de.idrinth.waraddonclient.model.AddonSettings;
+import de.idrinth.waraddonclient.service.DelayedRunner;
 import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.FileDialog;
@@ -25,8 +26,6 @@ import java.util.ArrayList;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.RowFilter;
-import javax.swing.SwingUtilities;
-import javax.swing.Timer;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 import javax.swing.event.ListSelectionEvent;
@@ -42,12 +41,13 @@ public class Window extends javax.swing.JFrame {
     
     private final AddonList addonList;
 
-    public Window(AddonList addonList) {
+    public Window(AddonList addonList, Version version) {
         this.addonList = addonList;
-        ThemeManager.init();
         initComponents();
         ThemeManager.addTo(jMenu5);
         finishGuiBuilding();
+        version.setVersion(remoteVersion);
+        new java.lang.Thread(version).start();
         setLocation(getProcessedLocation());
         setSize(getProcessedSize());
         addComponentListener(new Adapter(new DelayedRunner(400, () -> updatePref(this))));
@@ -72,7 +72,6 @@ public class Window extends javax.swing.JFrame {
         localVersion.setText(Config.getVersion());
         tagList = new TagList(Tags, addonList);
         new java.lang.Thread(tagList).start();
-        new java.lang.Thread(new Version()).start();
         (new TableListener()).updateUi();
     }
 
@@ -1007,26 +1006,6 @@ public class Window extends javax.swing.JFrame {
         @Override
         public void componentMoved(ComponentEvent e) {
             updater.update();
-        }
-    }
-
-    private static class DelayedRunner {
-
-        private Timer timer;
-
-        public DelayedRunner(int delay, Runnable callback) {
-            timer = new Timer(delay, e -> {
-                timer.stop();
-                callback.run();
-            });
-        }
-
-        public void update() {
-            if (!SwingUtilities.isEventDispatchThread()) {
-                SwingUtilities.invokeLater(() -> timer.restart());
-            } else {
-                timer.restart();
-            }
         }
     }
 }

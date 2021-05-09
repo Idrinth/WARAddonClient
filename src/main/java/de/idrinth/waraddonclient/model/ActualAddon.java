@@ -2,6 +2,8 @@ package de.idrinth.waraddonclient.model;
 
 import de.idrinth.waraddonclient.Config;
 import de.idrinth.waraddonclient.Utils;
+import de.idrinth.waraddonclient.service.Request;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -25,10 +27,10 @@ public class ActualAddon implements de.idrinth.waraddonclient.model.Addon {
 
     private static final String VERSION_FILE = "/self.idrinth";
 
-    /**
-     * @param addon
-     */
-    public ActualAddon(javax.json.JsonObject addon) {
+    private final Request client;
+    
+    public ActualAddon(javax.json.JsonObject addon, Request client) {
+        this.client = client;
         descriptions.put("en", getStringFromObject("description", addon));
         descriptions.put("fr", getStringFromObject("description_fr", addon));
         descriptions.put("de", getStringFromObject("description_de", addon));
@@ -193,7 +195,7 @@ public class ActualAddon implements de.idrinth.waraddonclient.model.Addon {
     public void fileWasChanged(java.io.File file) {
         if (addonSettings.isEnabled() && file.isFile() && file.getName().equalsIgnoreCase(addonSettings.getFile())) {
             try {
-                de.idrinth.waraddonclient.factory.RemoteRequest.build().upload(addonSettings.getUrl(), file);
+                client.upload(addonSettings.getUrl(), file);
             } catch (Exception exception) {
                 de.idrinth.waraddonclient.factory.Logger.build().warn(exception);
             }
@@ -253,9 +255,9 @@ public class ActualAddon implements de.idrinth.waraddonclient.model.Addon {
          * @return java.io.File
          * @throws java.lang.Exception
          */
-        private java.io.File getZip() throws java.lang.Exception {
+        private java.io.File getZip() throws IOException {
             java.io.File file = new java.io.File(Config.getWARPath() + BASE_PATH + slug + ".zip");
-            try (java.io.InputStream stream = de.idrinth.waraddonclient.factory.RemoteRequest.build().getAddonDownload(slug + "/download/" + version.replace(".", "-") + "/")) {
+            try (java.io.InputStream stream = client.getAddonDownload(slug + "/download/" + version.replace(".", "-") + "/")) {
                 org.apache.commons.io.FileUtils.copyInputStreamToFile(stream, file);
             }
             return file;

@@ -1,6 +1,7 @@
 package de.idrinth.waraddonclient.list;
 
 import de.idrinth.waraddonclient.model.ActualAddon;
+import de.idrinth.waraddonclient.service.Request;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -15,6 +16,12 @@ public class AddonList implements java.lang.Runnable {
     private int duration = 15;
 
     private long lastRefreshed;
+    
+    private final Request client;
+
+    public AddonList(Request client) {
+        this.client = client;
+    }
 
     /**
      * set the refresh frequency
@@ -70,7 +77,7 @@ public class AddonList implements java.lang.Runnable {
                 de.idrinth.waraddonclient.service.Sleeper.sleep(250);
             }
             try {
-                new JsonProcessor(de.idrinth.waraddonclient.factory.RemoteRequest.build().getAddonList()).run();
+                new JsonProcessor(client.getAddonList()).run();
                 failuresInARow = 0;
                 lastRefreshed = System.currentTimeMillis();
             } catch (Exception exception) {
@@ -102,7 +109,7 @@ public class AddonList implements java.lang.Runnable {
             }
             javax.swing.table.DefaultTableModel model = (javax.swing.table.DefaultTableModel) de.idrinth.waraddonclient.factory.Interface.build().getAddonTable().getModel();
             for (int counter = json.size(); counter > 0; counter--) {
-                model = processJsonAddon(model, new ActualAddon(json.getJsonObject(counter - 1)));
+                model = processJsonAddon(model, new ActualAddon(json.getJsonObject(counter - 1), client));
             }
         }
 
