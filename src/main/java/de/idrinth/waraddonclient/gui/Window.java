@@ -947,6 +947,7 @@ public class Window extends javax.swing.JFrame {
             Title.setText(activeAddon.getName());
             InstallButton.setEnabled(isAnAddon);
             RemoveButton.setEnabled(isAnAddon);
+            rightSide.setEnabledAt(1, false);
             setTitle(activeAddon.getName() + " - " + BASE_TITLE + " " + Config.getVersion());
             if (!isAnAddon) {
                 return;
