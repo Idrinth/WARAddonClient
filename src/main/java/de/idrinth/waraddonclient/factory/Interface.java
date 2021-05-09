@@ -10,13 +10,11 @@ public final class Interface {
         //this is static only
     }
 
-    /**
-     * gets the GUI-object
-     */
     public static synchronized Window build() {
-        if (instance == null) {
-            instance = new de.idrinth.waraddonclient.gui.Window();
-        }
         return instance;
+    }
+
+    public static synchronized void set(Window window) {
+        instance = window;
     }
 }

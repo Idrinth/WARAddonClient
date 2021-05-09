@@ -2,11 +2,19 @@ package de.idrinth.waraddonclient.service;
 
 import com.sun.nio.file.ExtendedWatchEventModifier;
 import de.idrinth.waraddonclient.Config;
+import de.idrinth.waraddonclient.list.AddonList;
 import java.io.File;
 
 public class FileWatcher implements java.lang.Runnable {
 
     private java.nio.file.WatchService watcher;
+    
+    private final AddonList addonList;
+
+    public FileWatcher(AddonList addonList) {
+        this.addonList = addonList;
+    }
+    
 
     /**
      * initialises the filwatchin for the log-folder so uploads of changed data
@@ -30,7 +38,7 @@ public class FileWatcher implements java.lang.Runnable {
             );
             handleEvents();
         } catch (InterruptedException | java.io.IOException exception) {
-            de.idrinth.factory.Logger.build().log(exception, de.idrinth.Logger.LEVEL_ERROR);
+            de.idrinth.waraddonclient.factory.Logger.build().error(exception);
         }
     }
 
@@ -43,7 +51,7 @@ public class FileWatcher implements java.lang.Runnable {
         while (true) {
             java.nio.file.WatchKey key = watcher.take();
             key.pollEvents().stream().filter((event) -> (isValidEvent(event))).map((event) -> new java.io.File(Config.getWARPath() + "/logs/" + event.context().toString())).filter((file) -> (isValidFile(file))).forEach((file) -> {
-                de.idrinth.waraddonclient.factory.AddonList.build().getWatchedFiles().get(file.getName().toLowerCase()).setFileToProcess(file);
+                addonList.getWatchedFiles().get(file.getName().toLowerCase()).setFileToProcess(file);
             });
             key.reset();
         }
@@ -66,6 +74,6 @@ public class FileWatcher implements java.lang.Runnable {
      * @return
      */
     private boolean isValidFile(java.io.File file) {
-        return de.idrinth.waraddonclient.factory.AddonList.build().getWatchedFiles().containsKey(file.getName().toLowerCase());
+        return addonList.getWatchedFiles().containsKey(file.getName().toLowerCase());
     }
 }

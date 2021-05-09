@@ -4,7 +4,6 @@ import de.idrinth.waraddonclient.Config;
 import de.idrinth.waraddonclient.Utils;
 import java.util.ArrayList;
 import java.util.HashMap;
-import org.apache.commons.io.FileUtils;
 
 public class ActualAddon implements de.idrinth.waraddonclient.model.Addon {
 
@@ -196,7 +195,7 @@ public class ActualAddon implements de.idrinth.waraddonclient.model.Addon {
             try {
                 de.idrinth.waraddonclient.factory.RemoteRequest.build().upload(addonSettings.getUrl(), file);
             } catch (Exception exception) {
-                de.idrinth.factory.Logger.build().log(exception, de.idrinth.Logger.LEVEL_WARN);
+                de.idrinth.waraddonclient.factory.Logger.build().warn(exception);
             }
         }
     }
@@ -303,7 +302,7 @@ public class ActualAddon implements de.idrinth.waraddonclient.model.Addon {
                         installed = list.item(0).getAttributes().getNamedItem("version").getTextContent();
                         return true;
                     } catch (javax.xml.parsers.ParserConfigurationException | javax.xml.parsers.FactoryConfigurationError | org.xml.sax.SAXException | java.io.IOException exception) {
-                        de.idrinth.factory.Logger.build().log(exception, de.idrinth.Logger.LEVEL_ERROR);
+                        de.idrinth.waraddonclient.factory.Logger.build().error(exception);
                     }
                 }
             }
@@ -321,7 +320,7 @@ public class ActualAddon implements de.idrinth.waraddonclient.model.Addon {
                     installed = list.item(0).getTextContent().replace("(sys)", "");
                     return true;
                 } catch (javax.xml.parsers.ParserConfigurationException | javax.xml.parsers.FactoryConfigurationError | org.xml.sax.SAXException | java.io.IOException exception) {
-                    de.idrinth.factory.Logger.build().log(exception, de.idrinth.Logger.LEVEL_ERROR);
+                    de.idrinth.waraddonclient.factory.Logger.build().error(exception);
                 }
             }
             return false;

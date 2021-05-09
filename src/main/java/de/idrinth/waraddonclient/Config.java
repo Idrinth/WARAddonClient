@@ -100,4 +100,8 @@ public class Config {
     public static void setEnabled(String addon, boolean enable) {
         prefs.putBoolean(KEY_PREFIX_ADDON_UPLOAD + addon, enable);
     }
+
+    public static String getLogFile() {
+        return "waraddonclient.log";
+    }
 }

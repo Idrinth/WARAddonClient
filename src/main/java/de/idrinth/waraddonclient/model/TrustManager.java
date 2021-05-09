@@ -1,20 +1,25 @@
-package de.idrinth.ssl;
+package de.idrinth.waraddonclient.model;
 
+import de.idrinth.waraddonclient.service.FileLogger;
+import de.idrinth.waraddonclient.factory.Logger;
 import java.io.IOException;
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
-import org.apache.commons.io.IOUtils;
+import org.apache.http.ssl.TrustStrategy;
 
-public class TrustManager implements org.apache.http.ssl.TrustStrategy {
+public class TrustManager implements TrustStrategy {
 
     private java.security.KeyStore keyStore;
 
     private javax.net.ssl.X509TrustManager manager;
+    
+    private final FileLogger logger;
 
-    public TrustManager() throws java.lang.Exception {
+    public TrustManager(FileLogger logger) throws java.lang.Exception {
+        this.logger = logger;
         getStore();
         //tools.idrinth.de
         addCertToStore("DST Root CA X3");
@@ -58,7 +63,7 @@ public class TrustManager implements org.apache.http.ssl.TrustStrategy {
             java.security.cert.Certificate cert = java.security.cert.CertificateFactory.getInstance("X.509").generateCertificate(bis);
             keyStore.setCertificateEntry(name, cert);
         } catch(CertificateException e) {
-            System.out.println(e);
+            logger.error(e);
         }
     }
 
@@ -68,7 +73,7 @@ public class TrustManager implements org.apache.http.ssl.TrustStrategy {
             manager.checkServerTrusted(chain, authType);
             return true;
         } catch (CertificateException e) {
-            de.idrinth.factory.Logger.build().log(e, de.idrinth.Logger.LEVEL_WARN);
+            logger.warn(e);
         }
         return false;
     }

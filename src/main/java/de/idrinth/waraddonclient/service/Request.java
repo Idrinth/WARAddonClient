@@ -3,19 +3,22 @@ package de.idrinth.waraddonclient.service;
 import de.idrinth.waraddonclient.Config;
 import java.io.File;
 import java.io.IOException;
+import de.idrinth.waraddonclient.model.TrustManager;
 
 public class Request {
 
-    private final String BASE_URL = "https://tools.idrinth.de/";
+    private static final String BASE_URL = "https://tools.idrinth.de/";
 
     private volatile boolean requestActive;
 
     private org.apache.http.impl.client.CloseableHttpClient client;
 
     private final javax.net.ssl.SSLContext sslContext;
+    
+    private final FileLogger logger;
 
-    public Request() throws IOException, Exception {
-        de.idrinth.ssl.TrustManager manager = new de.idrinth.ssl.TrustManager();
+    public Request(TrustManager manager, FileLogger logger) {
+        this.logger = logger;
         sslContext = org.apache.http.ssl.SSLContextBuilder.create().loadTrustMaterial(
                 manager.getKeyStore(),
                 manager
@@ -63,7 +66,7 @@ public class Request {
             client.close();
             return wasSuccess;
         } catch (IOException exception) {
-            de.idrinth.factory.Logger.build().log(exception, de.idrinth.Logger.LEVEL_ERROR);
+            logger.error(exception);
         }
         return false;
     }
@@ -74,7 +77,7 @@ public class Request {
      * @return String
      * @throws java.lang.Exception
      */
-    public String getVersion() throws java.lang.Exception {
+    public String getVersion() {
         org.apache.http.client.methods.HttpGet request = new org.apache.http.client.methods.HttpGet("https://api.github.com/repos/Idrinth/WARAddonClient/releases/latest");
         org.apache.http.HttpResponse response = executionHandler(request);
         String version = "";
@@ -85,7 +88,7 @@ public class Request {
             }
             client.close();
         } catch (java.io.IOException exception) {
-            de.idrinth.factory.Logger.build().log(exception, de.idrinth.Logger.LEVEL_ERROR);
+            logger.error(exception);
         }
         return version;
     }

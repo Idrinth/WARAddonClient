@@ -78,7 +78,7 @@ public class AddonSettings {
             }
             hasSettings = true;
         } catch (javax.xml.parsers.ParserConfigurationException | javax.xml.parsers.FactoryConfigurationError | org.xml.sax.SAXException | java.io.IOException exception) {
-            de.idrinth.factory.Logger.build().log(exception, de.idrinth.Logger.LEVEL_ERROR);
+            de.idrinth.waraddonclient.factory.Logger.build().error(exception);
         }
     }
 

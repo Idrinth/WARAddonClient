@@ -1,8 +1,14 @@
 package de.idrinth.waraddonclient;
 
+import de.idrinth.waraddonclient.factory.Interface;
+import de.idrinth.waraddonclient.gui.Window;
+import de.idrinth.waraddonclient.list.AddonList;
+import de.idrinth.waraddonclient.service.FileLogger;
+import de.idrinth.waraddonclient.service.FileWatcher;
 import java.io.File;
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
+import javax.swing.JOptionPane;
 
 public final class Main {
 
@@ -13,12 +19,21 @@ public final class Main {
     }
 
     public static void main(String args[]) {
-        java.awt.EventQueue.invokeLater(() -> {
-            de.idrinth.factory.Logger.build().log("Starting", de.idrinth.Logger.LEVEL_INFO);
-            de.idrinth.waraddonclient.factory.AddonList.build();
-            de.idrinth.waraddonclient.factory.FileWatcher.build();
-            de.idrinth.waraddonclient.factory.Interface.build().setVisible(true);
-        });
+        try {
+            FileLogger logger = new FileLogger(new File(Config.getLogFile()));
+            logger.info("Starting");
+            AddonList addonList = new AddonList();
+            new Thread(addonList).start();
+            FileWatcher watcher = new FileWatcher(addonList);
+            new Thread(watcher).start();
+            java.awt.EventQueue.invokeLater(() -> {
+                Interface.set(new Window(addonList));
+                Interface.build().setVisible(true);
+            });
+        } catch (IOException ex) {
+            JOptionPane.showMessageDialog(null, ex.getLocalizedMessage());
+            Runtime.getRuntime().exit(0);
+        }
     }
 
     public static void restart() throws IOException {

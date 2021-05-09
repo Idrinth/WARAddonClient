@@ -4,7 +4,7 @@ import de.idrinth.waraddonclient.model.ActualAddon;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class Addon implements java.lang.Runnable {
+public class AddonList implements java.lang.Runnable {
 
     private final HashMap<String, ActualAddon> list = new HashMap<>();
 
@@ -74,7 +74,7 @@ public class Addon implements java.lang.Runnable {
                 failuresInARow = 0;
                 lastRefreshed = System.currentTimeMillis();
             } catch (Exception exception) {
-                de.idrinth.factory.Logger.build().log(exception, de.idrinth.Logger.LEVEL_ERROR);
+                de.idrinth.waraddonclient.factory.Logger.build().error(exception);
                 failuresInARow++;
                 if (failuresInARow > 5) {
                     de.idrinth.waraddonclient.factory.Interface.build().exitWithError(exception.getMessage());

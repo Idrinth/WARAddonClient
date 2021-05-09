@@ -1,5 +1,6 @@
 package de.idrinth.waraddonclient.factory;
 
+import de.idrinth.waraddonclient.model.TrustManager;
 import de.idrinth.waraddonclient.service.Request;
 
 public final class RemoteRequest {
@@ -12,7 +13,7 @@ public final class RemoteRequest {
 
     public static synchronized Request build() throws Exception {
         if (instance == null) {
-            instance = new Request();
+            instance = new Request(new TrustManager(Logger.build()), Logger.build());
         }
         return instance;
     }

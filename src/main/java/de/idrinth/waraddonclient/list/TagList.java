@@ -1,29 +1,38 @@
 package de.idrinth.waraddonclient.list;
 
-public class Tag implements java.lang.Runnable {
+import de.idrinth.waraddonclient.model.Tag;
+import de.idrinth.waraddonclient.service.Sleeper;
+import java.util.ArrayList;
+import java.util.HashMap;
+import javax.swing.JMenu;
 
-    private final javax.swing.JMenu menu;
+public class TagList implements java.lang.Runnable {
 
-    private final java.util.HashMap<String, de.idrinth.waraddonclient.model.Tag> tags = new java.util.HashMap();
+    private final JMenu menu;
 
-    private final java.util.ArrayList<String> tagNames = new java.util.ArrayList();
+    private final HashMap<String, Tag> tags = new HashMap<>();
+
+    private final ArrayList<String> tagNames = new ArrayList<>();
+    
+    private final AddonList addonList;
 
     private long lastRefreshed;
 
-    public Tag(javax.swing.JMenu jmenu) {
+    public TagList(JMenu jmenu, AddonList addonList) {
         this.menu = jmenu;
+        this.addonList = addonList;
     }
 
     /**
      * processes the addon lst to see what addon is tagged with a specific tag
      */
     private void processAddons() {
-        for (int counter = 0; counter < de.idrinth.waraddonclient.factory.AddonList.build().size(); counter++) {
-            for (String tag : de.idrinth.waraddonclient.factory.AddonList.build().get(counter).getTags()) {
+        for (int counter = 0; counter < addonList.size(); counter++) {
+            for (String tag : addonList.get(counter).getTags()) {
                 if (!tags.containsKey(tag)) {
-                    tags.put(tag, new de.idrinth.waraddonclient.model.Tag(tag));
+                    tags.put(tag, new Tag(tag));
                 }
-                tags.get(tag).addMember(de.idrinth.waraddonclient.factory.AddonList.build().get(counter));
+                tags.get(tag).addMember(addonList.get(counter));
                 if (!tagNames.contains(tag)) {
                     tagNames.add(tag);
                 }
@@ -35,10 +44,8 @@ public class Tag implements java.lang.Runnable {
      * get the selected tags
      */
     public java.util.ArrayList<String> getActiveTags() {
-        java.util.ArrayList<String> active = new java.util.ArrayList();
-        tagNames.stream().filter((tag) -> (tags.get(tag).isActive())).forEach((tag) -> {
-            active.add(tag);
-        });
+        java.util.ArrayList<String> active = new ArrayList<>();
+        tagNames.stream().filter(tag -> (tags.get(tag).isActive())).forEach(tag -> active.add(tag));
         return active;
     }
 
@@ -46,10 +53,10 @@ public class Tag implements java.lang.Runnable {
      * removes unneeded tags and adds new tags to the menu
      */
     private void processTags() {
-        tagNames.stream().map((name) -> {
+        tagNames.stream().map(name -> {
             tags.get(name).checkMembers();
             return name;
-        }).forEach((name) -> {
+        }).forEach(name -> {
             if (!tags.get(name).hasMembers()) {
                 menu.remove(tags.get(name).getMenu());
                 tags.remove(name);
@@ -65,7 +72,7 @@ public class Tag implements java.lang.Runnable {
      */
     @Override
     public void run() {
-        de.idrinth.waraddonclient.service.Sleeper.sleep(10000);
+        Sleeper.sleep(10000);
         while (true) {
             while (System.currentTimeMillis() < lastRefreshed + 300000) {
                 de.idrinth.waraddonclient.service.Sleeper.sleep(1000000);
