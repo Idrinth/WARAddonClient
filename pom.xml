@@ -9,7 +9,30 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
+        <mainClass>de.idrinth.waraddonclient.Main</mainClass>
     </properties>
+    <pluginRepositories>
+        <pluginRepository>
+            <id>stevenmz.packr-maven-plugin</id>
+            <name>github</name>
+            <url>https://maven.pkg.github.com/stevenmz/packr-maven-plugin</url>
+        </pluginRepository>
+        <pluginRepository>
+            <id>central</id>
+            <url>https://repo1.maven.org/maven2</url>
+        </pluginRepository>
+    </pluginRepositories>
+    <repositories>
+        <repository>
+            <id>stevenmz.packr-maven-plugin</id>
+            <name>github</name>
+            <url>https://maven.pkg.github.com/stevenmz/packr-maven-plugin</url>
+        </repository>
+        <repository>
+            <id>central</id>
+            <url>https://repo1.maven.org/maven2</url>
+        </repository>
+    </repositories>
     <dependencies>
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
@@ -88,9 +111,64 @@
             <resource>
                 <directory>src/main/resources</directory>
                 <filtering>true</filtering>
+                <includes>
+                    <include>version</include>
+                </includes>
+            </resource>
+            <resource>
+                <directory>src/main/resources</directory>
+                <targetPath>..</targetPath>
+                <filtering>true</filtering>
+                <includes>
+                    <include>setup.iss</include>
+                </includes>
+            </resource>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>false</filtering>
+                <includes>
+                    <include>**/*.cer</include>
+                    <include>**/*.png</include>
+                </includes>
             </resource>
         </resources>
         <plugins>
+            <plugin>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>2.6</version>
+                <executions>
+                    <execution>
+                        <id>copy-bin</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${basedir}/target/java/bin</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>${java.home}/bin</directory>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>copy-lib</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${basedir}/target/java/lib</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>${java.home}/lib</directory>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
@@ -107,10 +185,71 @@
                     <finalName>${project.artifactId}</finalName>
                     <transformers>
                         <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                            <mainClass>de.idrinth.waraddonclient.Main</mainClass>
+                            <mainClass>${mainClass}</mainClass>
                         </transformer>
                     </transformers>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>com.akathist.maven.plugins.launch4j</groupId>
+                <artifactId>launch4j-maven-plugin</artifactId>
+                <version>2.1.1</version>
+                <executions>
+                    <execution>
+                        <id>l4j-gui</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>launch4j</goal>
+                        </goals>
+                        <configuration>
+                            <headerType>gui</headerType>
+                            <outfile>target/${project.artifactId}.exe</outfile>
+                            <jar>target/${project.artifactId}.jar</jar>
+                            <dontWrapJar>false</dontWrapJar>
+                            <addDependencies>true</addDependencies>
+                            <errTitle>Error in launch4j plugin</errTitle>
+                            <classPath>
+                                <mainClass>${mainClass}</mainClass>
+                            </classPath>
+                            <icon>src/main/resources/Images/logo.ico</icon>
+                            <jre>
+                                <path>./java</path>
+                            </jre>
+                            <versionInfo>
+                                <fileVersion>${project.version}.0</fileVersion>
+                                <txtFileVersion>${project.version}.0</txtFileVersion>
+                                <fileDescription>${project.version}</fileDescription>
+                                <copyright>Copyright(c) Björn "Idrinth" Büttner</copyright>
+                                <companyName>Björn "Idrinth" Büttner</companyName>
+                                <productVersion>${project.version}.0</productVersion>
+                                <txtProductVersion>${project.version}.0</txtProductVersion>
+                                <productName>${project.artifactId}</productName>
+                                <internalName>${project.artifactId}</internalName>
+                                <originalFilename>${project.artifactId}.exe</originalFilename>
+                                <language>ENGLISH_UK</language>
+                            </versionInfo>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>3.0.0</version>
+                <configuration>
+                    <executable>iscc.exe</executable>
+                    <arguments> 
+                        <argument>${project.basedir}/target/setup.iss</argument>
+                    </arguments>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>

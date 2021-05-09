@@ -72,6 +72,7 @@ public class Addon implements java.lang.Runnable {
             try {
                 new JsonProcessor(de.idrinth.waraddonclient.factory.RemoteRequest.build().getAddonList()).run();
                 failuresInARow = 0;
+                lastRefreshed = System.currentTimeMillis();
             } catch (Exception exception) {
                 de.idrinth.factory.Logger.build().log(exception, de.idrinth.Logger.LEVEL_ERROR);
                 failuresInARow++;
@@ -79,7 +80,6 @@ public class Addon implements java.lang.Runnable {
                     de.idrinth.waraddonclient.factory.Interface.build().exitWithError(exception.getMessage());
                 }
             }
-            lastRefreshed = System.currentTimeMillis();
         }
     }
 

@@ -1,13 +1,5 @@
 /.nbproject
 /nbproject
-/build
-/dist
-/manifest.mf
-/bin
-/logs
-/Interface
-/WAR.exe
-/RoRLauncher.exe
-/idrinth.xml
 /AddonClient.jar
 /target/
+/output/

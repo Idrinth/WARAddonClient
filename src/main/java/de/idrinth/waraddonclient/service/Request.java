@@ -1,10 +1,12 @@
 package de.idrinth.waraddonclient.service;
 
 import de.idrinth.waraddonclient.Config;
+import java.io.File;
+import java.io.IOException;
 
 public class Request {
 
-    private final String baseUrl = "https://tools.idrinth.de/";
+    private final String BASE_URL = "https://tools.idrinth.de/";
 
     private volatile boolean requestActive;
 
@@ -12,12 +14,7 @@ public class Request {
 
     private final javax.net.ssl.SSLContext sslContext;
 
-    /**
-     * Throws an exception if there's issues with the ssl-certificates
-     *
-     * @throws java.lang.Exception
-     */
-    public Request() throws java.lang.Exception {
+    public Request() throws IOException, Exception {
         de.idrinth.ssl.TrustManager manager = new de.idrinth.ssl.TrustManager();
         sslContext = org.apache.http.ssl.SSLContextBuilder.create().loadTrustMaterial(
                 manager.getKeyStore(),
@@ -25,41 +22,21 @@ public class Request {
         ).build();
     }
 
-    /**
-     * gets a list of avaible addons from the website's api
-     *
-     * @return javax.json.JsonArray
-     * @throws java.lang.Exception
-     */
-    public javax.json.JsonArray getAddonList() throws java.lang.Exception {
-        org.apache.http.HttpResponse response = executionHandler(new org.apache.http.client.methods.HttpGet(baseUrl + "addon-api/"));
+    public javax.json.JsonArray getAddonList() throws IOException {
+        org.apache.http.HttpResponse response = executionHandler(new org.apache.http.client.methods.HttpGet(BASE_URL + "addon-api/"));
         javax.json.JsonArray data = javax.json.Json.createReader(response.getEntity().getContent()).readArray();
         client.close();
         return data;
     }
 
-    /**
-     * downloads an addon-zip
-     *
-     * @param url
-     * @return java.io.InputStream
-     * @throws java.lang.Exception
-     */
-    public java.io.InputStream getAddonDownload(String url) throws java.lang.Exception {
-        org.apache.http.HttpResponse response = executionHandler(new org.apache.http.client.methods.HttpGet(baseUrl + "addons/" + url));
+    public java.io.InputStream getAddonDownload(String url) throws IOException {
+        org.apache.http.HttpResponse response = executionHandler(new org.apache.http.client.methods.HttpGet(BASE_URL + "addons/" + url));
         return response.getEntity().getContent();
     }
 
-    /**
-     * requests data from an url
-     *
-     * @param uri
-     * @return org.apache.http.HttpResponse
-     * @throws java.lang.Exception
-     */
-    private synchronized org.apache.http.HttpResponse executionHandler(org.apache.http.client.methods.HttpRequestBase uri) throws java.lang.Exception {
+    private synchronized org.apache.http.HttpResponse executionHandler(org.apache.http.client.methods.HttpRequestBase uri) throws IOException {
         uri.setConfig(org.apache.http.client.config.RequestConfig.DEFAULT);
-        uri.setHeader("User-Agent", "IdrinthAddonClient/" + Config.getVersion());
+        uri.setHeader("User-Agent", "IdrinthsWARAddonClient/" + Config.getVersion());
         uri.setHeader("Cache-Control", "no-cache");
         while (requestActive) {
             de.idrinth.waraddonclient.service.Sleeper.sleep(150);
@@ -71,30 +48,24 @@ public class Request {
                 .build();
         org.apache.http.HttpResponse response = client.execute(uri);
         if (response.getStatusLine().getStatusCode() < 200 || response.getStatusLine().getStatusCode() > 299) {
+            requestActive = false;
             throw new java.net.ConnectException(response.getStatusLine().getReasonPhrase());
         }
         requestActive = false;
         return response;
     }
 
-    /**
-     * tries to upload a file
-     *
-     * @param url
-     * @param file
-     * @return boolean
-     * @throws java.lang.Exception
-     */
-    public boolean upload(String url, java.io.File file) throws java.lang.Exception {
+    public boolean upload(String url, File file) {
         org.apache.http.client.methods.HttpPost request = new org.apache.http.client.methods.HttpPost(url);
         request.setEntity(new org.apache.http.entity.FileEntity(file));
-        boolean wasSuccess = executionHandler(request) != null;
         try {
+            boolean wasSuccess = executionHandler(request) != null;
             client.close();
-        } catch (java.io.IOException exception) {
+            return wasSuccess;
+        } catch (IOException exception) {
             de.idrinth.factory.Logger.build().log(exception, de.idrinth.Logger.LEVEL_ERROR);
         }
-        return wasSuccess;
+        return false;
     }
 
     /**

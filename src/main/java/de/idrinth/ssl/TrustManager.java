@@ -1,5 +1,13 @@
 package de.idrinth.ssl;
 
+import java.io.IOException;
+import java.security.KeyManagementException;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
+import org.apache.commons.io.IOUtils;
+
 public class TrustManager implements org.apache.http.ssl.TrustStrategy {
 
     private java.security.KeyStore keyStore;
@@ -28,55 +36,38 @@ public class TrustManager implements org.apache.http.ssl.TrustStrategy {
         throw new java.lang.RuntimeException("Couldn't initialize Trustmanager due to lack of X509TrustManager");
     }
 
-    /**
-     *
-     * @return java.security.KeyStore
-     */
     public final java.security.KeyStore getKeyStore() {
         return keyStore;
     }
 
-    /**
-     *
-     * @throws java.lang.Exception
-     */
-    private final void getStore() throws java.lang.Exception {
+    private final void getStore() throws KeyManagementException, KeyStoreException, IOException, NoSuchAlgorithmException, CertificateException {
         String password = "changeit";
         keyStore = new KeystoreFinder().getKeystore(password);
         javax.net.ssl.TrustManagerFactory trustManagerFactory = javax.net.ssl.TrustManagerFactory.getInstance(javax.net.ssl.TrustManagerFactory.getDefaultAlgorithm());
         trustManagerFactory.init(keyStore);
         javax.net.ssl.TrustManager[] trustManagers = trustManagerFactory.getTrustManagers();
-        javax.net.ssl.SSLContext sslContext = javax.net.ssl.SSLContext.getInstance("TLS");
+        javax.net.ssl.SSLContext sslContext = javax.net.ssl.SSLContext.getInstance("TLSv1.2");
         sslContext.init(null, trustManagers, null);
         javax.net.ssl.SSLContext.setDefault(sslContext);
         System.setProperty("javax.net.ssl.trustStorePassword", password);
     }
 
-    /**
-     *
-     * @param name
-     * @throws java.lang.Exception
-     */
-    private final void addCertToStore(String name) throws java.lang.Exception {
+    private final void addCertToStore(String name) throws IOException, CertificateException, KeyStoreException {
         java.net.URL resource = getClass().getResource("/certificates/" + name + ".cer");
         try (java.io.BufferedInputStream bis = new java.io.BufferedInputStream(resource.openStream())) {
             java.security.cert.Certificate cert = java.security.cert.CertificateFactory.getInstance("X.509").generateCertificate(bis);
             keyStore.setCertificateEntry(name, cert);
+        } catch(CertificateException e) {
+            System.out.println(e);
         }
     }
 
-    /**
-     *
-     * @param chain
-     * @param authType
-     * @return boolean
-     */
     @Override
-    public boolean isTrusted(java.security.cert.X509Certificate[] chain, String authType) {
+    public boolean isTrusted(X509Certificate[] chain, String authType) {
         try {
             manager.checkServerTrusted(chain, authType);
             return true;
-        } catch (java.security.cert.CertificateException e) {
+        } catch (CertificateException e) {
             de.idrinth.factory.Logger.build().log(e, de.idrinth.Logger.LEVEL_WARN);
         }
         return false;
@@ -90,20 +81,11 @@ public class TrustManager implements org.apache.http.ssl.TrustStrategy {
 
         private static final String ALTERNATE_CERTIFICATES = "cacerts";
 
-        /**
-         * checks for the fileSeperator used multiple times
-         */
         public KeystoreFinder() {
             fileSeperator = System.getProperty("file.separator");
         }
 
-        /**
-         *
-         * @param password
-         * @return java.security.KeyStore
-         * @throws java.lang.Exception
-         */
-        public java.security.KeyStore getKeystore(String password) throws java.lang.Exception {
+        public java.security.KeyStore getKeystore(String password) throws KeyStoreException, IOException, NoSuchAlgorithmException, CertificateException {
             java.security.KeyStore store = java.security.KeyStore.getInstance(java.security.KeyStore.getDefaultType());
             System.setProperty("javax.net.ssl.trustStore", java.security.KeyStore.getDefaultType());
             System.setProperty("javax.net.ssl.keyStore", java.security.KeyStore.getDefaultType());
@@ -116,10 +98,6 @@ public class TrustManager implements org.apache.http.ssl.TrustStrategy {
             return store;
         }
 
-        /**
-         *
-         * @return String
-         */
         private String fileForKeystore() {
             String path = findStoreFolder().getAbsolutePath() + fileSeperator;
             String prefered = path + PREFERED_CERTIFICATES;
@@ -127,10 +105,6 @@ public class TrustManager implements org.apache.http.ssl.TrustStrategy {
             return new java.io.File(prefered).exists() ? prefered : alternative;
         }
 
-        /**
-         *
-         * @return java.io.File
-         */
         private java.io.File findStoreFolder() {
             String[] folders = "lib/security".split("/");
             java.io.File file = new java.io.File(System.getProperty("sun.boot.library.path"));

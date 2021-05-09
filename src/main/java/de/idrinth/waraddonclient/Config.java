@@ -11,14 +11,23 @@ import org.apache.commons.io.IOUtils;
 public class Config {
 
     private static final Preferences prefs = Preferences.userRoot().node(Config.class.getClass().getName());
+
     private static final String KEY_WAR_PATH = "war-path";
+
     private static final String KEY_THEME = "theme";
+
     private static final String KEY_LANGUAGE = "language";
+
     private static final String KEY_WINDOW_LOCATION_X = "window-x";
+
     private static final String KEY_WINDOW_LOCATION_Y = "window-y";
+
     private static final String KEY_WINDOW_WIDTH = "window-width";
+
     private static final String KEY_WINDOW_HEIGHT = "window-height";
+
     private static final String KEY_PREFIX_ADDON_UPLOAD = "addon-upload-";
+
     private static String version;
 
     private Config() {
@@ -77,8 +86,7 @@ public class Config {
             return version;
         }
         try {
-            InputStream stream = Config.class.getResourceAsStream("/version");
-            version = IOUtils.toString(stream, StandardCharsets.UTF_8);
+            version = IOUtils.toString(Config.class.getResourceAsStream("/version"), StandardCharsets.UTF_8);
         } catch (IOException ex) {
             return "0.0.0";
         }
