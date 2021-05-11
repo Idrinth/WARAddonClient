@@ -1,15 +1,15 @@
 package de.idrinth.waraddonclient.service;
 
-import com.sun.nio.file.ExtendedWatchEventModifier;
 import de.idrinth.waraddonclient.Config;
 import de.idrinth.waraddonclient.model.AddonList;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.WatchService;
 
-public class FileWatcher implements java.lang.Runnable {    
+public class FileWatcher implements java.lang.Runnable {
+
     private final AddonList addonList;
-    
+
     private final WatchService watcher;
 
     private final FileLogger logger;
@@ -17,21 +17,17 @@ public class FileWatcher implements java.lang.Runnable {
     public FileWatcher(AddonList addonList, FileLogger logger) throws IOException {
         this.addonList = addonList;
         this.logger = logger;
-            File path = new File(Config.getWARPath() + "/logs");
-            if (!path.exists()) {
-                path.mkdirs();
-            }
-            watcher = path.toPath().getFileSystem().newWatchService();
-            java.nio.file.WatchEvent.Kind[] modes = new java.nio.file.WatchEvent.Kind[2];
-            modes[0] = java.nio.file.StandardWatchEventKinds.ENTRY_CREATE;
-            modes[1] = java.nio.file.StandardWatchEventKinds.ENTRY_MODIFY;
-            path.toPath().register(
-                    watcher,
-                    modes,
-                    ExtendedWatchEventModifier.FILE_TREE
-            );
+        File path = new File(Config.getWARPath() + "/logs");
+        if (!path.exists()) {
+            path.mkdirs();
+        }
+        watcher = path.toPath().getFileSystem().newWatchService();
+        java.nio.file.WatchEvent.Kind[] modes = new java.nio.file.WatchEvent.Kind[2];
+        modes[0] = java.nio.file.StandardWatchEventKinds.ENTRY_CREATE;
+        modes[1] = java.nio.file.StandardWatchEventKinds.ENTRY_MODIFY;
+        path.toPath().register(watcher, modes);
     }
-    
+
     @Override
     public void run() {
         try {
