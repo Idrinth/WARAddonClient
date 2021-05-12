@@ -4,9 +4,14 @@ import de.idrinth.waraddonclient.Config;
 import de.idrinth.waraddonclient.Utils;
 import de.idrinth.waraddonclient.service.FileLogger;
 import de.idrinth.waraddonclient.service.Request;
+import de.idrinth.waraddonclient.service.XmlParser;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import javax.xml.parsers.FactoryConfigurationError;
+import javax.xml.parsers.ParserConfigurationException;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
 public class ActualAddon implements de.idrinth.waraddonclient.model.Addon {
 
@@ -32,9 +37,12 @@ public class ActualAddon implements de.idrinth.waraddonclient.model.Addon {
     
     private final FileLogger logger;
     
-    public ActualAddon(javax.json.JsonObject addon, Request client, FileLogger logger) {
+    private final XmlParser parser;
+    
+    public ActualAddon(javax.json.JsonObject addon, Request client, FileLogger logger, XmlParser parser) {
         this.client = client;
         this.logger = logger;
+        this.parser = parser;
         descriptions.put("en", getStringFromObject("description", addon));
         descriptions.put("fr", getStringFromObject("description_fr", addon));
         descriptions.put("de", getStringFromObject("description_de", addon));
@@ -48,7 +56,7 @@ public class ActualAddon implements de.idrinth.waraddonclient.model.Addon {
             counter++;
         }
         new VersionFinder().run();
-        addonSettings = new AddonSettings(name, logger);
+        addonSettings = new AddonSettings(name, logger, parser);
     }
 
     /**
@@ -67,7 +75,7 @@ public class ActualAddon implements de.idrinth.waraddonclient.model.Addon {
      * @return boolean
      */
     public boolean hasTag(String tag) {
-        return tags.stream().anyMatch((hasTag) -> (tag.equalsIgnoreCase(hasTag)));
+        return tags.stream().anyMatch(hasTag -> (tag.equalsIgnoreCase(hasTag)));
     }
 
     /**
@@ -197,7 +205,7 @@ public class ActualAddon implements de.idrinth.waraddonclient.model.Addon {
      * @param file
      */
     public void fileWasChanged(java.io.File file) {
-        if (addonSettings.isEnabled() && file.isFile() && file.getName().equalsIgnoreCase(addonSettings.getFile())) {
+        if (Config.isEnabled(name) && file.isFile() && file.getName().equalsIgnoreCase(addonSettings.getFile())) {
             try {
                 client.upload(addonSettings.getUrl(), file);
             } catch (Exception exception) {
@@ -234,13 +242,13 @@ public class ActualAddon implements de.idrinth.waraddonclient.model.Addon {
          * @param redeploy
          * @throws java.lang.Exception
          */
-        public void run(boolean redeploy) throws java.lang.Exception {
+        public void run(boolean redeploy) throws IOException {
             uninstall();
             if (redeploy) {
                 install();
             }
             addonSettings.refresh();
-            addonSettings.setEnabled(false);
+            Config.setEnabled(name, false);
         }
 
         /**
@@ -272,7 +280,7 @@ public class ActualAddon implements de.idrinth.waraddonclient.model.Addon {
          *
          * @throws java.lang.Exception
          */
-        private void install() throws java.lang.Exception {
+        private void install() throws IOException {
             java.io.File file = getZip();
             (new net.lingala.zip4j.ZipFile(file)).extractAll(Config.getWARPath() + BASE_PATH);
             org.apache.commons.io.FileUtils.deleteQuietly(file);
@@ -304,10 +312,10 @@ public class ActualAddon implements de.idrinth.waraddonclient.model.Addon {
                 if (!fileEntry.isDirectory()
                         && org.apache.commons.io.FilenameUtils.getExtension(fileEntry.getName()).equalsIgnoreCase("mod")) {
                     try {
-                        org.w3c.dom.NodeList list = javax.xml.parsers.DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(fileEntry).getElementsByTagName("UiMod");
+                        NodeList list = parser.parse(fileEntry).getElementsByTagName("UiMod");
                         installed = list.item(0).getAttributes().getNamedItem("version").getTextContent();
                         return true;
-                    } catch (javax.xml.parsers.ParserConfigurationException | javax.xml.parsers.FactoryConfigurationError | org.xml.sax.SAXException | java.io.IOException exception) {
+                    } catch (FactoryConfigurationError | SAXException | IOException exception) {
                         logger.error(exception);
                     }
                 }
@@ -322,10 +330,10 @@ public class ActualAddon implements de.idrinth.waraddonclient.model.Addon {
             java.io.File file = new java.io.File(folder.getPath() + VERSION_FILE);
             if (file.exists()) {
                 try {
-                    org.w3c.dom.NodeList list = javax.xml.parsers.DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(file).getElementsByTagName("version");
+                    NodeList list = parser.parse(file).getElementsByTagName("version");
                     installed = list.item(0).getTextContent().replace("(sys)", "");
                     return true;
-                } catch (javax.xml.parsers.ParserConfigurationException | javax.xml.parsers.FactoryConfigurationError | org.xml.sax.SAXException | java.io.IOException exception) {
+                } catch (FactoryConfigurationError | SAXException | IOException exception) {
                     logger.error(exception);
                 }
             }

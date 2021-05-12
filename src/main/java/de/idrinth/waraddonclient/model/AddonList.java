@@ -5,7 +5,10 @@ import de.idrinth.waraddonclient.model.ActualAddon;
 import de.idrinth.waraddonclient.model.Tag;
 import de.idrinth.waraddonclient.service.FileLogger;
 import de.idrinth.waraddonclient.service.Request;
+import de.idrinth.waraddonclient.service.XmlParser;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import javax.json.JsonArray;
@@ -33,10 +36,13 @@ public class AddonList implements java.lang.Runnable {
     private final ArrayList<String> tagNames = new ArrayList<>();
     
     private ActionListener listener;
+    
+    private final XmlParser parser;
 
-    public AddonList(Request client, FileLogger logger) {
+    public AddonList(Request client, FileLogger logger, XmlParser parser) {
         this.client = client;
         this.logger = logger;
+        this.parser = parser;
     }
 
     public void setMenu(JMenu menu, ActionListener listener) {
@@ -148,17 +154,12 @@ public class AddonList implements java.lang.Runnable {
             this.model = model;
         }
 
-        /**
-         * works through the datab provided by the website's api
-         *
-         * @throws java.lang.Exception
-         */
-        public void run() throws java.lang.Exception {
+        public void run() throws IOException {
             if (json == null) {
-                throw new java.lang.Exception("no content in json");
+                throw new IOException("no content in json");
             }
             for (int counter = json.size(); counter > 0; counter--) {
-                processJsonAddon(new ActualAddon(json.getJsonObject(counter - 1), client, logger));
+                processJsonAddon(new ActualAddon(json.getJsonObject(counter - 1), client, logger, parser));
             }
         }
 
@@ -204,9 +205,9 @@ public class AddonList implements java.lang.Runnable {
 
         private boolean active;
 
-        private java.io.File file;
+        private File file;
 
-        private final java.util.ArrayList<de.idrinth.waraddonclient.model.ActualAddon> list = new ArrayList<>();
+        private final ArrayList<ActualAddon> list = new ArrayList<>();
 
         /**
          * Adds an addon to watch an be handled here

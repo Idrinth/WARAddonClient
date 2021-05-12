@@ -7,7 +7,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import org.apache.commons.io.FileUtils;
 
-final public class FileLogger {
+public final class FileLogger {
     private final File output;
 
     public FileLogger(File output) throws IOException {

@@ -536,7 +536,7 @@ public class Window extends javax.swing.JFrame {
      * @param evt
      */
     private void UploadEnableActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_UploadEnableActionPerformed
-        activeAddon.getUploadData().setEnabled(UploadEnable.isSelected());
+        Config.setEnabled(activeAddon.getName(), UploadEnable.isSelected());
     }//GEN-LAST:event_UploadEnableActionPerformed
 
     /**
@@ -785,7 +785,7 @@ public class Window extends javax.swing.JFrame {
             UploadReason.setText(settings.getReason());
             UploadUrl.setText(settings.getUrl());
             UploadFile.setText(settings.getFile());
-            UploadEnable.setSelected(settings.isEnabled());
+            UploadEnable.setSelected(Config.isEnabled(activeAddon.getName()));
             String taglist = "Tagged: ";
             taglist = activeAddon.getTags().stream().map(tagname -> tagname + ", ").reduce(taglist, String::concat);
             CurTags.setText(taglist.substring(0, taglist.length() - 2));

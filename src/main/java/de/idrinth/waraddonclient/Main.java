@@ -11,6 +11,7 @@ import de.idrinth.waraddonclient.service.FileWatcher;
 import de.idrinth.waraddonclient.service.Request;
 import de.idrinth.waraddonclient.service.Shedule;
 import de.idrinth.waraddonclient.service.Version;
+import de.idrinth.waraddonclient.service.XmlParser;
 import java.io.File;
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
@@ -20,8 +21,8 @@ import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import javax.xml.parsers.ParserConfigurationException;
 
 public final class Main {
 
@@ -31,7 +32,7 @@ public final class Main {
         //not to be used
     }
 
-    public static void main(String args[]) {
+    public static void main(String[] args) {
         try {
             FileLogger logger = new FileLogger(new File(Config.getLogFile()));
             logger.info("Starting");
@@ -39,7 +40,7 @@ public final class Main {
             new FileSystem().processPosition();
             Shedule schedule = new Shedule();
             Request client = new Request(new TrustManager(logger), logger);
-            AddonList addonList = new AddonList(client, logger);
+            AddonList addonList = new AddonList(client, logger, new XmlParser());
             FileWatcher watcher = new FileWatcher(addonList, logger);
             schedule.register(30, watcher);
             java.awt.EventQueue.invokeLater(() -> {
@@ -48,7 +49,7 @@ public final class Main {
                 new FrameRestorer().restore(window);
                 window.setVisible(true);
             });
-        } catch (FileSystem.FileSystemException|IOException|CertificateException|KeyManagementException|KeyStoreException|NoSuchAlgorithmException ex) {
+        } catch (ParserConfigurationException |FileSystem.FileSystemException|IOException|CertificateException|KeyManagementException|KeyStoreException|NoSuchAlgorithmException ex) {
             JOptionPane.showMessageDialog(null, ex.getLocalizedMessage());
             Runtime.getRuntime().exit(0);
         }

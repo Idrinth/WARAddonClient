@@ -1,13 +1,15 @@
 package de.idrinth.waraddonclient.model;
 
-import de.idrinth.waraddonclient.Config;
 import de.idrinth.waraddonclient.service.FileLogger;
+import de.idrinth.waraddonclient.service.XmlParser;
+import java.io.IOException;
+import javax.xml.parsers.FactoryConfigurationError;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
 public class AddonSettings {
 
     private String file = "";
-
-    private boolean enabled;
 
     private String reason = "";
 
@@ -18,18 +20,11 @@ public class AddonSettings {
     private boolean hasSettings;
     
     private final FileLogger logger;
+    
+    private final XmlParser parser;
 
     public String getFile() {
         return file;
-    }
-
-    public boolean isEnabled() {
-        return enabled;
-    }
-
-    public void setEnabled(boolean enable) {
-        this.enabled = enable;
-        Config.setEnabled(name, enable);
     }
 
     public String getReason() {
@@ -40,10 +35,10 @@ public class AddonSettings {
         return url;
     }
 
-    public AddonSettings(String addon, FileLogger logger) {
+    public AddonSettings(String addon, FileLogger logger, XmlParser parser) {
         this.name = addon;
         this.logger = logger;
-        this.enabled = Config.isEnabled(addon);
+        this.parser = parser;
         refresh();
     }
 
@@ -76,12 +71,12 @@ public class AddonSettings {
             return;
         }
         try {
-            org.w3c.dom.NodeList list = javax.xml.parsers.DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(fileEntry).getFirstChild().getChildNodes();
+            NodeList list = parser.parse(fileEntry).getFirstChild().getChildNodes();
             for (int counter = 0; counter < list.getLength(); counter++) {
                 processNode(list.item(counter));
             }
             hasSettings = true;
-        } catch (javax.xml.parsers.ParserConfigurationException | javax.xml.parsers.FactoryConfigurationError | org.xml.sax.SAXException | java.io.IOException exception) {
+        } catch (FactoryConfigurationError | SAXException | IOException exception) {
             logger.error(exception);
         }
     }
