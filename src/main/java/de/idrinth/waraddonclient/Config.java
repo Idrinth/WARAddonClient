@@ -3,7 +3,6 @@ package de.idrinth.waraddonclient;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.prefs.Preferences;
 import org.apache.commons.io.IOUtils;

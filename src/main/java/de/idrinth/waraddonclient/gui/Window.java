@@ -16,16 +16,15 @@ import de.idrinth.waraddonclient.service.Shedule;
 import java.awt.Desktop;
 import java.awt.FileDialog;
 import java.awt.Toolkit;
-import java.util.ArrayList;
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
-import javax.swing.RowFilter;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 
-public class Window extends javax.swing.JFrame {
+public class Window extends JFrame {
 
     private Addon activeAddon = new de.idrinth.waraddonclient.model.NoAddon();
     
@@ -45,10 +44,10 @@ public class Window extends javax.swing.JFrame {
     }
 
     private void finishGuiBuilding(Shedule schedule) {
-        AddonList.getSelectionModel().addListSelectionListener(new TableListener());
+        AddonListTable.getSelectionModel().addListSelectionListener(new TableListener());
         setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/Images/logo.png")));
-        AddonList.setRowSorter(new TableRowSorter<>(AddonList.getModel()));
-        addonList.setModel((DefaultTableModel) AddonList.getModel());
+        AddonListTable.setRowSorter(new TableRowSorter<>(AddonListTable.getModel()));
+        addonList.setModel((DefaultTableModel) AddonListTable.getModel());
         Description.addHyperlinkListener(new HyperlinkListenerImpl());
         localVersion.setText(Config.getVersion());
         addonList.setMenu(Tags, (java.awt.event.ActionEvent evt) -> newFilter());
@@ -58,8 +57,8 @@ public class Window extends javax.swing.JFrame {
 
     private void newFilter() {
         try {
-            RowFilter<String, ArrayList<String>> rf = new TextCategory(Search.getText(), addonList);
-            ((TableRowSorter) AddonList.getRowSorter()).setRowFilter(rf);
+            TextCategory rf = new TextCategory(Search.getText(), addonList);
+            ((TableRowSorter) AddonListTable.getRowSorter()).setRowFilter(rf);
         } catch (java.util.regex.PatternSyntaxException exception) {
             logger.error(exception);
         }
@@ -79,7 +78,7 @@ public class Window extends javax.swing.JFrame {
         javax.swing.JPanel leftSide = new javax.swing.JPanel();
         Search = new javax.swing.JTextField();
         jScrollPane2 = new javax.swing.JScrollPane();
-        AddonList = new javax.swing.JTable();
+        AddonListTable = new javax.swing.JTable();
         DeleteSearch = new javax.swing.JButton();
         UpdateAll = new javax.swing.JButton();
         rightSide = new javax.swing.JTabbedPane();
@@ -143,8 +142,8 @@ public class Window extends javax.swing.JFrame {
 
         jScrollPane2.setMaximumSize(null);
 
-        AddonList.setAutoCreateRowSorter(true);
-        AddonList.setModel(new javax.swing.table.DefaultTableModel(
+        AddonListTable.setAutoCreateRowSorter(true);
+        AddonListTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
             },
@@ -167,12 +166,12 @@ public class Window extends javax.swing.JFrame {
                 return canEdit [columnIndex];
             }
         });
-        AddonList.setColumnSelectionAllowed(true);
-        AddonList.setMaximumSize(null);
-        AddonList.setName(""); // NOI18N
-        AddonList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
-        jScrollPane2.setViewportView(AddonList);
-        AddonList.getColumnModel().getSelectionModel().setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        AddonListTable.setColumnSelectionAllowed(true);
+        AddonListTable.setMaximumSize(null);
+        AddonListTable.setName(""); // NOI18N
+        AddonListTable.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        jScrollPane2.setViewportView(AddonListTable);
+        AddonListTable.getColumnModel().getSelectionModel().setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
 
         DeleteSearch.setText("X");
         DeleteSearch.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -691,16 +690,16 @@ public class Window extends javax.swing.JFrame {
      * updates addon list
      */
     private void updateList() {
-        for (int position = 0; position < AddonList.getRowCount(); position++) {
-            de.idrinth.waraddonclient.model.ActualAddon addon = addonList.get(AddonList.convertRowIndexToModel(position));
-            AddonList.setValueAt(addon.getInstalled(), position, 3);
-            AddonList.setValueAt(addon.getStatus(), position, 0);
+        for (int position = 0; position < AddonListTable.getRowCount(); position++) {
+            de.idrinth.waraddonclient.model.ActualAddon addon = addonList.get(AddonListTable.convertRowIndexToModel(position));
+            AddonListTable.setValueAt(addon.getInstalled(), position, 3);
+            AddonListTable.setValueAt(addon.getStatus(), position, 0);
         }
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuItem About;
-    private javax.swing.JTable AddonList;
+    private javax.swing.JTable AddonListTable;
     private javax.swing.JMenuItem BuyMeACoffee;
     private javax.swing.JMenuItem CreateBackup;
     private javax.swing.JLabel CurTags;
@@ -755,7 +754,7 @@ public class Window extends javax.swing.JFrame {
         @Override
         public void valueChanged(ListSelectionEvent event) {
             try {
-                activeAddon = addonList.get(AddonList.convertRowIndexToModel(AddonList.getSelectedRow()));
+                activeAddon = addonList.get(AddonListTable.convertRowIndexToModel(AddonListTable.getSelectedRow()));
             } catch (java.lang.ArrayIndexOutOfBoundsException exception) {
                 logger.error(exception);
                 return;

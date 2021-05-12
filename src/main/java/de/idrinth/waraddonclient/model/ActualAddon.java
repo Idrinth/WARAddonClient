@@ -9,7 +9,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import javax.xml.parsers.FactoryConfigurationError;
-import javax.xml.parsers.ParserConfigurationException;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
@@ -39,7 +38,10 @@ public class ActualAddon implements de.idrinth.waraddonclient.model.Addon {
     
     private final XmlParser parser;
     
-    public ActualAddon(javax.json.JsonObject addon, Request client, FileLogger logger, XmlParser parser) {
+    public ActualAddon(javax.json.JsonObject addon, Request client, FileLogger logger, XmlParser parser) throws InvalidArgumentException {
+        if (addon == null) {
+            throw new InvalidArgumentException("Addon is null");
+        }
         this.client = client;
         this.logger = logger;
         this.parser = parser;
@@ -186,7 +188,7 @@ public class ActualAddon implements de.idrinth.waraddonclient.model.Addon {
      *
      * @throws java.lang.Exception
      */
-    public void install() throws java.lang.Exception {
+    public void install() throws IOException {
         (new Updater()).run(true);
     }
 
@@ -195,7 +197,7 @@ public class ActualAddon implements de.idrinth.waraddonclient.model.Addon {
      *
      * @throws java.lang.Exception
      */
-    public void uninstall() throws java.lang.Exception {
+    public void uninstall() throws IOException {
         (new Updater()).run(false);
     }
 
@@ -350,6 +352,12 @@ public class ActualAddon implements de.idrinth.waraddonclient.model.Addon {
             if (!getDownloadVersion() && !processDirectory()) {
                 installed = "unknown";
             }
+        }
+    }
+    public class InvalidArgumentException extends Exception {
+
+        private InvalidArgumentException(String error) {
+            super(error);
         }
     }
 }

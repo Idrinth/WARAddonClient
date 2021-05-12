@@ -4,6 +4,9 @@ import de.idrinth.waraddonclient.Config;
 import de.idrinth.waraddonclient.model.AddonList;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.StandardWatchEventKinds;
+import java.nio.file.WatchEvent;
+import java.nio.file.WatchKey;
 import java.nio.file.WatchService;
 
 public class FileWatcher implements java.lang.Runnable {
@@ -22,19 +25,17 @@ public class FileWatcher implements java.lang.Runnable {
             path.mkdirs();
         }
         watcher = path.toPath().getFileSystem().newWatchService();
-        java.nio.file.WatchEvent.Kind[] modes = new java.nio.file.WatchEvent.Kind[2];
-        modes[0] = java.nio.file.StandardWatchEventKinds.ENTRY_CREATE;
-        modes[1] = java.nio.file.StandardWatchEventKinds.ENTRY_MODIFY;
+        WatchEvent.Kind[] modes = new WatchEvent.Kind[2];
+        modes[0] = StandardWatchEventKinds.ENTRY_CREATE;
+        modes[1] = StandardWatchEventKinds.ENTRY_MODIFY;
         path.toPath().register(watcher, modes);
     }
 
     @Override
     public void run() {
         try {
-            java.nio.file.WatchKey key = watcher.take();
-            key.pollEvents().stream().filter((event) -> (isValidEvent(event))).map((event) -> new java.io.File(Config.getWARPath() + "/logs/" + event.context().toString())).filter((file) -> (isValidFile(file))).forEach((file) -> {
-                addonList.getWatchedFiles().get(file.getName().toLowerCase()).setFileToProcess(file);
-            });
+            WatchKey key = watcher.take();
+            key.pollEvents().stream().filter(event -> (isValidEvent(event))).map(event -> new File(Config.getWARPath() + "/logs/" + event.context().toString())).filter(file -> (isValidFile(file))).forEach(file -> addonList.getWatchedFiles().get(file.getName().toLowerCase()).setFileToProcess(file));
             key.reset();
         } catch (InterruptedException ex) {
             logger.error(ex);
@@ -47,8 +48,8 @@ public class FileWatcher implements java.lang.Runnable {
      * @param event
      * @return
      */
-    private boolean isValidEvent(java.nio.file.WatchEvent event) {
-        return event.kind() == java.nio.file.StandardWatchEventKinds.ENTRY_CREATE || event.kind() == java.nio.file.StandardWatchEventKinds.ENTRY_MODIFY;
+    private boolean isValidEvent(WatchEvent event) {
+        return event.kind() == StandardWatchEventKinds.ENTRY_CREATE || event.kind() == StandardWatchEventKinds.ENTRY_MODIFY;
     }
 
     /**

@@ -1,8 +1,6 @@
 package de.idrinth.waraddonclient.model;
 
 import de.idrinth.waraddonclient.Utils;
-import de.idrinth.waraddonclient.model.ActualAddon;
-import de.idrinth.waraddonclient.model.Tag;
 import de.idrinth.waraddonclient.service.FileLogger;
 import de.idrinth.waraddonclient.service.Request;
 import de.idrinth.waraddonclient.service.XmlParser;
@@ -147,7 +145,7 @@ public class AddonList implements java.lang.Runnable {
 
         private final javax.json.JsonArray json;
         
-        private DefaultTableModel model;
+        private final DefaultTableModel model;
 
         public JsonProcessor(JsonArray parse, DefaultTableModel model) {
             json = parse;
@@ -159,7 +157,11 @@ public class AddonList implements java.lang.Runnable {
                 throw new IOException("no content in json");
             }
             for (int counter = json.size(); counter > 0; counter--) {
-                processJsonAddon(new ActualAddon(json.getJsonObject(counter - 1), client, logger, parser));
+                try {
+                    processJsonAddon(new ActualAddon(json.getJsonObject(counter - 1), client, logger, parser));
+                } catch (ActualAddon.InvalidArgumentException ex) {
+                    logger.error(ex);
+                }
             }
         }
 

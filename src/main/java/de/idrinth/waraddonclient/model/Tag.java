@@ -1,14 +1,16 @@
 package de.idrinth.waraddonclient.model;
 
 import java.awt.event.ActionListener;
+import java.util.HashMap;
+import javax.swing.JCheckBoxMenuItem;
 
 public class Tag {
 
     private final String name;
 
-    private final java.util.HashMap<String, ActualAddon> list = new java.util.HashMap();
+    private final HashMap<String, ActualAddon> list = new java.util.HashMap<>();
 
-    private final javax.swing.JCheckBoxMenuItem item;
+    private final JCheckBoxMenuItem item;
 
     public Tag(String tag, ActionListener update) {
         this.name = tag;
@@ -35,8 +37,6 @@ public class Tag {
     }
 
     public void checkMembers() {
-        list.keySet().stream().filter((addon) -> (!list.get(addon).hasTag(name))).forEach((addon) -> {
-            list.remove(addon);
-        });
+        list.keySet().stream().filter(addon -> (!list.get(addon).hasTag(name))).forEach(addon -> list.remove(addon));
     }
 }
