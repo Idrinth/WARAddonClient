@@ -3,6 +3,7 @@ package de.idrinth.waraddonclient;
 import de.idrinth.waraddonclient.gui.FrameRestorer;
 import de.idrinth.waraddonclient.gui.ThemeManager;
 import de.idrinth.waraddonclient.gui.Window;
+import de.idrinth.waraddonclient.model.Addon;
 import de.idrinth.waraddonclient.model.AddonList;
 import de.idrinth.waraddonclient.model.TrustManager;
 import de.idrinth.waraddonclient.service.Backup;
@@ -19,6 +20,7 @@ import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
+import java.util.Arrays;
 import javax.swing.JOptionPane;
 import javax.xml.parsers.ParserConfigurationException;
 
@@ -45,6 +47,25 @@ public final class Main {
                 new FrameRestorer(config).restore(window);
                 window.setVisible(true);
             });
+
+            if (args.length > 0) {
+                for (String arg : args) {
+                    if (arg.trim().contains("--updateonly")) {
+                        for (int i = 0; i < addonList.size(); i++) {
+                            Addon addon = addonList.get(i);
+                            if (addon.getStatus().equals("X")) {
+                                try {
+                                    addon.install();
+                                } catch (Exception ex) {
+                                    logger.error(ex);
+                                }
+                            }
+                        }
+                        Runtime.getRuntime().exit(0);
+                    }
+                }
+            }
+
         } catch (ParserConfigurationException |FileSystem.FileSystemException|IOException|CertificateException|KeyManagementException|KeyStoreException|NoSuchAlgorithmException ex) {
             JOptionPane.showMessageDialog(null, ex.getLocalizedMessage());
             Runtime.getRuntime().exit(0);
