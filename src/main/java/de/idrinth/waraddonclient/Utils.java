@@ -4,8 +4,6 @@ import de.idrinth.waraddonclient.service.FileLogger;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class Utils {
 

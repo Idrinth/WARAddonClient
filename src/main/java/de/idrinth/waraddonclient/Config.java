@@ -27,6 +27,8 @@ public class Config {
 
     private static final String KEY_PREFIX_ADDON_UPLOAD = "addon-upload-";
 
+    public static final String LOG_FILE = "waraddonclient.log";
+
     private static String version;
 
     private Config() {
@@ -98,9 +100,5 @@ public class Config {
 
     public static void setEnabled(String addon, boolean enable) {
         prefs.putBoolean(KEY_PREFIX_ADDON_UPLOAD + addon, enable);
-    }
-
-    public static String getLogFile() {
-        return "waraddonclient.log";
     }
 }

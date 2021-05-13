@@ -17,7 +17,7 @@ public class Backup {
             folder.mkdir();
         }
         java.time.LocalDateTime now = java.time.LocalDateTime.now();
-        java.io.File file = new java.io.File(warDir+"/backups/"+ now.format(java.time.format.DateTimeFormatter.ofPattern("YYYY-MM-dd-HH-mm")) +".zip");
+        java.io.File file = new java.io.File(warDir+"/backups/"+ now.format(java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd-HH-mm")) +".zip");
         net.lingala.zip4j.ZipFile zip = new net.lingala.zip4j.ZipFile(file);
         zip.addFolder(new java.io.File(warDir+"/user"));
         zip.addFolder(new java.io.File(warDir+"/Interface"));
