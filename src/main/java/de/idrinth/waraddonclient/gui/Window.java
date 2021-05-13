@@ -16,6 +16,8 @@ import de.idrinth.waraddonclient.service.Shedule;
 import java.awt.Desktop;
 import java.awt.FileDialog;
 import java.awt.Toolkit;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.event.HyperlinkEvent;
@@ -650,7 +652,7 @@ public class Window extends JFrame {
             try {
                 Backup.restore(new java.io.File(dialog.getDirectory() + "/" + dialog.getFile()));
                 JOptionPane.showMessageDialog(this, "Backup restored.");
-            } catch (ZipException ex) {
+            } catch (IOException ex) {
                 logger.error(ex);
                 JOptionPane.showMessageDialog(this, "Couldn't restore Backup.");
             }
@@ -658,17 +660,17 @@ public class Window extends JFrame {
     }//GEN-LAST:event_RestoreBackupActionPerformed
 
     private void QuitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_QuitActionPerformed
+        this.dispose();
+        Runtime.getRuntime().exit(0);
+    }//GEN-LAST:event_QuitActionPerformed
+
+    private void RestartActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_RestartActionPerformed
         try {
             Main.restart();
         } catch (IOException ex) {
             logger.error(ex);
             JOptionPane.showMessageDialog(this, "Couldn't restart app.");
         }
-    }//GEN-LAST:event_QuitActionPerformed
-
-    private void RestartActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_RestartActionPerformed
-        this.dispose();
-        Runtime.getRuntime().exit(0);
     }//GEN-LAST:event_RestartActionPerformed
 
     /**

@@ -2,6 +2,8 @@ package de.idrinth.waraddonclient.service;
 
 import de.idrinth.waraddonclient.Config;
 import de.idrinth.waraddonclient.Utils;
+import java.io.IOException;
+import net.lingala.zip4j.exception.ZipException;
 
 public class Backup {
     private Backup() {
@@ -21,7 +23,7 @@ public class Backup {
         zip.addFolder(new java.io.File(warDir+"/Interface"));
     }
 
-    public static void restore(java.io.File backup) throws net.lingala.zip4j.exception.ZipException {
+    public static void restore(java.io.File backup) throws ZipException, IOException {
         create();
         String warDir = Config.getWARPath();
         net.lingala.zip4j.ZipFile zip = new net.lingala.zip4j.ZipFile(backup);

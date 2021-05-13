@@ -253,13 +253,9 @@ public class ActualAddon implements de.idrinth.waraddonclient.model.Addon {
             Config.setEnabled(name, false);
         }
 
-        /**
-         * removes all data of this addon from the harddrive
-         */
-        private void uninstall() {
+        private void uninstall() throws IOException {
             java.io.File addonFolder = new java.io.File(Config.getWARPath() + BASE_PATH + name);
-            Utils.emptyFolder(addonFolder);
-            addonFolder.delete();
+            Utils.deleteFolder(addonFolder);
             installed="-";
         }
 

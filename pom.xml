@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>de.idrinth</groupId>
     <artifactId>WARAddonClient</artifactId>
-    <version>1.10.1</version>
+    <version>1.10.2</version>
     <packaging>jar</packaging>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -204,6 +204,21 @@
                                     <resources>
                                         <resource>
                                             <directory>${java.home}/lib</directory>
+                                        </resource>
+                                    </resources>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>copy-conf</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>copy-resources</goal>
+                                </goals>
+                                <configuration>
+                                    <outputDirectory>${basedir}/target/java/conf</outputDirectory>
+                                    <resources>
+                                        <resource>
+                                            <directory>${java.home}/conf</directory>
                                         </resource>
                                     </resources>
                                 </configuration>

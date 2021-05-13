@@ -55,31 +55,35 @@ public final class Main {
 
     public static void restart() throws IOException {
         try {
-            StringBuilder cmd = new StringBuilder("\"" + System.getProperty("java.home") + "/bin/java\" ");
-            ManagementFactory.getRuntimeMXBean().getInputArguments().stream().filter(arg -> (!arg.contains("-agentlib"))).map(arg -> {
-                cmd.append(arg);
-                return arg;
-            }).forEachOrdered(item -> cmd.append(" "));
-
-            String[] mainCommand = System.getProperty(SUN_JAVA_COMMAND).split(" ");
-            cmd.append("-jar " );
-            cmd.append(new File(mainCommand[0]).getPath());
-            for (int i = 1; i < mainCommand.length; i++) {
-                cmd.append(" ");
-                cmd.append(mainCommand[i]);
-            }
-            Runtime.getRuntime().addShutdownHook(new Thread() {
-                @Override
-                public void run() {
-                    try {
-                        Runtime.getRuntime().exec(cmd.toString());
-                    } catch (IOException e) {
-                        e.printStackTrace();
+            File jar = new File("WARAddonClient.jar");
+            File exe = new File("WARAddonClient.exe");
+            if (exe.exists()) {
+                Runtime.getRuntime().addShutdownHook(new Thread() {
+                    @Override
+                    public void run() {
+                        try {
+                            Runtime.getRuntime().exec(exe.getAbsolutePath());
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
                     }
-                }
-            });
-            System.exit(0);
-        } catch (Exception e) {
+                });
+                System.exit(0);
+            } else if (jar.exists()) {
+                Runtime.getRuntime().addShutdownHook(new Thread() {
+                    @Override
+                    public void run() {
+                        try {
+                            Runtime.getRuntime().exec("java -jar "+jar.getAbsolutePath());
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+                System.exit(0);
+            }
+            throw new IOException("Executable not found, did you replace it?");
+        } catch (IOException e) {
             throw new IOException("Error while trying to restart the application", e);
         }
     }
