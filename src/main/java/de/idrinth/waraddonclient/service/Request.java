@@ -13,8 +13,6 @@ import org.apache.http.client.methods.HttpGet;
 
 public class Request {
 
-    private static final String BASE_URL = "https://tools.idrinth.de/";
-
     private volatile boolean requestActive;
 
     private org.apache.http.impl.client.CloseableHttpClient client;
@@ -22,9 +20,12 @@ public class Request {
     private final javax.net.ssl.SSLContext sslContext;
 
     private final FileLogger logger;
+    
+    private final Config config;
 
-    public Request(TrustManager manager, FileLogger logger) throws NoSuchAlgorithmException, KeyStoreException, KeyManagementException {
+    public Request(TrustManager manager, FileLogger logger, Config config) throws NoSuchAlgorithmException, KeyStoreException, KeyManagementException {
         this.logger = logger;
+        this.config = config;
         sslContext = org.apache.http.ssl.SSLContextBuilder.create().loadTrustMaterial(
                 manager.getKeyStore(),
                 manager
@@ -32,20 +33,20 @@ public class Request {
     }
 
     public javax.json.JsonArray getAddonList() throws IOException {
-        org.apache.http.HttpResponse response = executionHandler(new org.apache.http.client.methods.HttpGet(BASE_URL + "addon-api/"));
+        org.apache.http.HttpResponse response = executionHandler(new org.apache.http.client.methods.HttpGet(config.getURL() + "addon-api/"));
         javax.json.JsonArray data = javax.json.Json.createReader(response.getEntity().getContent()).readArray();
         client.close();
         return data;
     }
 
     public java.io.InputStream getAddonDownload(String url) throws IOException {
-        org.apache.http.HttpResponse response = executionHandler(new org.apache.http.client.methods.HttpGet(BASE_URL + "addons/" + url));
+        org.apache.http.HttpResponse response = executionHandler(new org.apache.http.client.methods.HttpGet(config.getURL() + "addons/" + url));
         return response.getEntity().getContent();
     }
 
     private synchronized org.apache.http.HttpResponse executionHandler(org.apache.http.client.methods.HttpRequestBase uri) throws IOException {
         uri.setConfig(org.apache.http.client.config.RequestConfig.DEFAULT);
-        uri.setHeader("User-Agent", "IdrinthsWARAddonClient/" + Config.getVersion());
+        uri.setHeader("User-Agent", "IdrinthsWARAddonClient/" + config.getVersion());
         uri.setHeader("Cache-Control", "no-cache");
         while (requestActive) {
             Utils.sleep(150, logger);

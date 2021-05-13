@@ -1,5 +1,6 @@
 package de.idrinth.waraddonclient.model;
 
+import de.idrinth.waraddonclient.Config;
 import de.idrinth.waraddonclient.Utils;
 import de.idrinth.waraddonclient.service.FileLogger;
 import de.idrinth.waraddonclient.service.Request;
@@ -36,11 +37,14 @@ public class AddonList implements java.lang.Runnable {
     private ActionListener listener;
     
     private final XmlParser parser;
+    
+    private final Config config;
 
-    public AddonList(Request client, FileLogger logger, XmlParser parser) {
+    public AddonList(Request client, FileLogger logger, XmlParser parser, Config config) {
         this.client = client;
         this.logger = logger;
         this.parser = parser;
+        this.config = config;
     }
 
     public void setMenu(JMenu menu, ActionListener listener) {
@@ -158,7 +162,7 @@ public class AddonList implements java.lang.Runnable {
             }
             for (int counter = json.size(); counter > 0; counter--) {
                 try {
-                    processJsonAddon(new ActualAddon(json.getJsonObject(counter - 1), client, logger, parser));
+                    processJsonAddon(new ActualAddon(json.getJsonObject(counter - 1), client, logger, parser, config));
                 } catch (ActualAddon.InvalidArgumentException ex) {
                     logger.error(ex);
                 }
@@ -174,11 +178,11 @@ public class AddonList implements java.lang.Runnable {
         private void newAddon(ActualAddon addon) {
             add(addon);
             model.addRow(addon.getTableRow());
-            if (!addon.getUploadData().getFile().isEmpty()) {
-                if (!watchedFilesMap.containsKey(addon.getUploadData().getFile().toLowerCase())) {
-                    watchedFilesMap.put(addon.getUploadData().getFile().toLowerCase(), new WatchedFile());
+            if (!addon.getFile().isEmpty()) {
+                if (!watchedFilesMap.containsKey(addon.getFile().toLowerCase())) {
+                    watchedFilesMap.put(addon.getFile().toLowerCase(), new WatchedFile());
                 }
-                watchedFilesMap.get(addon.getUploadData().getFile().toLowerCase()).addAddon(addon);
+                watchedFilesMap.get(addon.getFile().toLowerCase()).addAddon(addon);
             }
         }
 

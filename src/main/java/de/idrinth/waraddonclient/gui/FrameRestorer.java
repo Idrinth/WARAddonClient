@@ -7,23 +7,27 @@ import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
-import javax.swing.JFrame;
 
 public class FrameRestorer {
+
+    private final Config config;
+
+    public FrameRestorer(Config config) {
+        this.config = config;
+    }
+
     public void restore(Window frame) {
         Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
         frame.setLocation(getProcessedLocation(screen));
         frame.setSize(getProcessedSize(screen));
-        frame.addComponentListener(new Adapter(new DelayedRunner(400, () -> updatePref(frame))));
-    }
-    
-    private static void updatePref(JFrame frame) {
-        Config.setWindowDimension(frame.getSize());
-        Config.setWindowPosition(frame.getLocation());
+        frame.addComponentListener(new Adapter(new DelayedRunner(400, () -> {
+            config.setWindowDimension(frame.getSize());
+            config.setWindowPosition(frame.getLocation());
+        })));
     }
 
     private Dimension getProcessedSize(Dimension screen) {
-        Dimension dimension = Config.getWindowDimension();
+        Dimension dimension = config.getWindowDimension();
         int width = dimension.width;
         int height = dimension.height;
         if (width <= 0 || width > screen.width) {
@@ -36,7 +40,7 @@ public class FrameRestorer {
     }
 
     private Point getProcessedLocation(Dimension screen) {
-        Point point = Config.getWindowPosition();
+        Point point = config.getWindowPosition();
         int x = point.x;
         int y = point.y;
         if (x < 0 || x > screen.width) {

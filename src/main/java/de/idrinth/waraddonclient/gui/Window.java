@@ -10,7 +10,6 @@ import java.net.URISyntaxException;
 import net.lingala.zip4j.exception.ZipException;
 import javax.swing.table.TableRowSorter;
 import de.idrinth.waraddonclient.service.Version;
-import de.idrinth.waraddonclient.model.AddonSettings;
 import de.idrinth.waraddonclient.service.FileLogger;
 import de.idrinth.waraddonclient.service.Shedule;
 import java.awt.Desktop;
@@ -31,16 +30,22 @@ public class Window extends JFrame {
     private final AddonList addonList;
 
     private final FileLogger logger;
+    
+    private final Config config;
 
-    public Window(AddonList addonList, Version version, ThemeManager manager, FileLogger logger, Shedule schedule) {
+    private final Backup backup;
+
+    public Window(AddonList addonList, Version version, ThemeManager manager, FileLogger logger, Shedule schedule, Config config, Backup backup) {
         this.addonList = addonList;
         this.logger = logger;
+        this.config = config;
+        this.backup = backup;
         initComponents();
         manager.addTo(menuTheme);
         finishGuiBuilding(schedule);
         version.setVersion(remoteVersion);
         new Thread(version).start();
-        changeLanguageTo(Config.getLanguage());
+        changeLanguageTo(config.getLanguage());
     }
 
     private void finishGuiBuilding(Shedule schedule) {
@@ -49,7 +54,7 @@ public class Window extends JFrame {
         addonListTable.setRowSorter(new TableRowSorter<>(addonListTable.getModel()));
         addonList.setModel((DefaultTableModel) addonListTable.getModel());
         description.addHyperlinkListener(new HyperlinkListenerImpl());
-        localVersion.setText(Config.getVersion());
+        localVersion.setText(config.getVersion());
         addonList.setMenu(menuTags, (java.awt.event.ActionEvent evt) -> newFilter());
         schedule.register(300, addonList);
         (new TableListener()).updateUi();
@@ -496,7 +501,7 @@ public class Window extends JFrame {
             activeAddon.install();
             updateList();
             JOptionPane.showMessageDialog(this, "The requested Addon was installed.");
-        } catch (java.lang.Exception exception) {
+        } catch (IOException exception) {
             logger.error(exception);
             JOptionPane.showMessageDialog(this, "Sadly Installing failed, check if the folder is writeable.");
         }
@@ -528,7 +533,7 @@ public class Window extends JFrame {
     private void removeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeButtonActionPerformed
         try {
             activeAddon.uninstall();
-        } catch (Exception exception) {
+        } catch (IOException exception) {
             logger.error(exception);
         }
         updateList();
@@ -539,7 +544,7 @@ public class Window extends JFrame {
      * @param evt
      */
     private void uploadEnableActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_uploadEnableActionPerformed
-        Config.setEnabled(activeAddon.getName(), uploadEnable.isSelected());
+        config.setEnabled(activeAddon.getName(), uploadEnable.isSelected());
     }//GEN-LAST:event_uploadEnableActionPerformed
 
     /**
@@ -611,7 +616,7 @@ public class Window extends JFrame {
 
     private void menuCreateBackupActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuCreateBackupActionPerformed
         try {
-            Backup.create();
+            backup.create();
             JOptionPane.showMessageDialog(this, "Saved your profile and addons in backups.");
         } catch (ZipException ex) {
             logger.error(ex);
@@ -652,7 +657,7 @@ public class Window extends JFrame {
                 return;
             }
             try {
-                Backup.restore(new java.io.File(dialog.getDirectory() + "/" + dialog.getFile()));
+                backup.restore(new java.io.File(dialog.getDirectory() + "/" + dialog.getFile()));
                 JOptionPane.showMessageDialog(this, "Backup restored.");
             } catch (IOException ex) {
                 logger.error(ex);
@@ -684,10 +689,8 @@ public class Window extends JFrame {
         menuEnglish.setSelected("en".equals(lang));
         menuDeutsch.setSelected("de".equals(lang));
         menuFrancais.setSelected("fr".equals(lang));
-        Config.setLanguage(lang);
-        if (activeAddon != null) {
-            description.setText(activeAddon.getDescription(lang));
-        }
+        config.setLanguage(lang);
+        description.setText(activeAddon.getDescription(lang));
     }
 
     /**
@@ -758,22 +761,17 @@ public class Window extends JFrame {
          * Updates the ui to show the current addon's data
          */
         public void updateUi() {
-            boolean isAnAddon = !"".equals(activeAddon.getVersion());
-            description.setText(activeAddon.getDescription(Config.getLanguage()));
+            description.setText(activeAddon.getDescription(config.getLanguage()));
             addonTitle.setText(activeAddon.getName());
-            installButton.setEnabled(isAnAddon);
-            removeButton.setEnabled(isAnAddon);
+            installButton.setEnabled(true);
+            removeButton.setEnabled(true);
             rightSide.setEnabledAt(1, false);
-            setTitle(activeAddon.getName() + " - Idrinth's WAR Addon Client " + Config.getVersion());
-            if (!isAnAddon) {
-                return;
-            }
-            AddonSettings settings = activeAddon.getUploadData();
-            rightSide.setEnabledAt(1, settings.showSettings());
-            uploadReason.setText(settings.getReason());
-            uploadUrl.setText(settings.getUrl());
-            uploadFile.setText(settings.getFile());
-            uploadEnable.setSelected(Config.isEnabled(activeAddon.getName()));
+            setTitle(activeAddon.getName() + " - Idrinth's WAR Addon Client " + config.getVersion());
+            rightSide.setEnabledAt(1, activeAddon.showSettings());
+            uploadReason.setText(activeAddon.getReason());
+            uploadUrl.setText(activeAddon.getUrl());
+            uploadFile.setText(activeAddon.getFile());
+            uploadEnable.setSelected(config.isEnabled(activeAddon.getName()));
             String taglist = "Tagged: ";
             taglist = activeAddon.getTags().stream().map(tagname -> tagname + ", ").reduce(taglist, String::concat);
             currentTags.setText(taglist.substring(0, taglist.length() - 2));

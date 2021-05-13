@@ -31,11 +31,14 @@ import javax.swing.UnsupportedLookAndFeelException;
 public final class ThemeManager {
 
     private final FileLogger logger;
+    
+    private final Config config;
 
-    public ThemeManager(FileLogger logger) {
+    public ThemeManager(FileLogger logger, Config config) {
         this.logger = logger;
+        this.config = config;
         install();
-        String preference = Config.getTheme();
+        String preference = config.getTheme();
         for (UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
             if (preference.equals(info.getName())) {
                 try {
@@ -74,12 +77,12 @@ public final class ThemeManager {
         for (UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
             javax.swing.JCheckBoxMenuItem item = new javax.swing.JCheckBoxMenuItem();
             item.setText(info.getName());
-            item.setSelected(Config.getTheme().equals(info.getName()));
+            item.setSelected(config.getTheme().equals(info.getName()));
             item.addActionListener((ActionEvent evt) -> {
-                if (Config.getTheme().equals(info.getName())) {
+                if (config.getTheme().equals(info.getName())) {
                     return;
                 }
-                Config.setTheme(info.getName());
+                config.setTheme(info.getName());
                 try {
                     Main.restart();
                 } catch (IOException ex) {

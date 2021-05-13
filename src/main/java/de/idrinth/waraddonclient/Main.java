@@ -5,6 +5,7 @@ import de.idrinth.waraddonclient.gui.ThemeManager;
 import de.idrinth.waraddonclient.gui.Window;
 import de.idrinth.waraddonclient.model.AddonList;
 import de.idrinth.waraddonclient.model.TrustManager;
+import de.idrinth.waraddonclient.service.Backup;
 import de.idrinth.waraddonclient.service.FileLogger;
 import de.idrinth.waraddonclient.service.FileSystem;
 import de.idrinth.waraddonclient.service.FileWatcher;
@@ -29,19 +30,20 @@ public final class Main {
 
     public static void main(String[] args) {
         try {
-            FileLogger logger = new FileLogger(new File(Config.LOG_FILE));
+            Config config = new Config();
+            FileLogger logger = new FileLogger(config.getLogFile());
             logger.info("Starting");
-            ThemeManager themes = new ThemeManager(logger);
-            new FileSystem().processPosition();
+            ThemeManager themes = new ThemeManager(logger, config);
+            new FileSystem(config).processPosition();
             Shedule schedule = new Shedule();
-            Request client = new Request(new TrustManager(logger), logger);
-            AddonList addonList = new AddonList(client, logger, new XmlParser());
-            FileWatcher watcher = new FileWatcher(addonList, logger);
+            Request client = new Request(new TrustManager(logger), logger, config);
+            AddonList addonList = new AddonList(client, logger, new XmlParser(), config);
+            FileWatcher watcher = new FileWatcher(addonList, logger, config);
             schedule.register(30, watcher);
             java.awt.EventQueue.invokeLater(() -> {
                 Version version = new Version(client, logger);
-                Window window = new Window(addonList, version, themes, logger, schedule);
-                new FrameRestorer().restore(window);
+                Window window = new Window(addonList, version, themes, logger, schedule, config, new Backup(config));
+                new FrameRestorer(config).restore(window);
                 window.setVisible(true);
             });
         } catch (ParserConfigurationException |FileSystem.FileSystemException|IOException|CertificateException|KeyManagementException|KeyStoreException|NoSuchAlgorithmException ex) {

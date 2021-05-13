@@ -25,11 +25,6 @@ public class NoAddon implements de.idrinth.waraddonclient.model.Addon {
     }
 
     @Override
-    public AddonSettings getUploadData() {
-        return null;
-    }
-
-    @Override
     public String getDescription(String language) {
         return "<html><h1>Welcome to the client.</h1><p>To get something more useful here, select an addon to the left.</p>";
     }
@@ -52,6 +47,26 @@ public class NoAddon implements de.idrinth.waraddonclient.model.Addon {
     @Override
     public String getStatus() {
         return "unknown";
+    }
+
+    @Override
+    public String getFile() {
+        return "";
+    }
+
+    @Override
+    public String getReason() {
+        return "";
+    }
+
+    @Override
+    public String getUrl() {
+        return "";
+    }
+
+    @Override
+    public boolean showSettings() {
+        return false;
     }
 
 }

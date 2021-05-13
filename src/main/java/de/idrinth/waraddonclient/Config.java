@@ -2,14 +2,13 @@ package de.idrinth.waraddonclient;
 
 import java.awt.Dimension;
 import java.awt.Point;
+import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.prefs.Preferences;
 import org.apache.commons.io.IOUtils;
 
 public class Config {
-
-    private static final Preferences prefs = Preferences.userRoot().node(Config.class.getClass().getName());
 
     private static final String KEY_WAR_PATH = "war-path";
 
@@ -27,78 +26,99 @@ public class Config {
 
     private static final String KEY_PREFIX_ADDON_UPLOAD = "addon-upload-";
 
-    public static final String LOG_FILE = "waraddonclient.log";
+    private static final String LOG_FILE = "waraddonclient.log";
 
-    private static String version;
+    private static final String ADDON_FOLDER = "/Interface/AddOns/";
 
-    private Config() {
+    private static final String LOGS = "/logs/";
+
+    private static final String BASE_URL = "https://tools.idrinth.de/";
+
+    private final Preferences prefs = Preferences.userRoot().node(Config.class.getClass().getName());
+
+    private final String version;
+    
+    private final File logFile;
+
+    public Config() throws IOException {
+        version = IOUtils.toString(Config.class.getResourceAsStream("/version"), StandardCharsets.UTF_8);
+        logFile = new File(LOG_FILE);
     }
 
-    public static void setWARPath(String path) {
+    public void setWARPath(String path) {
         prefs.put(KEY_WAR_PATH, path);
     }
 
-    public static String getWARPath() {
+    public String getWARPath() {
         return prefs.get(KEY_WAR_PATH, ".");
     }
 
-    public static String getTheme() {
+    public String getTheme() {
         return prefs.get(KEY_THEME, "Nimbus");
     }
 
-    public static void setTheme(String theme) {
+    public void setTheme(String theme) {
         prefs.put(KEY_THEME, theme);
     }
 
-    public static String getLanguage() {
+    public String getLanguage() {
         return prefs.get(KEY_LANGUAGE, "en");
     }
 
-    public static void setLanguage(String language) {
+    public void setLanguage(String language) {
         prefs.put(KEY_LANGUAGE, language);
     }
 
-    public static void setWindowDimension(Dimension dimension) {
+    public void setWindowDimension(Dimension dimension) {
         prefs.putInt(KEY_WINDOW_WIDTH, dimension.width);
         prefs.putInt(KEY_WINDOW_HEIGHT, dimension.height);
     }
 
-    public static Dimension getWindowDimension() {
+    public Dimension getWindowDimension() {
         return new Dimension(
                 prefs.getInt(KEY_WINDOW_WIDTH, 800),
                 prefs.getInt(KEY_WINDOW_HEIGHT, 450)
         );
     }
 
-    public static void setWindowPosition(Point point) {
+    public void setWindowPosition(Point point) {
         prefs.putInt(KEY_WINDOW_LOCATION_X, point.x);
         prefs.putInt(KEY_WINDOW_LOCATION_Y, point.y);
     }
 
-    public static Point getWindowPosition() {
+    public Point getWindowPosition() {
         return new Point(
                 prefs.getInt(KEY_WINDOW_LOCATION_X, 0),
                 prefs.getInt(KEY_WINDOW_LOCATION_Y, 0)
         );
     }
 
-    public static String getVersion() {
-        if (version != null) {
-            return version;
-        }
-        try {
-            version = IOUtils.toString(Config.class.getResourceAsStream("/version"), StandardCharsets.UTF_8);
-        } catch (IOException ex) {
-            return "0.0.0";
-        }
+    public String getVersion() {
         return version;
     }
 
-    public static boolean isEnabled(String addon) {
+    public boolean isEnabled(String addon) {
         return prefs.getBoolean(KEY_PREFIX_ADDON_UPLOAD + addon, false);
     }
 
-    public static void setEnabled(String addon, boolean enable) {
+    public void setEnabled(String addon, boolean enable) {
         prefs.putBoolean(KEY_PREFIX_ADDON_UPLOAD + addon, enable);
+    }
+    
+    public File getLogFile()
+    {
+        return logFile;
+    }
+    
+    public String getAddonFolder()
+    {
+        return getWARPath() + ADDON_FOLDER;
+    }
+    public String getLogsFolder()
+    {
+        return getWARPath() + LOGS;
+    }
+    public String getURL() {
+        return BASE_URL;
     }
 }

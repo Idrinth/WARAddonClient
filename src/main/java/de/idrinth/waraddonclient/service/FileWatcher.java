@@ -16,11 +16,14 @@ public class FileWatcher implements java.lang.Runnable {
     private final WatchService watcher;
 
     private final FileLogger logger;
+    
+    private final Config config;
 
-    public FileWatcher(AddonList addonList, FileLogger logger) throws IOException {
+    public FileWatcher(AddonList addonList, FileLogger logger, Config config) throws IOException {
         this.addonList = addonList;
         this.logger = logger;
-        File path = new File(Config.getWARPath() + "/logs");
+        this.config = config;
+        File path = new File(config.getLogsFolder());
         if (!path.exists()) {
             path.mkdirs();
         }
@@ -35,7 +38,7 @@ public class FileWatcher implements java.lang.Runnable {
     public void run() {
         try {
             WatchKey key = watcher.take();
-            key.pollEvents().stream().filter(event -> (isValidEvent(event))).map(event -> new File(Config.getWARPath() + "/logs/" + event.context().toString())).filter(file -> (isValidFile(file))).forEach(file -> addonList.getWatchedFiles().get(file.getName().toLowerCase()).setFileToProcess(file));
+            key.pollEvents().stream().filter(event -> (isValidEvent(event))).map(event -> new File(config.getLogsFolder() + event.context().toString())).filter(file -> (isValidFile(file))).forEach(file -> addonList.getWatchedFiles().get(file.getName().toLowerCase()).setFileToProcess(file));
             key.reset();
         } catch (InterruptedException ex) {
             logger.error(ex);

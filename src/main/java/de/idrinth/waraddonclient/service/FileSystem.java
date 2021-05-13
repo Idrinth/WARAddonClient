@@ -5,8 +5,15 @@ import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 
 public class FileSystem {
+
+    private final Config config;
+
+    public FileSystem(Config config) {
+        this.config = config;
+    }
+
     public void processPosition() throws FileSystemException {
-        if (new java.io.File(Config.getWARPath() + "/WAR.exe").exists()) {
+        if (new java.io.File(config.getWARPath() + "/WAR.exe").exists()) {
             return;
         }
         JOptionPane.showMessageDialog(null, "No WAR.exe found, please select it");
@@ -15,13 +22,14 @@ public class FileSystem {
 
         // if the user selects a file
         if (r == JFileChooser.APPROVE_OPTION) {
-            Config.setWARPath(j.getSelectedFile().getParent());
+            config.setWARPath(j.getSelectedFile().getParent());
         }
-        if (new java.io.File(Config.getWARPath() + "/WAR.exe").exists()) {
+        if (new java.io.File(config.getWARPath() + "/WAR.exe").exists()) {
             return;
         }
         throw new FileSystemException("Unable to find WAR.exe");
     }
+
     public class FileSystemException extends Exception {
 
         public FileSystemException() {
@@ -42,6 +50,6 @@ public class FileSystem {
         public FileSystemException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
             super(message, cause, enableSuppression, writableStackTrace);
         }
-        
+
     }
 }

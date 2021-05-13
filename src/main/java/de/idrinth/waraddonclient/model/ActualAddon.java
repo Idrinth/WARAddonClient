@@ -1,21 +1,34 @@
 package de.idrinth.waraddonclient.model;
 
+import com.github.zafarkhaja.semver.Version;
 import de.idrinth.waraddonclient.Config;
 import de.idrinth.waraddonclient.Utils;
 import de.idrinth.waraddonclient.service.FileLogger;
 import de.idrinth.waraddonclient.service.Request;
 import de.idrinth.waraddonclient.service.XmlParser;
+import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import javax.xml.parsers.FactoryConfigurationError;
+import net.lingala.zip4j.ZipFile;
+import org.apache.commons.io.FileUtils;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 public class ActualAddon implements de.idrinth.waraddonclient.model.Addon {
 
     private HashMap<String, String> descriptions = new HashMap<>();
+    
+    private boolean hasSettings = false;
+
+    private String file = "";
+
+    private String reason = "";
+
+    private String url = "";
 
     private String version;
 
@@ -27,10 +40,6 @@ public class ActualAddon implements de.idrinth.waraddonclient.model.Addon {
 
     private ArrayList<String> tags = new ArrayList<>();
 
-    private final AddonSettings addonSettings;
-
-    private static final String BASE_PATH = "/Interface/AddOns/";
-
     private static final String VERSION_FILE = "/self.idrinth";
 
     private final Request client;
@@ -39,13 +48,16 @@ public class ActualAddon implements de.idrinth.waraddonclient.model.Addon {
     
     private final XmlParser parser;
     
-    public ActualAddon(javax.json.JsonObject addon, Request client, FileLogger logger, XmlParser parser) throws InvalidArgumentException {
+    private final Config config;
+    
+    public ActualAddon(javax.json.JsonObject addon, Request client, FileLogger logger, XmlParser parser, Config config) throws InvalidArgumentException {
         if (addon == null) {
             throw new InvalidArgumentException("Addon is null");
         }
         this.client = client;
         this.logger = logger;
         this.parser = parser;
+        this.config = config;
         descriptions.put("en", getStringFromObject("description", addon));
         descriptions.put("fr", getStringFromObject("description_fr", addon));
         descriptions.put("de", getStringFromObject("description_de", addon));
@@ -58,15 +70,23 @@ public class ActualAddon implements de.idrinth.waraddonclient.model.Addon {
             tags.add(tagList.getString(counter));
             counter++;
         }
-        new VersionFinder().run();
-        addonSettings = new AddonSettings(name, logger, parser);
+        new VersionFinder(find(name)).run();
+        refresh();
     }
 
-    /**
-     * get the tags of this addon
-     *
-     * @return java.util.ArrayList
-     */
+    private File find(String name) {
+        File folder = new File(config.getAddonFolder());
+        if (folder.exists()) {
+            for (File innerFolder : folder.listFiles()) {
+                if (innerFolder.getName().equalsIgnoreCase(name)) {
+                    return innerFolder;
+                }
+
+            }
+        }
+        return  new File(config.getAddonFolder() + name);
+    }
+
     public java.util.ArrayList<String> getTags() {
         return tags;
     }
@@ -101,23 +121,8 @@ public class ActualAddon implements de.idrinth.waraddonclient.model.Addon {
         return version;
     }
 
-    /**
-     * the installed version
-     *
-     * @return String
-     */
     public String getInstalled() {
-        new VersionFinder().run();
         return installed;
-    }
-
-    /**
-     * returns the settings for this addon
-     *
-     * @return AddonSettings
-     */
-    public final AddonSettings getUploadData() {
-        return addonSettings;
     }
 
     /**
@@ -175,42 +180,22 @@ public class ActualAddon implements de.idrinth.waraddonclient.model.Addon {
         return descriptions;
     }
 
-    /**
-     * get addon name
-     *
-     * @return String
-     */
     public String getName() {
         return name;
     }
 
-    /**
-     * downloads a zip and unpacks it
-     *
-     * @throws java.lang.Exception
-     */
     public void install() throws IOException {
         (new Updater()).run(true);
     }
 
-    /**
-     * downloads a zip and unpacks it
-     *
-     * @throws java.lang.Exception
-     */
     public void uninstall() throws IOException {
         (new Updater()).run(false);
     }
 
-    /**
-     * starts uploading a file if so configured
-     *
-     * @param file
-     */
-    public void fileWasChanged(java.io.File file) {
-        if (Config.isEnabled(name) && file.isFile() && file.getName().equalsIgnoreCase(addonSettings.getFile())) {
+    public void fileWasChanged(File changedFile) {
+        if (config.isEnabled(name) && changedFile.isFile() && changedFile.getName().equalsIgnoreCase(file)) {
             try {
-                client.upload(addonSettings.getUrl(), file);
+                client.upload(url, changedFile);
             } catch (Exception exception) {
                 logger.warn(exception);
             }
@@ -223,8 +208,8 @@ public class ActualAddon implements de.idrinth.waraddonclient.model.Addon {
             return " ";
         }
         try {
-            com.github.zafarkhaja.semver.Version remote = com.github.zafarkhaja.semver.Version.valueOf(getVersion());
-            com.github.zafarkhaja.semver.Version local = com.github.zafarkhaja.semver.Version.valueOf(getInstalled());
+            Version remote = Version.valueOf(getVersion());
+            Version local = Version.valueOf(getInstalled());
             if (remote.equals(local)) {
                 return "✓";
             }
@@ -250,12 +235,12 @@ public class ActualAddon implements de.idrinth.waraddonclient.model.Addon {
             if (redeploy) {
                 install();
             }
-            addonSettings.refresh();
-            Config.setEnabled(name, false);
+            refresh();
+            config.setEnabled(name, false);
         }
 
         private void uninstall() throws IOException {
-            java.io.File addonFolder = new java.io.File(Config.getWARPath() + BASE_PATH + name);
+            File addonFolder = new File(config.getAddonFolder() + name);
             Utils.deleteFolder(addonFolder);
             installed="-";
         }
@@ -267,23 +252,24 @@ public class ActualAddon implements de.idrinth.waraddonclient.model.Addon {
          * @throws java.lang.Exception
          */
         private java.io.File getZip() throws IOException {
-            java.io.File file = new java.io.File(Config.getWARPath() + BASE_PATH + slug + ".zip");
-            try (java.io.InputStream stream = client.getAddonDownload(slug + "/download/" + version.replace(".", "-") + "/")) {
-                org.apache.commons.io.FileUtils.copyInputStreamToFile(stream, file);
+            File zip = new File(config.getAddonFolder() + slug + ".zip");
+            try (InputStream stream = client.getAddonDownload(slug + "/download/" + version.replace(".", "-") + "/")) {
+                FileUtils.copyInputStreamToFile(stream, zip);
             }
-            return file;
+            return zip;
         }
 
-        /**
-         * extracts a zip downloaded for the install()-method
-         *
-         * @throws java.lang.Exception
-         */
         private void install() throws IOException {
-            java.io.File file = getZip();
-            (new net.lingala.zip4j.ZipFile(file)).extractAll(Config.getWARPath() + BASE_PATH);
-            org.apache.commons.io.FileUtils.deleteQuietly(file);
-            org.apache.commons.io.FileUtils.writeStringToFile(new java.io.File(Config.getWARPath() + BASE_PATH + name + VERSION_FILE), "<?xml version=\"1.0\" encoding=\"UTF-8\"?><UiMod><name>" + name + "</name><version>" + version + "</version></UiMod>", StandardCharsets.UTF_8);
+            File zip = getZip();
+            (new ZipFile(zip)).extractAll(config.getAddonFolder());
+            FileUtils.deleteQuietly(zip);
+            File target = find(name);
+            target.mkdirs();
+            FileUtils.writeStringToFile(
+                new File(target.getAbsoluteFile() + VERSION_FILE),
+                "<?xml version=\"1.0\" encoding=\"UTF-8\"?><UiMod><name>" + name + "</name><version>" + version + "</version></UiMod>",
+                StandardCharsets.UTF_8
+            );
             installed=version;
         }
 
@@ -291,21 +277,12 @@ public class ActualAddon implements de.idrinth.waraddonclient.model.Addon {
 
     private class VersionFinder {
 
-        private final java.io.File folder;
+        private final File folder;
 
-        /**
-         *
-         * @param base
-         */
-        public VersionFinder() {
-            folder = de.idrinth.waraddonclient.service.AddonFolderLocator.find(name);
+        public VersionFinder(File folder) {
+            this.folder = folder;
         }
 
-        /**
-         * tries to find and set the usual version
-         *
-         * @return boolean
-         */
         private boolean processDirectory() {
             for (java.io.File fileEntry : folder.listFiles()) {
                 if (!fileEntry.isDirectory()
@@ -326,10 +303,10 @@ public class ActualAddon implements de.idrinth.waraddonclient.model.Addon {
          * tries to find and set the default version
          */
         private boolean getDownloadVersion() {
-            java.io.File file = new java.io.File(folder.getPath() + VERSION_FILE);
-            if (file.exists()) {
+            File versionFile = new File(folder.getPath() + VERSION_FILE);
+            if (versionFile.exists()) {
                 try {
-                    NodeList list = parser.parse(file).getElementsByTagName("version");
+                    NodeList list = parser.parse(versionFile).getElementsByTagName("version");
                     installed = list.item(0).getTextContent().replace("(sys)", "");
                     return true;
                 } catch (FactoryConfigurationError | SAXException | IOException exception) {
@@ -347,10 +324,75 @@ public class ActualAddon implements de.idrinth.waraddonclient.model.Addon {
                 return;
             }
             if (!getDownloadVersion() && !processDirectory()) {
-                installed = "unknown";
+                installed = "-";
             }
         }
     }
+    
+    public boolean showSettings() {
+        return hasSettings;
+    }
+
+    public final void refresh() {
+        file = "";
+        reason = "";
+        url = "";
+        hasSettings = false;
+        File folder = find(name);
+        for (File fileEntry : folder.listFiles()) {
+            processFile(fileEntry);
+            if (hasSettings) {
+                return;
+            }
+        }
+    }
+
+    private void processFile(java.io.File fileEntry) {
+        if (fileEntry.isDirectory()) {
+            return;
+        }
+        if (!"upload.idrinth".equalsIgnoreCase(fileEntry.getName())) {
+            return;
+        }
+        try {
+            NodeList list = parser.parse(fileEntry).getFirstChild().getChildNodes();
+            for (int counter = 0; counter < list.getLength(); counter++) {
+                processNode(list.item(counter));
+            }
+            hasSettings = true;
+        } catch (FactoryConfigurationError | SAXException | IOException exception) {
+            logger.error(exception);
+        }
+    }
+
+    private void processNode(org.w3c.dom.Node item) {
+        if ("file".equalsIgnoreCase(item.getNodeName())) {
+            file = item.getTextContent();
+            return;
+        }
+        if ("url".equalsIgnoreCase(item.getNodeName())) {
+            url = item.getTextContent();
+            return;
+        }
+        if ("reason".equalsIgnoreCase(item.getNodeName())) {
+            reason = item.getTextContent();
+        }
+    }
+    @Override
+    public String getFile() {
+        return file;
+    }
+
+    @Override
+    public String getReason() {
+        return reason;
+    }
+
+    @Override
+    public String getUrl() {
+        return url;
+    }
+
     public class InvalidArgumentException extends Exception {
 
         private InvalidArgumentException(String error) {

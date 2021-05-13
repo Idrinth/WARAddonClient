@@ -13,8 +13,6 @@ public interface Addon {
 
     public String getInstalled();
 
-    public de.idrinth.waraddonclient.model.AddonSettings getUploadData();
-
     public String getDescription(String language);
 
     public String getName();
@@ -24,4 +22,12 @@ public interface Addon {
     public void install() throws IOException;
 
     public void uninstall() throws IOException;
+
+    public String getFile();
+
+    public String getReason();
+
+    public String getUrl();
+    
+    public boolean showSettings();
 }
