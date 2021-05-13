@@ -339,10 +339,12 @@ public class ActualAddon implements de.idrinth.waraddonclient.model.Addon {
         url = "";
         hasSettings = false;
         File folder = find(name);
-        for (File fileEntry : folder.listFiles()) {
-            processFile(fileEntry);
-            if (hasSettings) {
-                return;
+        if (folder.exists()) {
+            for (File fileEntry : folder.listFiles()) {
+                processFile(fileEntry);
+                if (hasSettings) {
+                    return;
+                }
             }
         }
     }
