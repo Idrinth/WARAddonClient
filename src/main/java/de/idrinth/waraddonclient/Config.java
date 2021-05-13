@@ -37,7 +37,7 @@ public class Config {
     private final Preferences prefs = Preferences.userRoot().node(Config.class.getClass().getName());
 
     private final String version;
-    
+
     private final File logFile;
 
     public Config() throws IOException {
@@ -104,20 +104,19 @@ public class Config {
     public void setEnabled(String addon, boolean enable) {
         prefs.putBoolean(KEY_PREFIX_ADDON_UPLOAD + addon, enable);
     }
-    
-    public File getLogFile()
-    {
+
+    public File getLogFile() {
         return logFile;
     }
-    
-    public String getAddonFolder()
-    {
+
+    public String getAddonFolder() {
         return getWARPath() + ADDON_FOLDER;
     }
-    public String getLogsFolder()
-    {
+
+    public String getLogsFolder() {
         return getWARPath() + LOGS;
     }
+
     public String getURL() {
         return BASE_URL;
     }
