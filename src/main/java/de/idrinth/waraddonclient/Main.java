@@ -19,8 +19,8 @@ import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
+import java.util.Arrays;
 import javax.swing.JOptionPane;
-import javax.swing.table.DefaultTableModel;
 import javax.xml.parsers.ParserConfigurationException;
 
 public final class Main {
@@ -40,13 +40,10 @@ public final class Main {
             AddonList addonList = new AddonList(client, logger, new XmlParser(), config);
             FileWatcher watcher = new FileWatcher(addonList, logger, config);
             schedule.register(30, watcher);
-            if (args.length > 0) {
-                for (String arg : args) {
-                    if (arg.trim().contains("--updateonly")) {
-                        addonList.updateAll();
-                        Runtime.getRuntime().exit(0);
-                    }
-                }
+            boolean updateOnly = Arrays.asList(args).contains("--updateonly");
+            if (updateOnly) {
+                addonList.updateAll();
+                Runtime.getRuntime().exit(0);
             }
             else {
                 java.awt.EventQueue.invokeLater(() -> {
