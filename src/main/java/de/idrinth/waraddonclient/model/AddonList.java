@@ -128,10 +128,28 @@ public class AddonList implements java.lang.Runnable {
                 menu.remove(tags.get(name).getMenu());
                 tags.remove(name);
                 tagNames.remove(name);
-            } else if (tags.get(name).getMenu().getParent() == null) {
+            } else if (menu != null && tags.get(name).getMenu().getParent() == null) {
                 menu.add(tags.get(name).getMenu());
             }
         });
+    }
+
+    /**
+     * method to silently update all addons
+     */
+    public void updateAll() {
+        model = new DefaultTableModel();
+        run();
+        for (int i = 0; i < size(); i++) {
+            Addon addon = get(i);
+            if (addon.getStatus().equals("X")) {
+                try {
+                    addon.install();
+                } catch (Exception ex) {
+                    logger.error(ex);
+                }
+            }
+        }
     }
 
     @Override
