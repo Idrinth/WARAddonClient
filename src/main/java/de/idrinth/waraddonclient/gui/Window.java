@@ -36,7 +36,7 @@ public class Window extends JFrame {
         this.addonList = addonList;
         this.logger = logger;
         initComponents();
-        manager.addTo(ThemeMenu);
+        manager.addTo(menuTheme);
         finishGuiBuilding(schedule);
         version.setVersion(remoteVersion);
         new Thread(version).start();
@@ -44,21 +44,21 @@ public class Window extends JFrame {
     }
 
     private void finishGuiBuilding(Shedule schedule) {
-        AddonListTable.getSelectionModel().addListSelectionListener(new TableListener());
+        addonListTable.getSelectionModel().addListSelectionListener(new TableListener());
         setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/Images/logo.png")));
-        AddonListTable.setRowSorter(new TableRowSorter<>(AddonListTable.getModel()));
-        addonList.setModel((DefaultTableModel) AddonListTable.getModel());
-        Description.addHyperlinkListener(new HyperlinkListenerImpl());
+        addonListTable.setRowSorter(new TableRowSorter<>(addonListTable.getModel()));
+        addonList.setModel((DefaultTableModel) addonListTable.getModel());
+        description.addHyperlinkListener(new HyperlinkListenerImpl());
         localVersion.setText(Config.getVersion());
-        addonList.setMenu(Tags, (java.awt.event.ActionEvent evt) -> newFilter());
+        addonList.setMenu(menuTags, (java.awt.event.ActionEvent evt) -> newFilter());
         schedule.register(300, addonList);
         (new TableListener()).updateUi();
     }
 
     private void newFilter() {
         try {
-            TextCategory rf = new TextCategory(Search.getText(), addonList);
-            ((TableRowSorter) AddonListTable.getRowSorter()).setRowFilter(rf);
+            TextCategory rf = new TextCategory(inputSearch.getText(), addonList);
+            ((TableRowSorter) addonListTable.getRowSorter()).setRowFilter(rf);
         } catch (java.util.regex.PatternSyntaxException exception) {
             logger.error(exception);
         }
@@ -73,77 +73,74 @@ public class Window extends JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jMenuItem1 = new javax.swing.JMenuItem();
-        javax.swing.JSplitPane jSplitPane2 = new javax.swing.JSplitPane();
+        javax.swing.JSplitPane base = new javax.swing.JSplitPane();
         javax.swing.JPanel leftSide = new javax.swing.JPanel();
-        Search = new javax.swing.JTextField();
-        jScrollPane2 = new javax.swing.JScrollPane();
-        AddonListTable = new javax.swing.JTable();
-        DeleteSearch = new javax.swing.JButton();
-        UpdateAll = new javax.swing.JButton();
+        inputSearch = new javax.swing.JTextField();
+        javax.swing.JScrollPane scroll = new javax.swing.JScrollPane();
+        addonListTable = new javax.swing.JTable();
+        javax.swing.JButton buttonDeleteSearch = new javax.swing.JButton();
+        javax.swing.JButton buttonUpdateAll = new javax.swing.JButton();
         rightSide = new javax.swing.JTabbedPane();
-        javax.swing.JPanel jPanel1 = new javax.swing.JPanel();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        Description = new javax.swing.JEditorPane();
-        InstallButton = new javax.swing.JButton();
-        RemoveButton = new javax.swing.JButton();
-        Title = new javax.swing.JLabel();
+        javax.swing.JPanel tabMain = new javax.swing.JPanel();
+        javax.swing.JScrollPane scrollDescription = new javax.swing.JScrollPane();
+        description = new javax.swing.JEditorPane();
+        installButton = new javax.swing.JButton();
+        removeButton = new javax.swing.JButton();
+        addonTitle = new javax.swing.JLabel();
         localVersion = new javax.swing.JLabel();
         remoteVersion = new javax.swing.JLabel();
-        javax.swing.JLabel jLabel3 = new javax.swing.JLabel();
-        CurTags = new javax.swing.JLabel();
-        jPanel2 = new javax.swing.JPanel();
-        jScrollPane3 = new javax.swing.JScrollPane();
-        UploadReason = new javax.swing.JTextArea();
-        UploadUrl = new javax.swing.JTextField();
-        javax.swing.JLabel jLabel1 = new javax.swing.JLabel();
-        UploadEnable = new javax.swing.JCheckBox();
-        java.awt.Label label1 = new java.awt.Label();
-        UploadFile = new javax.swing.JTextField();
-        javax.swing.JMenuBar jMenuBar1 = new javax.swing.JMenuBar();
-        javax.swing.JMenu jMenu4 = new javax.swing.JMenu();
-        About = new javax.swing.JMenuItem();
-        Restart = new javax.swing.JMenuItem();
-        Quit = new javax.swing.JMenuItem();
-        Tags = new javax.swing.JMenu();
-        javax.swing.JMenu Tools = new javax.swing.JMenu();
-        CreateBackup = new javax.swing.JMenuItem();
-        RestoreBackup = new javax.swing.JMenuItem();
-        javax.swing.JMenu jMenu3 = new javax.swing.JMenu();
-        javax.swing.JMenu jMenu1 = new javax.swing.JMenu();
-        English = new javax.swing.JRadioButtonMenuItem();
-        Deutsch = new javax.swing.JRadioButtonMenuItem();
-        Francais = new javax.swing.JRadioButtonMenuItem();
-        ThemeMenu = new javax.swing.JMenu();
-        javax.swing.JMenu Links = new javax.swing.JMenu();
-        Guilded = new javax.swing.JMenuItem();
-        BuyMeACoffee = new javax.swing.JMenuItem();
-        Source = new javax.swing.JMenuItem();
-
-        jMenuItem1.setText("jMenuItem1");
+        javax.swing.JLabel slash = new javax.swing.JLabel();
+        currentTags = new javax.swing.JLabel();
+        javax.swing.JPanel tabSettings = new javax.swing.JPanel();
+        javax.swing.JScrollPane scrollSettings = new javax.swing.JScrollPane();
+        uploadReason = new javax.swing.JTextArea();
+        uploadUrl = new javax.swing.JTextField();
+        javax.swing.JLabel uploadLabel = new javax.swing.JLabel();
+        uploadEnable = new javax.swing.JCheckBox();
+        uploadFile = new javax.swing.JTextField();
+        javax.swing.JLabel uploadFileLabel = new javax.swing.JLabel();
+        javax.swing.JMenuBar mainMenu = new javax.swing.JMenuBar();
+        javax.swing.JMenu menuFile = new javax.swing.JMenu();
+        javax.swing.JMenuItem menuAbout = new javax.swing.JMenuItem();
+        javax.swing.JMenuItem menuRestart = new javax.swing.JMenuItem();
+        javax.swing.JMenuItem menuQuit = new javax.swing.JMenuItem();
+        menuTags = new javax.swing.JMenu();
+        javax.swing.JMenu menuTools = new javax.swing.JMenu();
+        javax.swing.JMenuItem menuCreateBackup = new javax.swing.JMenuItem();
+        javax.swing.JMenuItem menuRestoreBackup = new javax.swing.JMenuItem();
+        javax.swing.JMenu menuSettings = new javax.swing.JMenu();
+        javax.swing.JMenu menuLanguage = new javax.swing.JMenu();
+        menuEnglish = new javax.swing.JRadioButtonMenuItem();
+        menuFrancais = new javax.swing.JRadioButtonMenuItem();
+        menuDeutsch = new javax.swing.JRadioButtonMenuItem();
+        menuTheme = new javax.swing.JMenu();
+        javax.swing.JMenu menuLinks = new javax.swing.JMenu();
+        javax.swing.JMenuItem menuGuilded = new javax.swing.JMenuItem();
+        javax.swing.JMenuItem menuBuyMeACoffee = new javax.swing.JMenuItem();
+        javax.swing.JMenuItem menuSource = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jSplitPane2.setDividerLocation(300);
-        jSplitPane2.setToolTipText("");
-        jSplitPane2.setMinimumSize(new java.awt.Dimension(300, 200));
-        jSplitPane2.setName(""); // NOI18N
+        base.setDividerLocation(300);
+        base.setToolTipText("");
+        base.setMinimumSize(new java.awt.Dimension(300, 200));
+        base.setName(""); // NOI18N
 
-        Search.addActionListener(new java.awt.event.ActionListener() {
+        inputSearch.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                SearchActionPerformed(evt);
+                inputSearchActionPerformed(evt);
             }
         });
-        Search.addKeyListener(new java.awt.event.KeyAdapter() {
+        inputSearch.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
-                SearchKeyReleased(evt);
+                inputSearchKeyReleased(evt);
             }
         });
 
-        jScrollPane2.setMaximumSize(null);
+        scroll.setMaximumSize(null);
 
-        AddonListTable.setAutoCreateRowSorter(true);
-        AddonListTable.setModel(new javax.swing.table.DefaultTableModel(
+        addonListTable.setAutoCreateRowSorter(true);
+        addonListTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
             },
@@ -166,24 +163,24 @@ public class Window extends JFrame {
                 return canEdit [columnIndex];
             }
         });
-        AddonListTable.setColumnSelectionAllowed(true);
-        AddonListTable.setMaximumSize(null);
-        AddonListTable.setName(""); // NOI18N
-        AddonListTable.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
-        jScrollPane2.setViewportView(AddonListTable);
-        AddonListTable.getColumnModel().getSelectionModel().setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        addonListTable.setColumnSelectionAllowed(true);
+        addonListTable.setMaximumSize(null);
+        addonListTable.setName(""); // NOI18N
+        addonListTable.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        scroll.setViewportView(addonListTable);
+        addonListTable.getColumnModel().getSelectionModel().setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
 
-        DeleteSearch.setText("X");
-        DeleteSearch.addMouseListener(new java.awt.event.MouseAdapter() {
+        buttonDeleteSearch.setText("X");
+        buttonDeleteSearch.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                DeleteSearchMouseClicked(evt);
+                buttonDeleteSearchMouseClicked(evt);
             }
         });
 
-        UpdateAll.setText("Update All");
-        UpdateAll.addMouseListener(new java.awt.event.MouseAdapter() {
+        buttonUpdateAll.setText("Update All");
+        buttonUpdateAll.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                UpdateAllMouseClicked(evt);
+                buttonUpdateAllMouseClicked(evt);
             }
         });
 
@@ -192,50 +189,50 @@ public class Window extends JFrame {
         leftSideLayout.setHorizontalGroup(
             leftSideLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(leftSideLayout.createSequentialGroup()
-                .addComponent(Search, javax.swing.GroupLayout.PREFERRED_SIZE, 151, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(inputSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 151, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(DeleteSearch)
+                .addComponent(buttonDeleteSearch)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(UpdateAll)
+                .addComponent(buttonUpdateAll)
                 .addGap(0, 30, Short.MAX_VALUE))
-            .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+            .addComponent(scroll, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
         );
         leftSideLayout.setVerticalGroup(
             leftSideLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(leftSideLayout.createSequentialGroup()
                 .addGroup(leftSideLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(Search, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(DeleteSearch)
-                    .addComponent(UpdateAll))
+                    .addComponent(inputSearch, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(buttonDeleteSearch)
+                    .addComponent(buttonUpdateAll))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 393, Short.MAX_VALUE)
+                .addComponent(scroll, javax.swing.GroupLayout.DEFAULT_SIZE, 393, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
-        jSplitPane2.setLeftComponent(leftSide);
+        base.setLeftComponent(leftSide);
 
-        jScrollPane1.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-        jScrollPane1.setMaximumSize(null);
+        scrollDescription.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        scrollDescription.setMaximumSize(null);
 
-        Description.setEditable(false);
-        Description.setContentType("text/html"); // NOI18N
-        jScrollPane1.setViewportView(Description);
+        description.setEditable(false);
+        description.setContentType("text/html"); // NOI18N
+        scrollDescription.setViewportView(description);
 
-        InstallButton.setText("(Re)Install");
-        InstallButton.addActionListener(new java.awt.event.ActionListener() {
+        installButton.setText("(Re)Install");
+        installButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                InstallButtonActionPerformed(evt);
+                installButtonActionPerformed(evt);
             }
         });
 
-        RemoveButton.setText("Remove");
-        RemoveButton.addActionListener(new java.awt.event.ActionListener() {
+        removeButton.setText("Remove");
+        removeButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                RemoveButtonActionPerformed(evt);
+                removeButtonActionPerformed(evt);
             }
         });
 
-        Title.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        addonTitle.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
 
         localVersion.setText("0.0.0");
         localVersion.setToolTipText("Local Version");
@@ -243,240 +240,247 @@ public class Window extends JFrame {
         remoteVersion.setText("0.0.0");
         remoteVersion.setToolTipText("Remote Version");
 
-        jLabel3.setText("/");
+        slash.setText("/");
 
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
+        javax.swing.GroupLayout tabMainLayout = new javax.swing.GroupLayout(tabMain);
+        tabMain.setLayout(tabMainLayout);
+        tabMainLayout.setHorizontalGroup(
+            tabMainLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(tabMainLayout.createSequentialGroup()
                 .addGap(21, 21, 21)
-                .addComponent(InstallButton)
+                .addComponent(installButton)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(Title, javax.swing.GroupLayout.DEFAULT_SIZE, 238, Short.MAX_VALUE)
+                .addComponent(addonTitle, javax.swing.GroupLayout.DEFAULT_SIZE, 238, Short.MAX_VALUE)
                 .addGap(18, 18, 18)
-                .addComponent(RemoveButton)
+                .addComponent(removeButton)
                 .addGap(24, 24, 24))
-            .addGroup(jPanel1Layout.createSequentialGroup()
+            .addGroup(tabMainLayout.createSequentialGroup()
                 .addComponent(localVersion)
                 .addGap(1, 1, 1)
-                .addComponent(jLabel3)
+                .addComponent(slash)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(remoteVersion)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(CurTags, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(currentTags, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addComponent(scrollDescription, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(RemoveButton)
-                    .addComponent(InstallButton)
-                    .addComponent(Title))
+        tabMainLayout.setVerticalGroup(
+            tabMainLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(tabMainLayout.createSequentialGroup()
+                .addGroup(tabMainLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(removeButton)
+                    .addComponent(installButton)
+                    .addComponent(addonTitle))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 334, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(scrollDescription, javax.swing.GroupLayout.PREFERRED_SIZE, 334, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(tabMainLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(localVersion)
                     .addComponent(remoteVersion)
-                    .addComponent(jLabel3)
-                    .addComponent(CurTags))
+                    .addComponent(slash)
+                    .addComponent(currentTags))
                 .addGap(6, 6, 6))
         );
 
-        rightSide.addTab("Main", jPanel1);
+        rightSide.addTab("Main", tabMain);
 
-        UploadReason.setEditable(false);
-        UploadReason.setColumns(20);
-        UploadReason.setRows(5);
-        jScrollPane3.setViewportView(UploadReason);
+        uploadReason.setEditable(false);
+        uploadReason.setColumns(20);
+        uploadReason.setRows(5);
+        scrollSettings.setViewportView(uploadReason);
 
-        UploadUrl.setEditable(false);
-        UploadUrl.setToolTipText("");
+        uploadUrl.setEditable(false);
+        uploadUrl.setToolTipText("");
 
-        jLabel1.setText("Upload URL");
+        uploadLabel.setText("Upload URL");
 
-        UploadEnable.setText("Allow Upload");
-        UploadEnable.addActionListener(new java.awt.event.ActionListener() {
+        uploadEnable.setText("Allow Upload");
+        uploadEnable.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                UploadEnableActionPerformed(evt);
+                uploadEnableActionPerformed(evt);
             }
         });
 
-        label1.setText("File to Upload");
+        uploadFile.setEditable(false);
+        uploadFile.setToolTipText("");
 
-        UploadFile.setEditable(false);
-        UploadFile.setToolTipText("");
+        uploadFileLabel.setText("Upload File");
 
-        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
-        jPanel2.setLayout(jPanel2Layout);
-        jPanel2Layout.setHorizontalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane3)
-            .addGroup(jPanel2Layout.createSequentialGroup()
+        javax.swing.GroupLayout tabSettingsLayout = new javax.swing.GroupLayout(tabSettings);
+        tabSettings.setLayout(tabSettingsLayout);
+        tabSettingsLayout.setHorizontalGroup(
+            tabSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(scrollSettings)
+            .addGroup(tabSettingsLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addComponent(UploadEnable)
+                .addGroup(tabSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(tabSettingsLayout.createSequentialGroup()
+                        .addComponent(uploadEnable)
                         .addGap(0, 0, Short.MAX_VALUE))
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(tabSettingsLayout.createSequentialGroup()
+                        .addComponent(uploadLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 185, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(UploadUrl, javax.swing.GroupLayout.PREFERRED_SIZE, 265, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addComponent(label1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 113, Short.MAX_VALUE)
-                        .addComponent(UploadFile, javax.swing.GroupLayout.PREFERRED_SIZE, 265, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                        .addComponent(uploadUrl, javax.swing.GroupLayout.PREFERRED_SIZE, 265, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(tabSettingsLayout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(uploadFile, javax.swing.GroupLayout.PREFERRED_SIZE, 265, javax.swing.GroupLayout.PREFERRED_SIZE))))
+            .addGroup(tabSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(tabSettingsLayout.createSequentialGroup()
+                    .addContainerGap()
+                    .addComponent(uploadFileLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 189, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addContainerGap(273, Short.MAX_VALUE)))
         );
-        jPanel2Layout.setVerticalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 247, javax.swing.GroupLayout.PREFERRED_SIZE)
+        tabSettingsLayout.setVerticalGroup(
+            tabSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(tabSettingsLayout.createSequentialGroup()
+                .addComponent(scrollSettings, javax.swing.GroupLayout.PREFERRED_SIZE, 247, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(UploadUrl, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(tabSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(uploadUrl, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(uploadLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(7, 7, 7)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(label1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(UploadFile, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(uploadFile, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(UploadEnable)
-                .addContainerGap(61, Short.MAX_VALUE))
+                .addComponent(uploadEnable)
+                .addContainerGap(64, Short.MAX_VALUE))
+            .addGroup(tabSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, tabSettingsLayout.createSequentialGroup()
+                    .addContainerGap(278, Short.MAX_VALUE)
+                    .addComponent(uploadFileLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGap(92, 92, 92)))
         );
 
-        rightSide.addTab("Settings", jPanel2);
+        rightSide.addTab("Settings", tabSettings);
 
-        jSplitPane2.setRightComponent(rightSide);
+        base.setRightComponent(rightSide);
 
-        jMenu4.setText("File");
+        menuFile.setText("File");
 
-        About.setText("About");
-        About.setToolTipText("");
-        About.addActionListener(new java.awt.event.ActionListener() {
+        menuAbout.setText("About");
+        menuAbout.setToolTipText("");
+        menuAbout.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                AboutActionPerformed(evt);
+                menuAboutActionPerformed(evt);
             }
         });
-        jMenu4.add(About);
+        menuFile.add(menuAbout);
 
-        Restart.setText("Restart");
-        Restart.addActionListener(new java.awt.event.ActionListener() {
+        menuRestart.setText("Restart");
+        menuRestart.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                RestartActionPerformed(evt);
+                menuRestartActionPerformed(evt);
             }
         });
-        jMenu4.add(Restart);
+        menuFile.add(menuRestart);
 
-        Quit.setText("Quit");
-        Quit.addActionListener(new java.awt.event.ActionListener() {
+        menuQuit.setText("Quit");
+        menuQuit.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                QuitActionPerformed(evt);
+                menuQuitActionPerformed(evt);
             }
         });
-        jMenu4.add(Quit);
+        menuFile.add(menuQuit);
 
-        jMenuBar1.add(jMenu4);
+        mainMenu.add(menuFile);
 
-        Tags.setText("Tags");
-        jMenuBar1.add(Tags);
+        menuTags.setText("Tags");
+        mainMenu.add(menuTags);
 
-        Tools.setText("Tools");
+        menuTools.setText("Tools");
 
-        CreateBackup.setText("Create Backup");
-        CreateBackup.addActionListener(new java.awt.event.ActionListener() {
+        menuCreateBackup.setText("Create Backup");
+        menuCreateBackup.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                CreateBackupActionPerformed(evt);
+                menuCreateBackupActionPerformed(evt);
             }
         });
-        Tools.add(CreateBackup);
+        menuTools.add(menuCreateBackup);
 
-        RestoreBackup.setText("Restore Backup");
-        RestoreBackup.addActionListener(new java.awt.event.ActionListener() {
+        menuRestoreBackup.setText("Restore Backup");
+        menuRestoreBackup.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                RestoreBackupActionPerformed(evt);
+                menuRestoreBackupActionPerformed(evt);
             }
         });
-        Tools.add(RestoreBackup);
+        menuTools.add(menuRestoreBackup);
 
-        jMenuBar1.add(Tools);
+        mainMenu.add(menuTools);
 
-        jMenu3.setText("Settings");
+        menuSettings.setText("Settings");
 
-        jMenu1.setText("Language");
+        menuLanguage.setText("Language");
 
-        English.setSelected(true);
-        English.setText("English");
-        English.addActionListener(new java.awt.event.ActionListener() {
+        menuEnglish.setSelected(true);
+        menuEnglish.setText("English");
+        menuEnglish.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                EnglishActionPerformed(evt);
+                menuEnglishActionPerformed(evt);
             }
         });
-        jMenu1.add(English);
+        menuLanguage.add(menuEnglish);
 
-        Deutsch.setText("Deutsch");
-        Deutsch.addActionListener(new java.awt.event.ActionListener() {
+        menuFrancais.setText("Francais");
+        menuFrancais.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                DeutschActionPerformed(evt);
+                menuFrancaisActionPerformed(evt);
             }
         });
-        jMenu1.add(Deutsch);
+        menuLanguage.add(menuFrancais);
 
-        Francais.setText("Francais");
-        Francais.addActionListener(new java.awt.event.ActionListener() {
+        menuDeutsch.setText("Deutsch");
+        menuDeutsch.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                FrancaisActionPerformed(evt);
+                menuDeutschActionPerformed(evt);
             }
         });
-        jMenu1.add(Francais);
+        menuLanguage.add(menuDeutsch);
 
-        jMenu3.add(jMenu1);
+        menuSettings.add(menuLanguage);
 
-        ThemeMenu.setText("Theme");
-        jMenu3.add(ThemeMenu);
+        menuTheme.setText("Theme");
+        menuSettings.add(menuTheme);
 
-        jMenuBar1.add(jMenu3);
+        mainMenu.add(menuSettings);
 
-        Links.setText("Links");
+        menuLinks.setText("Links");
 
-        Guilded.setText("Guilded: Idrinth's Addons");
-        Guilded.addActionListener(new java.awt.event.ActionListener() {
+        menuGuilded.setText("Guilded: Idrinth's Addons");
+        menuGuilded.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                GuildedActionPerformed(evt);
+                menuGuildedActionPerformed(evt);
             }
         });
-        Links.add(Guilded);
+        menuLinks.add(menuGuilded);
 
-        BuyMeACoffee.setText("BuyMeACoffee");
-        BuyMeACoffee.addActionListener(new java.awt.event.ActionListener() {
+        menuBuyMeACoffee.setText("BuyMeACoffee");
+        menuBuyMeACoffee.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                BuyMeACoffeeActionPerformed(evt);
+                menuBuyMeACoffeeActionPerformed(evt);
             }
         });
-        Links.add(BuyMeACoffee);
+        menuLinks.add(menuBuyMeACoffee);
 
-        Source.setText("GitHub:WARAddonClient");
-        Source.addActionListener(new java.awt.event.ActionListener() {
+        menuSource.setText("GitHub:WARAddonClient");
+        menuSource.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                SourceActionPerformed(evt);
+                menuSourceActionPerformed(evt);
             }
         });
-        Links.add(Source);
+        menuLinks.add(menuSource);
 
-        jMenuBar1.add(Links);
+        mainMenu.add(menuLinks);
 
-        setJMenuBar(jMenuBar1);
+        setJMenuBar(mainMenu);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jSplitPane2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(base, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jSplitPane2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(base, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         pack();
@@ -487,7 +491,7 @@ public class Window extends JFrame {
      *
      * @param evt
      */
-    private void InstallButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_InstallButtonActionPerformed
+    private void installButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_installButtonActionPerformed
         try {
             activeAddon.install();
             updateList();
@@ -496,91 +500,91 @@ public class Window extends JFrame {
             logger.error(exception);
             JOptionPane.showMessageDialog(this, "Sadly Installing failed, check if the folder is writeable.");
         }
-    }//GEN-LAST:event_InstallButtonActionPerformed
+    }//GEN-LAST:event_installButtonActionPerformed
 
     /**
      * the searchtext was changed
      *
      * @param evt
      */
-    private void SearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SearchActionPerformed
+    private void inputSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_inputSearchActionPerformed
         newFilter();
-    }//GEN-LAST:event_SearchActionPerformed
+    }//GEN-LAST:event_inputSearchActionPerformed
 
     /**
      * the searchtext was changed
      *
      * @param evt
      */
-    private void SearchKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_SearchKeyReleased
+    private void inputSearchKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_inputSearchKeyReleased
         newFilter();
-    }//GEN-LAST:event_SearchKeyReleased
+    }//GEN-LAST:event_inputSearchKeyReleased
 
     /**
      * delete addon was clicked
      *
      * @param evt
      */
-    private void RemoveButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_RemoveButtonActionPerformed
+    private void removeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeButtonActionPerformed
         try {
             activeAddon.uninstall();
         } catch (Exception exception) {
             logger.error(exception);
         }
         updateList();
-    }//GEN-LAST:event_RemoveButtonActionPerformed
+    }//GEN-LAST:event_removeButtonActionPerformed
 
     /**
      *
      * @param evt
      */
-    private void UploadEnableActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_UploadEnableActionPerformed
-        Config.setEnabled(activeAddon.getName(), UploadEnable.isSelected());
-    }//GEN-LAST:event_UploadEnableActionPerformed
+    private void uploadEnableActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_uploadEnableActionPerformed
+        Config.setEnabled(activeAddon.getName(), uploadEnable.isSelected());
+    }//GEN-LAST:event_uploadEnableActionPerformed
 
     /**
      * changes language to english
      *
      * @param evt
      */
-    private void EnglishActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_EnglishActionPerformed
+    private void menuEnglishActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuEnglishActionPerformed
         changeLanguageTo("en");
-    }//GEN-LAST:event_EnglishActionPerformed
+    }//GEN-LAST:event_menuEnglishActionPerformed
 
     /**
      * @param evt
      */
-    private void AboutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_AboutActionPerformed
+    private void menuAboutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuAboutActionPerformed
         javax.swing.JOptionPane.showMessageDialog(this, "This software is provided for free by Björn Büttner.\n"
                 + "If you have ideas or bugs please add them to the issues at GitHub:WARAddonClient.\n"
                 + "If you want to buy me a coffee you can do so at Buy me a coffee.\n"
                 + "If you need support, go to Guilded:Idrinth's Addons", "About", javax.swing.JOptionPane.INFORMATION_MESSAGE);
-    }//GEN-LAST:event_AboutActionPerformed
+    }//GEN-LAST:event_menuAboutActionPerformed
 
     /**
      * changes language to german
      *
      * @param evt
      */
-    private void DeutschActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_DeutschActionPerformed
+    private void menuDeutschActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuDeutschActionPerformed
         changeLanguageTo("de");
-    }//GEN-LAST:event_DeutschActionPerformed
+    }//GEN-LAST:event_menuDeutschActionPerformed
 
     /**
      * changes language to french
      *
      * @param evt
      */
-    private void FrancaisActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_FrancaisActionPerformed
+    private void menuFrancaisActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuFrancaisActionPerformed
         changeLanguageTo("fr");
-    }//GEN-LAST:event_FrancaisActionPerformed
+    }//GEN-LAST:event_menuFrancaisActionPerformed
 
-    private void DeleteSearchMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_DeleteSearchMouseClicked
-        Search.setText("");
-        SearchActionPerformed(new java.awt.event.ActionEvent(evt.getSource(), 1001, "reset"));
-    }//GEN-LAST:event_DeleteSearchMouseClicked
+    private void buttonDeleteSearchMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_buttonDeleteSearchMouseClicked
+        inputSearch.setText("");
+        inputSearchActionPerformed(new java.awt.event.ActionEvent(evt.getSource(), 1001, "reset"));
+    }//GEN-LAST:event_buttonDeleteSearchMouseClicked
 
-    private void UpdateAllMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_UpdateAllMouseClicked
+    private void buttonUpdateAllMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_buttonUpdateAllMouseClicked
         int errors = 0;
         int count = 0;
         for (int i = 0; i < addonList.size(); i++) {
@@ -603,9 +607,9 @@ public class Window extends JFrame {
         } else {
             JOptionPane.showMessageDialog(this, "Updating " + errors + " out of " + count + " Add-ons failed.");
         }
-    }//GEN-LAST:event_UpdateAllMouseClicked
+    }//GEN-LAST:event_buttonUpdateAllMouseClicked
 
-    private void CreateBackupActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CreateBackupActionPerformed
+    private void menuCreateBackupActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuCreateBackupActionPerformed
         try {
             Backup.create();
             JOptionPane.showMessageDialog(this, "Saved your profile and addons in backups.");
@@ -613,33 +617,33 @@ public class Window extends JFrame {
             logger.error(ex);
             JOptionPane.showMessageDialog(this, "Failed to save your profile and addons.");
         }
-    }//GEN-LAST:event_CreateBackupActionPerformed
+    }//GEN-LAST:event_menuCreateBackupActionPerformed
 
-    private void SourceActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SourceActionPerformed
+    private void menuSourceActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuSourceActionPerformed
         try {
             Desktop.getDesktop().browse(new java.net.URI("https://github.com/Idrinth/WARAddonClient/"));
         } catch (URISyntaxException | IOException ex) {
             logger.error(ex);
         }
-    }//GEN-LAST:event_SourceActionPerformed
+    }//GEN-LAST:event_menuSourceActionPerformed
 
-    private void BuyMeACoffeeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BuyMeACoffeeActionPerformed
+    private void menuBuyMeACoffeeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuBuyMeACoffeeActionPerformed
         try {
             Desktop.getDesktop().browse(new java.net.URI("https://buymeacoffee.com/idrinth"));
         } catch (URISyntaxException | IOException ex) {
             logger.error(ex);
         }
-    }//GEN-LAST:event_BuyMeACoffeeActionPerformed
+    }//GEN-LAST:event_menuBuyMeACoffeeActionPerformed
 
-    private void GuildedActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_GuildedActionPerformed
+    private void menuGuildedActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuGuildedActionPerformed
         try {
             Desktop.getDesktop().browse(new java.net.URI("https://guilded.gg/Idrinths-Addons/"));
         } catch (URISyntaxException | IOException ex) {
             logger.error(ex);
         }
-    }//GEN-LAST:event_GuildedActionPerformed
+    }//GEN-LAST:event_menuGuildedActionPerformed
 
-    private void RestoreBackupActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_RestoreBackupActionPerformed
+    private void menuRestoreBackupActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuRestoreBackupActionPerformed
         FileDialog dialog = new java.awt.FileDialog(this, "Select backup", java.awt.FileDialog.LOAD);
         dialog.setVisible(true);
         if (dialog.getFile() != null) {
@@ -655,21 +659,21 @@ public class Window extends JFrame {
                 JOptionPane.showMessageDialog(this, "Couldn't restore Backup.");
             }
         }
-    }//GEN-LAST:event_RestoreBackupActionPerformed
+    }//GEN-LAST:event_menuRestoreBackupActionPerformed
 
-    private void QuitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_QuitActionPerformed
+    private void menuQuitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuQuitActionPerformed
         this.dispose();
         Runtime.getRuntime().exit(0);
-    }//GEN-LAST:event_QuitActionPerformed
+    }//GEN-LAST:event_menuQuitActionPerformed
 
-    private void RestartActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_RestartActionPerformed
+    private void menuRestartActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuRestartActionPerformed
         try {
             Main.restart();
         } catch (IOException ex) {
             logger.error(ex);
             JOptionPane.showMessageDialog(this, "Couldn't restart app.");
         }
-    }//GEN-LAST:event_RestartActionPerformed
+    }//GEN-LAST:event_menuRestartActionPerformed
 
     /**
      * handles actual changing of languages
@@ -677,12 +681,12 @@ public class Window extends JFrame {
      * @param lang
      */
     private void changeLanguageTo(String lang) {
-        English.setSelected("en".equals(lang));
-        Deutsch.setSelected("de".equals(lang));
-        Francais.setSelected("fr".equals(lang));
+        menuEnglish.setSelected("en".equals(lang));
+        menuDeutsch.setSelected("de".equals(lang));
+        menuFrancais.setSelected("fr".equals(lang));
         Config.setLanguage(lang);
         if (activeAddon != null) {
-            Description.setText(activeAddon.getDescription(lang));
+            description.setText(activeAddon.getDescription(lang));
         }
     }
 
@@ -690,48 +694,33 @@ public class Window extends JFrame {
      * updates addon list
      */
     private void updateList() {
-        for (int position = 0; position < AddonListTable.getRowCount(); position++) {
-            de.idrinth.waraddonclient.model.ActualAddon addon = addonList.get(AddonListTable.convertRowIndexToModel(position));
-            AddonListTable.setValueAt(addon.getInstalled(), position, 3);
-            AddonListTable.setValueAt(addon.getStatus(), position, 0);
+        for (int position = 0; position < addonListTable.getRowCount(); position++) {
+            de.idrinth.waraddonclient.model.ActualAddon addon = addonList.get(addonListTable.convertRowIndexToModel(position));
+            addonListTable.setValueAt(addon.getInstalled(), position, 3);
+            addonListTable.setValueAt(addon.getStatus(), position, 0);
         }
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JMenuItem About;
-    private javax.swing.JTable AddonListTable;
-    private javax.swing.JMenuItem BuyMeACoffee;
-    private javax.swing.JMenuItem CreateBackup;
-    private javax.swing.JLabel CurTags;
-    private javax.swing.JButton DeleteSearch;
-    private javax.swing.JEditorPane Description;
-    private javax.swing.JRadioButtonMenuItem Deutsch;
-    private javax.swing.JRadioButtonMenuItem English;
-    private javax.swing.JRadioButtonMenuItem Francais;
-    private javax.swing.JMenuItem Guilded;
-    private javax.swing.JButton InstallButton;
-    private javax.swing.JMenuItem Quit;
-    private javax.swing.JButton RemoveButton;
-    private javax.swing.JMenuItem Restart;
-    private javax.swing.JMenuItem RestoreBackup;
-    private javax.swing.JTextField Search;
-    private javax.swing.JMenuItem Source;
-    private javax.swing.JMenu Tags;
-    private javax.swing.JMenu ThemeMenu;
-    private javax.swing.JLabel Title;
-    private javax.swing.JButton UpdateAll;
-    private javax.swing.JCheckBox UploadEnable;
-    private javax.swing.JTextField UploadFile;
-    private javax.swing.JTextArea UploadReason;
-    private javax.swing.JTextField UploadUrl;
-    private javax.swing.JMenuItem jMenuItem1;
-    private javax.swing.JPanel jPanel2;
-    private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JScrollPane jScrollPane3;
+    private javax.swing.JTable addonListTable;
+    private javax.swing.JLabel addonTitle;
+    private javax.swing.JLabel currentTags;
+    private javax.swing.JEditorPane description;
+    private javax.swing.JTextField inputSearch;
+    private javax.swing.JButton installButton;
     private javax.swing.JLabel localVersion;
+    private javax.swing.JRadioButtonMenuItem menuDeutsch;
+    private javax.swing.JRadioButtonMenuItem menuEnglish;
+    private javax.swing.JRadioButtonMenuItem menuFrancais;
+    private javax.swing.JMenu menuTags;
+    private javax.swing.JMenu menuTheme;
     private javax.swing.JLabel remoteVersion;
+    private javax.swing.JButton removeButton;
     private javax.swing.JTabbedPane rightSide;
+    private javax.swing.JCheckBox uploadEnable;
+    private javax.swing.JTextField uploadFile;
+    private javax.swing.JTextArea uploadReason;
+    private javax.swing.JTextField uploadUrl;
     // End of variables declaration//GEN-END:variables
 
     private class HyperlinkListenerImpl implements HyperlinkListener {
@@ -754,7 +743,7 @@ public class Window extends JFrame {
         @Override
         public void valueChanged(ListSelectionEvent event) {
             try {
-                activeAddon = addonList.get(AddonListTable.convertRowIndexToModel(AddonListTable.getSelectedRow()));
+                activeAddon = addonList.get(addonListTable.convertRowIndexToModel(addonListTable.getSelectedRow()));
             } catch (java.lang.ArrayIndexOutOfBoundsException exception) {
                 logger.error(exception);
                 return;
@@ -770,10 +759,10 @@ public class Window extends JFrame {
          */
         public void updateUi() {
             boolean isAnAddon = !"".equals(activeAddon.getVersion());
-            Description.setText(activeAddon.getDescription(Config.getLanguage()));
-            Title.setText(activeAddon.getName());
-            InstallButton.setEnabled(isAnAddon);
-            RemoveButton.setEnabled(isAnAddon);
+            description.setText(activeAddon.getDescription(Config.getLanguage()));
+            addonTitle.setText(activeAddon.getName());
+            installButton.setEnabled(isAnAddon);
+            removeButton.setEnabled(isAnAddon);
             rightSide.setEnabledAt(1, false);
             setTitle(activeAddon.getName() + " - Idrinth's WAR Addon Client " + Config.getVersion());
             if (!isAnAddon) {
@@ -781,13 +770,13 @@ public class Window extends JFrame {
             }
             AddonSettings settings = activeAddon.getUploadData();
             rightSide.setEnabledAt(1, settings.showSettings());
-            UploadReason.setText(settings.getReason());
-            UploadUrl.setText(settings.getUrl());
-            UploadFile.setText(settings.getFile());
-            UploadEnable.setSelected(Config.isEnabled(activeAddon.getName()));
+            uploadReason.setText(settings.getReason());
+            uploadUrl.setText(settings.getUrl());
+            uploadFile.setText(settings.getFile());
+            uploadEnable.setSelected(Config.isEnabled(activeAddon.getName()));
             String taglist = "Tagged: ";
             taglist = activeAddon.getTags().stream().map(tagname -> tagname + ", ").reduce(taglist, String::concat);
-            CurTags.setText(taglist.substring(0, taglist.length() - 2));
+            currentTags.setText(taglist.substring(0, taglist.length() - 2));
         }
     }
 }
