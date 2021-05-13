@@ -130,6 +130,35 @@
                             </transformers>
                         </configuration>
                     </plugin>
+		    <plugin>
+			<groupId>io.github.fvarrui</groupId>
+			<artifactId>javapackager</artifactId>
+			<version>1.5.1</version>
+			<executions>
+				<execution>
+					<phase>package</phase>
+					<goals>
+						<goal>package</goal>
+					</goals>
+					<configuration>
+						<!-- mandatory -->
+						<mainClass>src/main/java/de/idrinth/waraddonclient/Main.java</mainClass>
+						<!-- optional -->
+						<bundleJre>false</bundleJre>
+						<customizedJre>false</customizedJre>
+						<generateInstaller>true</generateInstaller>
+						<administratorRequired>false</administratorRequired>
+						<platform>linux</platform>
+						<url>https://tools.idrinth.de/</url>
+						<linuxConfig>
+							<generateDeb>true</generateDeb>
+							<generateRpm>true</generateRpm>
+							<pngFile>src/main/resources/Images/logo.png</pngFile>
+						</linuxConfig>
+					</configuration>
+				</execution>
+			</executions>
+		</plugin>
                 </plugins>
             </build>
         </profile>
