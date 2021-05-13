@@ -140,7 +140,7 @@ public class AddonList implements java.lang.Runnable {
             new JsonProcessor(client.getAddonList(), model).run();
             processAddons();
             processTags();
-        } catch (Exception exception) {
+        } catch (IOException exception) {
             logger.error(exception);
         }
     }

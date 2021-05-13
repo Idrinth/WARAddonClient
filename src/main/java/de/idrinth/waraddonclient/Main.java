@@ -24,6 +24,8 @@ import javax.xml.parsers.ParserConfigurationException;
 
 public final class Main {
 
+    private static Shedule schedule;
+
     private Main() {
         //not to be used
     }
@@ -32,10 +34,9 @@ public final class Main {
         try {
             Config config = new Config();
             FileLogger logger = new FileLogger(config.getLogFile());
-            logger.info("Starting");
             ThemeManager themes = new ThemeManager(logger, config);
             new FileSystem(config).processPosition();
-            Shedule schedule = new Shedule();
+            schedule = new Shedule();
             Request client = new Request(new TrustManager(logger), logger, config);
             AddonList addonList = new AddonList(client, logger, new XmlParser(), config);
             FileWatcher watcher = new FileWatcher(addonList, logger, config);
