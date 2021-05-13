@@ -6,6 +6,7 @@ import de.idrinth.waraddonclient.service.FileLogger;
 import de.idrinth.waraddonclient.service.Request;
 import de.idrinth.waraddonclient.service.XmlParser;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import javax.xml.parsers.FactoryConfigurationError;
@@ -282,7 +283,7 @@ public class ActualAddon implements de.idrinth.waraddonclient.model.Addon {
             java.io.File file = getZip();
             (new net.lingala.zip4j.ZipFile(file)).extractAll(Config.getWARPath() + BASE_PATH);
             org.apache.commons.io.FileUtils.deleteQuietly(file);
-            org.apache.commons.io.FileUtils.writeStringToFile(new java.io.File(Config.getWARPath() + BASE_PATH + name + VERSION_FILE), "<?xml version=\"1.0\" encoding=\"UTF-8\"?><UiMod><name>" + name + "</name><version>" + version + "</version></UiMod>");
+            org.apache.commons.io.FileUtils.writeStringToFile(new java.io.File(Config.getWARPath() + BASE_PATH + name + VERSION_FILE), "<?xml version=\"1.0\" encoding=\"UTF-8\"?><UiMod><name>" + name + "</name><version>" + version + "</version></UiMod>", StandardCharsets.UTF_8);
             installed=version;
         }
 

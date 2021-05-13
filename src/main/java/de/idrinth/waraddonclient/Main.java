@@ -14,7 +14,6 @@ import de.idrinth.waraddonclient.service.Version;
 import de.idrinth.waraddonclient.service.XmlParser;
 import java.io.File;
 import java.io.IOException;
-import java.lang.management.ManagementFactory;
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
@@ -24,15 +23,13 @@ import javax.xml.parsers.ParserConfigurationException;
 
 public final class Main {
 
-    private static final String SUN_JAVA_COMMAND = "sun.java.command";
-
     private Main() {
         //not to be used
     }
 
     public static void main(String[] args) {
         try {
-            FileLogger logger = new FileLogger(new File(Config.getLogFile()));
+            FileLogger logger = new FileLogger(new File(Config.LOG_FILE));
             logger.info("Starting");
             ThemeManager themes = new ThemeManager(logger);
             new FileSystem().processPosition();

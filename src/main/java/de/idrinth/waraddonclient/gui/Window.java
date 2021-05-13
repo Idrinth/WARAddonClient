@@ -16,8 +16,6 @@ import de.idrinth.waraddonclient.service.Shedule;
 import java.awt.Desktop;
 import java.awt.FileDialog;
 import java.awt.Toolkit;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.event.HyperlinkEvent;
