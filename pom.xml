@@ -153,7 +153,7 @@
                         </requires>
                         <mappings>
                           <mapping> 
-                      	    <directory>/usr/local/bin/WARAddonClient</directory>
+                      	    <directory>/opt/WARAddonClient</directory>
                             <filemode>777</filemode>
 			    <dirmode>777</dirmode>
                             <sources>
@@ -166,17 +166,28 @@
                               <source>
 			        <location>src/main/resources/linux/WARAddonClient.desktop</location>
 			      </source>
+			      <source>
+	                        <location>src/main/resources/linux/waraddonclient</location>
+			      </source>
                             </sources>
                           </mapping>
 			  <mapping>
 		            <directory>/usr/share/applications/WARAddonClient.desktop</directory>
                             <sources>
                               <softlinkSource>
-		               <location>/usr/local/bin/WARAddonClient/WARAddonClient.desktop</location>
+		               <location>/opt/WARAddonClient/WARAddonClient.desktop</location>
                               </softlinkSource>
                             </sources>
                           </mapping>
-                        </mappings>
+                          <mapping>
+			   <directory>/usr/bin/waraddonclient</directory>
+			    <sources>
+			      <softlinkSource>
+				<location>/opt/WARAddonClient/waraddonclient</location>
+			      </softlinkSource>
+			    </sources>
+		          </mapping>
+			</mappings>
                         <preinstallScriptlet>
                           <script>echo "installing ${project.name} now"</script>
                         </preinstallScriptlet>
