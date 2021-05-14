@@ -1,0 +1,3 @@
+[submodule "waraddonclient-arch-pkgbuild"]
+	path = waraddonclient-arch-pkgbuild
+	url = https://github.com/xpander69/waraddonclient-arch-pkgbuild
