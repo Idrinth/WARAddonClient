@@ -1,7 +1,7 @@
 package de.idrinth.waraddonclient.service;
 
 import de.idrinth.waraddonclient.Config;
-import de.idrinth.waraddonclient.model.AddonList;
+import de.idrinth.waraddonclient.model.GuiAddonList;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.StandardWatchEventKinds;
@@ -11,7 +11,7 @@ import java.nio.file.WatchService;
 
 public class FileWatcher implements java.lang.Runnable {
 
-    private final AddonList addonList;
+    private final GuiAddonList addonList;
 
     private final WatchService watcher;
 
@@ -19,7 +19,7 @@ public class FileWatcher implements java.lang.Runnable {
     
     private final Config config;
 
-    public FileWatcher(AddonList addonList, FileLogger logger, Config config) throws IOException {
+    public FileWatcher(GuiAddonList addonList, FileLogger logger, Config config) throws IOException {
         this.addonList = addonList;
         this.logger = logger;
         this.config = config;
