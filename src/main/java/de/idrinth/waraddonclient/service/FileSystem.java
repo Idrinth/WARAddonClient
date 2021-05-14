@@ -12,8 +12,12 @@ public class FileSystem {
         this.config = config;
     }
 
-    public void processPosition() throws FileSystemException {
+    public void processPosition(boolean GUIMode) throws FileSystemException {
         if (new java.io.File(config.getWARPath() + "/WAR.exe").exists()) {
+            return;
+        }
+        if (!GUIMode) {
+            System.out.println("No WAR.exe found in the specified folder, please try setting it again");
             return;
         }
         JOptionPane.showMessageDialog(null, "No WAR.exe found, please select it");
