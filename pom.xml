@@ -176,14 +176,15 @@
                             <icon>${basedir}/src/main/resources/Images/logo.xpm</icon>
                             <description>${description}</description>
                             <packager>${distributor}</packager>
+			    <fileEncoding>utf-8</fileEncoding>
                             <requires>
                                 <require>jre-openjdk</require>
                             </requires>
                             <mappings>
                                 <mapping> 
-                                    <directory>/usr/local/bin/WARAddonClient</directory>
-                                    <filemode>777</filemode>
-                                    <dirmode>777</dirmode>
+                                    <directory>/opt/WARAddonClient</directory>
+                                    <filemode>755</filemode>
+                                    <dirmode>755</dirmode>
                                     <sources>
                                         <source>
                                             <location>target/WARAddonClient.jar</location>
@@ -194,16 +195,27 @@
                                         <source>
                                             <location>target/WARAddonClient.desktop</location>
                                         </source>
+					<source>
+					    <location>waraddonclient-arch-pkgbuild/waraddonclient/waraddonclient</location>
+					</source>
                                     </sources>
                                 </mapping>
                                 <mapping>
-                                    <directory>/usr/share/applications/WARAddonClient.desktop</directory>
+                                    <directory>/usr/share/applications/</directory>
                                     <sources>
                                         <softlinkSource>
-                                            <location>/usr/local/bin/WARAddonClient/WARAddonClient.desktop</location>
+                                            <location>/opt/WARAddonClient/WARAddonClient.desktop</location>
                                         </softlinkSource>
                                     </sources>
                                 </mapping>
+				<mapping>
+				<directory>/usr/bin/</directory>
+		                 <sources>
+				  <softlinkSource>
+				    <location>/opt/WARAddonClient/waraddonclient</location>
+				  </softlinkSource>
+			        </sources>
+			      </mapping>
                             </mappings>
                             <preinstallScriptlet>
                                 <script>echo "installing ${project.name} now"</script>
