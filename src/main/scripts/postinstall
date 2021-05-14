@@ -1,3 +1,3 @@
 echo "Creating the desktop file"
 
-echo -e "[Desktop Entry]\nName=WARAddonClient\nExec=java -jar /usr/local/bin/WARAddonClient/WARAddonClient.jar\nType=Application\nCategories=Games" > /usr/share/applications/WARAddonClient.desktop
+echo -e "[Desktop Entry]\nName=WARAddonClient\nExec=java -jar /usr/local/bin/WARAddonClient/WARAddonClient.jar\nType=Application\nCategories=Games;" > /usr/share/applications/WARAddonClient.desktop
