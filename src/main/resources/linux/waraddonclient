@@ -4,7 +4,7 @@
 # WARAddonClient CLI options
 
 # WARAddonClient path
-addon_path="/opt/WARAddonClient/bin/WARAddonClient.jar"
+addon_path="/opt/WARAddonClient/WARAddonClient.jar"
 
 # Work starts here:
 
