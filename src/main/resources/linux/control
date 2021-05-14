@@ -1,0 +1,13 @@
+Package: ${project.artifactId}
+Name: ${project.artifactId}
+Description: ${description}
+Author: ${distributor}
+Maintainer: ${distributor}
+Version: ${project.version}
+Section: Games
+Depends: default-jre
+Architecture: all
+Homepage: ${homepage}
+Website: ${homepage}
+Icon: /opt/WARAddonClient/logo.png
+Priority: optional

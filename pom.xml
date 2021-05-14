@@ -11,6 +11,7 @@
         <maven.compiler.target>1.8</maven.compiler.target>
         <mainClass>de.idrinth.waraddonclient.Main</mainClass>
         <distributor>Björn 'Idrinth' Büttner</distributor>
+        <homepage>https://tools.idrinth.de/</homepage>
         <description>Installing and updating Warhammer Return of Reckoning Addons.</description>
     </properties>
     <dependencies>
@@ -90,9 +91,9 @@
         <profile>
             <id>default-build</id>
             <activation>
-		<property>
-                   <name>!skip-default</name>
-		</property>
+                <property>
+                    <name>!skip-default</name>
+                </property>
             </activation>
             <build>
                 <resources>
@@ -138,9 +139,9 @@
             </build>
         </profile>
         <profile>
-        <id>deb-build</id>
-        <build>
-         <resources>
+            <id>deb-build</id>
+            <build>
+                <resources>
                     <resource>
                         <directory>src/main/resources/linux</directory>
                         <targetPath>..</targetPath>
@@ -149,80 +150,87 @@
                             <include>WARAddonClient.desktop</include>
                         </includes>
                     </resource>
+                    <resource>
+                        <directory>src/main/resources/linux</directory>
+                        <targetPath>../control</targetPath>
+                        <filtering>true</filtering>
+                        <includes>
+                            <include>control</include>
+                        </includes>
+                    </resource>
                 </resources>
                 <plugins>
-            <plugin>
-                <artifactId>jdeb</artifactId>
-                <groupId>org.vafer</groupId>
-                <version>1.8</version>
-                <executions>
-                    <execution>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>jdeb</goal>
-                        </goals>
-                        <configuration>
-                            <verbose>true</verbose>
-                            <snapshotExpand>true</snapshotExpand>
-                            <!-- expand "SNAPSHOT" to what is in the "USER" env variable -->
-                            <snapshotEnv>USER</snapshotEnv>
-			    <controlDir>${basedir}/src/main/resources/linux/control</controlDir>
-                            <dataSet>
-                                <data>
-                                  <src>${project.build.directory}/WARAddonClient.jar</src>
-                                  <type>file</type>
-                                  <mapper>
-                                    <type>perm</type>
-				    <prefix>/opt/WARAddonClient/</prefix>
-                                    <filemode>755</filemode>
-                                  </mapper>
-                                </data>
-				<data>
-				  <src>target/WARAddonClient.desktop</src>
-                                  <type>file</type>
-				  <mapper>
-                                    <type>perm</type>
-				    <prefix>/opt/WARAddonClient</prefix>
-				    <filemode>755</filemode>
-				  </mapper>
-                                </data>
-                                <data>
-                                  <src>${project.build.directory}/classes/Images/logo.png</src>
-                                  <type>file</type>
-                                  <mapper>
-                                    <type>perm</type>
-				    <prefix>/opt/WARAddonClient/</prefix>
-                                    <filemode>755</filemode>
-                                  </mapper>
-                                </data>
-                                <data>
-                                  <src>waraddonclient-arch-pkgbuild/waraddonclient/waraddonclient</src>
-                                  <type>file</type>
-                                  <mapper>
-                                    <type>perm</type>
-				    <prefix>/opt/WARAddonClient/</prefix>
-                                    <filemode>755</filemode>
-                                  </mapper>
-                                </data>
-                                <data>
-                                  <type>link</type>
-                                  <symlink>true</symlink>
-				  <linkName>/usr/share/applications/WARAddonClient.desktop</linkName>
-				  <linkTarget>/opt/WARAddonClient/WARAddonClient.desktop</linkTarget>
-                                </data>
-                                <data>
-                                  <type>link</type>
-                                  <symlink>true</symlink>
-				  <linkName>/usr/bin/waraddonclient</linkName>
-				  <linkTarget>/opt/WARAddonClient/waraddonclient</linkTarget>
-                                </data>
-                            </dataSet>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
-        </build>
+                    <plugin>
+                        <artifactId>jdeb</artifactId>
+                        <groupId>org.vafer</groupId>
+                        <version>1.8</version>
+                        <executions>
+                            <execution>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>jdeb</goal>
+                                </goals>
+                                <configuration>
+                                    <verbose>true</verbose>
+                                    <snapshotExpand>true</snapshotExpand>
+                                    <snapshotEnv>USER</snapshotEnv>
+                                    <controlDir>${basedir}/target/control</controlDir>
+                                    <dataSet>
+                                        <data>
+                                            <src>${project.build.directory}/WARAddonClient.jar</src>
+                                            <type>file</type>
+                                            <mapper>
+                                                <type>perm</type>
+                                                <prefix>/opt/WARAddonClient/</prefix>
+                                                <filemode>755</filemode>
+                                            </mapper>
+                                        </data>
+                                        <data>
+                                            <src>target/WARAddonClient.desktop</src>
+                                            <type>file</type>
+                                            <mapper>
+                                                <type>perm</type>
+                                                <prefix>/opt/WARAddonClient</prefix>
+                                                <filemode>755</filemode>
+                                            </mapper>
+                                        </data>
+                                        <data>
+                                            <src>${project.build.directory}/classes/Images/logo.png</src>
+                                            <type>file</type>
+                                            <mapper>
+                                                <type>perm</type>
+                                                <prefix>/opt/WARAddonClient/</prefix>
+                                                <filemode>755</filemode>
+                                            </mapper>
+                                        </data>
+                                        <data>
+                                            <src>waraddonclient-arch-pkgbuild/waraddonclient/waraddonclient</src>
+                                            <type>file</type>
+                                            <mapper>
+                                                <type>perm</type>
+                                                <prefix>/opt/WARAddonClient/</prefix>
+                                                <filemode>755</filemode>
+                                            </mapper>
+                                        </data>
+                                        <data>
+                                            <type>link</type>
+                                            <symlink>true</symlink>
+                                            <linkName>/usr/share/applications/WARAddonClient.desktop</linkName>
+                                            <linkTarget>/opt/WARAddonClient/WARAddonClient.desktop</linkTarget>
+                                        </data>
+                                        <data>
+                                            <type>link</type>
+                                            <symlink>true</symlink>
+                                            <linkName>/usr/bin/waraddonclient</linkName>
+                                            <linkTarget>/opt/WARAddonClient/waraddonclient</linkTarget>
+                                        </data>
+                                    </dataSet>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
         </profile>
         <profile>
             <id>rpm-build</id>
@@ -265,7 +273,7 @@
                             <icon>${basedir}/src/main/resources/Images/logo.xpm</icon>
                             <description>${description}</description>
                             <packager>${distributor}</packager>
-			    <fileEncoding>utf-8</fileEncoding>
+                            <fileEncoding>utf-8</fileEncoding>
                             <requires>
                                 <require>jre-openjdk</require>
                             </requires>
@@ -284,9 +292,9 @@
                                         <source>
                                             <location>target/WARAddonClient.desktop</location>
                                         </source>
-					<source>
-					    <location>waraddonclient-arch-pkgbuild/waraddonclient/waraddonclient</location>
-					</source>
+                                        <source>
+                                            <location>waraddonclient-arch-pkgbuild/waraddonclient/waraddonclient</location>
+                                        </source>
                                     </sources>
                                 </mapping>
                                 <mapping>
@@ -297,14 +305,14 @@
                                         </softlinkSource>
                                     </sources>
                                 </mapping>
-				<mapping>
-				<directory>/usr/bin/</directory>
-		                 <sources>
-				  <softlinkSource>
-				    <location>/opt/WARAddonClient/waraddonclient</location>
-				  </softlinkSource>
-			        </sources>
-			      </mapping>
+                                <mapping>
+                                    <directory>/usr/bin/</directory>
+                                    <sources>
+                                        <softlinkSource>
+                                            <location>/opt/WARAddonClient/waraddonclient</location>
+                                        </softlinkSource>
+                                    </sources>
+                                </mapping>
                             </mappings>
                             <preinstallScriptlet>
                                 <script>echo "installing ${project.name} now"</script>
