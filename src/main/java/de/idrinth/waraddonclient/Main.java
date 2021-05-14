@@ -20,7 +20,9 @@ import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import javax.swing.JOptionPane;
 import javax.xml.parsers.ParserConfigurationException;
 
@@ -38,7 +40,11 @@ public final class Main {
             new FileSystem(config).processPosition();
             Shedule schedule = new Shedule();
             Request client = new Request(new TrustManager(logger), logger, config);
-            if (Arrays.asList(args).contains("--updateonly")) {
+            List<String> options = Arrays.asList(args);
+            if (options.contains("--setlocation")) {
+                config.setWARPath(options.get(options.indexOf("--setlocation") + 1));
+            }
+            if (options.contains("--updateonly")) {
                 new CmdAddonList(client, logger, new XmlParser(), config).run();
                 Runtime.getRuntime().exit(0);
             }
