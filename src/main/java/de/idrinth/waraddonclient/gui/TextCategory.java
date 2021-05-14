@@ -1,6 +1,6 @@
 package de.idrinth.waraddonclient.gui;
 
-import de.idrinth.waraddonclient.model.AddonList;
+import de.idrinth.waraddonclient.model.GuiAddonList;
 import de.idrinth.waraddonclient.model.ActualAddon;
 import java.util.List;
 import javax.swing.RowFilter;
@@ -9,9 +9,9 @@ public class TextCategory extends RowFilter<ActualAddon, Integer> {
 
     private final java.util.regex.Pattern textfilter;
     
-    private final AddonList addonList;
+    private final GuiAddonList addonList;
 
-    public TextCategory(String text, AddonList addonList) {
+    public TextCategory(String text, GuiAddonList addonList) {
         textfilter = java.util.regex.Pattern.compile("(?i)" + java.util.regex.Pattern.quote(text));
         this.addonList = addonList;
     }
@@ -28,12 +28,6 @@ public class TextCategory extends RowFilter<ActualAddon, Integer> {
         return isInAllowedCategory(addon);
     }
 
-    /**
-     * Does any category match?
-     *
-     * @param addon
-     * @return boolean
-     */
     private boolean isInAllowedCategory(ActualAddon addon) {
         List<String> tags = addonList.getActiveTags();
         return tags.isEmpty() || tags.stream().anyMatch(tag -> (addon.hasTag(tag)));

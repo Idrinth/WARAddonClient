@@ -3,7 +3,8 @@ package de.idrinth.waraddonclient;
 import de.idrinth.waraddonclient.gui.FrameRestorer;
 import de.idrinth.waraddonclient.gui.ThemeManager;
 import de.idrinth.waraddonclient.gui.Window;
-import de.idrinth.waraddonclient.model.AddonList;
+import de.idrinth.waraddonclient.model.CmdAddonList;
+import de.idrinth.waraddonclient.model.GuiAddonList;
 import de.idrinth.waraddonclient.model.TrustManager;
 import de.idrinth.waraddonclient.service.Backup;
 import de.idrinth.waraddonclient.service.FileLogger;
@@ -37,22 +38,19 @@ public final class Main {
             new FileSystem(config).processPosition();
             Shedule schedule = new Shedule();
             Request client = new Request(new TrustManager(logger), logger, config);
-            AddonList addonList = new AddonList(client, logger, new XmlParser(), config);
-            FileWatcher watcher = new FileWatcher(addonList, logger, config);
-            schedule.register(30, watcher);
-            boolean updateOnly = Arrays.asList(args).contains("--updateonly");
-            if (updateOnly) {
-                addonList.updateAll();
+            if (Arrays.asList(args).contains("--updateonly")) {
+                new CmdAddonList(client, logger, new XmlParser(), config).run();
                 Runtime.getRuntime().exit(0);
             }
-            else {
-                java.awt.EventQueue.invokeLater(() -> {
-                    Version version = new Version(client, logger);
-                    Window window = new Window(addonList, version, themes, logger, schedule, config, new Backup(config));
-                    new FrameRestorer(config).restore(window);
-                    window.setVisible(true);
-                });
-            }
+            GuiAddonList addonList = new GuiAddonList(client, logger, new XmlParser(), config);
+            FileWatcher watcher = new FileWatcher(addonList, logger, config);
+            schedule.register(30, watcher);
+            java.awt.EventQueue.invokeLater(() -> {
+                Version version = new Version(client, logger);
+                Window window = new Window(addonList, version, themes, logger, schedule, config, new Backup(config));
+                new FrameRestorer(config).restore(window);
+                window.setVisible(true);
+            });
 
         } catch (ParserConfigurationException |FileSystem.FileSystemException|IOException|CertificateException|KeyManagementException|KeyStoreException|NoSuchAlgorithmException ex) {
             JOptionPane.showMessageDialog(null, ex.getLocalizedMessage());

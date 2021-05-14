@@ -3,8 +3,8 @@ package de.idrinth.waraddonclient.gui;
 import de.idrinth.waraddonclient.Config;
 import de.idrinth.waraddonclient.Main;
 import de.idrinth.waraddonclient.service.Backup;
-import de.idrinth.waraddonclient.model.AddonList;
 import de.idrinth.waraddonclient.model.Addon;
+import de.idrinth.waraddonclient.model.GuiAddonList;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import net.lingala.zip4j.exception.ZipException;
@@ -27,7 +27,7 @@ public class Window extends JFrame {
 
     private Addon activeAddon = new de.idrinth.waraddonclient.model.NoAddon();
     
-    private final AddonList addonList;
+    private final GuiAddonList addonList;
 
     private final FileLogger logger;
     
@@ -35,7 +35,7 @@ public class Window extends JFrame {
 
     private final Backup backup;
 
-    public Window(AddonList addonList, Version version, ThemeManager manager, FileLogger logger, Shedule schedule, Config config, Backup backup) {
+    public Window(GuiAddonList addonList, Version version, ThemeManager manager, FileLogger logger, Shedule schedule, Config config, Backup backup) {
         this.addonList = addonList;
         this.logger = logger;
         this.config = config;
