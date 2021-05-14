@@ -130,6 +130,67 @@
                             </transformers>
                         </configuration>
                     </plugin>
+		    <plugin>
+                      <groupId>org.codehaus.mojo</groupId>
+                      <artifactId>rpm-maven-plugin</artifactId>
+                      <version>2.2.0</version>
+                      <executions>
+                        <execution>
+                          <id>generate-rpm</id>
+                          <goals>
+                            <goal>rpm</goal>
+                          </goals>
+                        </execution>
+                      </executions>
+                      <configuration>
+                        <license>MIT</license>
+			<group>Amusements/Games</group>
+			<icon>src/main/resources/Images/logo.xpm</icon>
+			<description>A client to download and install addons for Warhammer Online Return of Reckoning</description>
+                        <packager>Idrinth</packager>
+                        <requires>
+                        <require>jre-openjdk</require>
+                        </requires>
+                        <mappings>
+                          <mapping> 
+                      	    <directory>/usr/local/bin/WARAddonClient</directory>
+                            <filemode>777</filemode>
+			    <dirmode>777</dirmode>
+                            <sources>
+                              <source>
+                                <location>target/WARAddonClient.jar</location>
+			      </source>
+			      <source>
+		                <location>src/main/resources/Images/logo.png</location>
+			      </source>
+                              <source>
+			        <location>src/main/resources/linux/WARAddonClient.desktop</location>
+			      </source>
+                            </sources>
+                          </mapping>
+			  <mapping>
+		            <directory>/usr/share/applications/WARAddonClient.desktop</directory>
+                            <sources>
+                              <softlinkSource>
+		               <location>/usr/local/bin/WARAddonClient/WARAddonClient.desktop</location>
+                              </softlinkSource>
+                            </sources>
+                          </mapping>
+                        </mappings>
+                        <preinstallScriptlet>
+                          <script>echo "installing ${project.name} now"</script>
+                        </preinstallScriptlet>
+                        <postinstallScriptlet>
+				<!--<scriptFile>src/main/scripts/postinstall</scriptFile>-->
+                          <fileEncoding>utf-8</fileEncoding>
+                          <filter>true</filter>
+                        </postinstallScriptlet>
+                        <preremoveScriptlet>
+				<!--<scriptFile>src/main/scripts/preremove</scriptFile>-->
+                          <fileEncoding>utf-8</fileEncoding>
+                        </preremoveScriptlet>
+                      </configuration>
+                    </plugin>
                 </plugins>
             </build>
         </profile>
