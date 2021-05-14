@@ -33,18 +33,26 @@ public final class Main {
 
     public static void main(String[] args) {
         try {
+            List<String> options = Arrays.asList(args);
             Config config = new Config();
             FileLogger logger = new FileLogger(config.getLogFile());
             ThemeManager themes = new ThemeManager(logger, config);
-            new FileSystem(config).processPosition();
-            Shedule schedule = new Shedule();
-            Request client = new Request(new TrustManager(logger), logger, config);
-            List<String> options = Arrays.asList(args);
             if (options.contains("--setlocation")) {
                 config.setWARPath(options.get(options.indexOf("--setlocation") + 1));
             }
+            if (options.isEmpty()) {
+                new FileSystem(config).processPosition(true);
+            }
+            else {
+                new FileSystem(config).processPosition(false);
+            }
+            Shedule schedule = new Shedule();
+            Request client = new Request(new TrustManager(logger), logger, config);
             if (options.contains("--updateonly")) {
                 new CmdAddonList(client, logger, new XmlParser(), config).run();
+            }
+            //if we have options we assume no GUI is wanted and exit once the options have done their job
+            if (!options.isEmpty()) {
                 Runtime.getRuntime().exit(0);
             }
             GuiAddonList addonList = new GuiAddonList(client, logger, new XmlParser(), config);
