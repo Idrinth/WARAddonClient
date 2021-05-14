@@ -1,6 +1,6 @@
 ﻿#define MyAppName "${project.artifactId}"
 #define MyAppVersion "${project.version}"
-#define MyAppPublisher "Björn 'Idrinth' Büttner"
+#define MyAppPublisher "${distributor}"
 #define MyAppURL "https://tools.idrinth.de"
 #define MyAppExeName "${project.artifactId}.exe"
 #define MyAppBasePath "${project.basedir}"

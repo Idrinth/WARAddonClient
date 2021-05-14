@@ -37,15 +37,13 @@ public final class Main {
             Config config = new Config();
             FileLogger logger = new FileLogger(config.getLogFile());
             ThemeManager themes = new ThemeManager(logger, config);
+            if (options.contains("--version")) {
+                System.out.println(config.getVersion());
+            }
             if (options.contains("--setlocation")) {
                 config.setWARPath(options.get(options.indexOf("--setlocation") + 1));
             }
-            if (options.isEmpty()) {
-                new FileSystem(config).processPosition(true);
-            }
-            else {
-                new FileSystem(config).processPosition(false);
-            }
+            new FileSystem(config).processPosition(options.isEmpty());
             Shedule schedule = new Shedule();
             Request client = new Request(new TrustManager(logger), logger, config);
             if (options.contains("--updateonly")) {

@@ -1,7 +1,7 @@
 [Desktop Entry]
-Name=WARAddonClient
-Comment=Updating Warhammer Return of Reckoning Addons.
-Exec=java -jar /usr/local/bin/WARAddonClient/WARAddonClient.jar
+Name=${project.artifactId}
+Comment=${description}
+Exec=java -jar /usr/local/bin/WARAddonClient/${project.artifactId}.jar
 Icon=/usr/local/bin/WARAddonClient/logo.png
 Terminal=false
 Type=Application

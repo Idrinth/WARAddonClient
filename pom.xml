@@ -3,13 +3,15 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>de.idrinth</groupId>
     <artifactId>WARAddonClient</artifactId>
-    <version>1.10.2</version>
+    <version>1.11.0</version>
     <packaging>jar</packaging>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
         <mainClass>de.idrinth.waraddonclient.Main</mainClass>
+        <distributor>Björn 'Idrinth' Büttner</distributor>
+        <description>Installing and updating Warhammer Return of Reckoning Addons.</description>
     </properties>
     <dependencies>
         <dependency>
@@ -130,66 +132,90 @@
                             </transformers>
                         </configuration>
                     </plugin>
-		    <plugin>
-                      <groupId>org.codehaus.mojo</groupId>
-                      <artifactId>rpm-maven-plugin</artifactId>
-                      <version>2.2.0</version>
-                      <executions>
-                        <execution>
-                          <id>generate-rpm</id>
-                          <goals>
-                            <goal>rpm</goal>
-                          </goals>
-                        </execution>
-                      </executions>
-                      <configuration>
-                        <license>MIT</license>
-			<group>Amusements/Games</group>
-			<icon>src/main/resources/Images/logo.xpm</icon>
-			<description>A client to download and install addons for Warhammer Online Return of Reckoning</description>
-                        <packager>Idrinth</packager>
-                        <requires>
-                        <require>jre-openjdk</require>
-                        </requires>
-                        <mappings>
-                          <mapping> 
-                      	    <directory>/usr/local/bin/WARAddonClient</directory>
-                            <filemode>777</filemode>
-			    <dirmode>777</dirmode>
-                            <sources>
-                              <source>
-                                <location>target/WARAddonClient.jar</location>
-			      </source>
-			      <source>
-		                <location>src/main/resources/Images/logo.png</location>
-			      </source>
-                              <source>
-			        <location>src/main/resources/linux/WARAddonClient.desktop</location>
-			      </source>
-                            </sources>
-                          </mapping>
-			  <mapping>
-		            <directory>/usr/share/applications/WARAddonClient.desktop</directory>
-                            <sources>
-                              <softlinkSource>
-		               <location>/usr/local/bin/WARAddonClient/WARAddonClient.desktop</location>
-                              </softlinkSource>
-                            </sources>
-                          </mapping>
-                        </mappings>
-                        <preinstallScriptlet>
-                          <script>echo "installing ${project.name} now"</script>
-                        </preinstallScriptlet>
-                        <postinstallScriptlet>
-				<!--<scriptFile>src/main/scripts/postinstall</scriptFile>-->
-                          <fileEncoding>utf-8</fileEncoding>
-                          <filter>true</filter>
-                        </postinstallScriptlet>
-                        <preremoveScriptlet>
-				<!--<scriptFile>src/main/scripts/preremove</scriptFile>-->
-                          <fileEncoding>utf-8</fileEncoding>
-                        </preremoveScriptlet>
-                      </configuration>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>rpm-build</id>
+            <activation>
+                <file>
+                    <exists>C:\cygwin64\bin\rpm.exe</exists>
+                </file>
+                <property>
+                    <name>build</name>
+                    <value>rpm</value>
+                </property>
+            </activation>
+            <build>
+                <resources>
+                    <resource>
+                        <directory>src/main/resources/linux</directory>
+                        <targetPath>..</targetPath>
+                        <filtering>true</filtering>
+                        <includes>
+                            <include>WARAddonClient.desktop</include>
+                        </includes>
+                    </resource>
+                </resources>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>rpm-maven-plugin</artifactId>
+                        <version>2.2.0</version>
+                        <executions>
+                            <execution>
+                                <id>generate-rpm</id>
+                                <goals>
+                                    <goal>rpm</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <license>MIT</license>
+                            <group>Amusements/Games</group>
+                            <icon>${basedir}/src/main/resources/Images/logo.xpm</icon>
+                            <description>${description}</description>
+                            <packager>${distributor}</packager>
+                            <requires>
+                                <require>jre-openjdk</require>
+                            </requires>
+                            <mappings>
+                                <mapping> 
+                                    <directory>/usr/local/bin/WARAddonClient</directory>
+                                    <filemode>777</filemode>
+                                    <dirmode>777</dirmode>
+                                    <sources>
+                                        <source>
+                                            <location>target/WARAddonClient.jar</location>
+                                        </source>
+                                        <source>
+                                            <location>target/classes/Images/logo.png</location>
+                                        </source>
+                                        <source>
+                                            <location>target/WARAddonClient.desktop</location>
+                                        </source>
+                                    </sources>
+                                </mapping>
+                                <mapping>
+                                    <directory>/usr/share/applications/WARAddonClient.desktop</directory>
+                                    <sources>
+                                        <softlinkSource>
+                                            <location>/usr/local/bin/WARAddonClient/WARAddonClient.desktop</location>
+                                        </softlinkSource>
+                                    </sources>
+                                </mapping>
+                            </mappings>
+                            <preinstallScriptlet>
+                                <script>echo "installing ${project.name} now"</script>
+                            </preinstallScriptlet>
+                            <postinstallScriptlet>
+                                <fileEncoding>utf-8</fileEncoding>
+                                <filter>true</filter>
+                            </postinstallScriptlet>
+                            <preremoveScriptlet>
+                                <fileEncoding>utf-8</fileEncoding>
+                            </preremoveScriptlet>
+                        </configuration>
                     </plugin>
                 </plugins>
             </build>
@@ -204,33 +230,18 @@
                     <exists>C:\Program Files (x86)\Inno Setup 6\ISCC.exe</exists>
                 </file>
                 <property>
-                    <name>build-full</name>
-                    <value>true</value>
+                    <name>build</name>
+                    <value>exe</value>
                 </property>
             </activation>
             <build>
-                <resources>                    
+                <resources>
                     <resource>
-                        <directory>src/main/resources</directory>
-                        <filtering>true</filtering>
-                        <includes>
-                            <include>version</include>
-                        </includes>
-                    </resource>
-                    <resource>
-                        <directory>src/main/resources</directory>
+                        <directory>src/main/resources/windows</directory>
                         <targetPath>..</targetPath>
                         <filtering>true</filtering>
                         <includes>
                             <include>setup.iss</include>
-                        </includes>
-                    </resource>
-                    <resource>
-                        <directory>src/main/resources</directory>
-                        <filtering>false</filtering>
-                        <includes>
-                            <include>**/*.cer</include>
-                            <include>**/*.png</include>
                         </includes>
                     </resource>
                 </resources>
@@ -335,9 +346,9 @@
                                     <versionInfo>
                                         <fileVersion>${project.version}.0</fileVersion>
                                         <txtFileVersion>${project.version}.0</txtFileVersion>
-                                        <fileDescription>${project.version}</fileDescription>
-                                        <copyright>Copyright(c) Björn "Idrinth" Büttner</copyright>
-                                        <companyName>Björn "Idrinth" Büttner</companyName>
+                                        <fileDescription>${description}</fileDescription>
+                                        <copyright>Copyright(c) ${distributor}</copyright>
+                                        <companyName>${distributor}</companyName>
                                         <productVersion>${project.version}.0</productVersion>
                                         <txtProductVersion>${project.version}.0</txtProductVersion>
                                         <productName>${project.artifactId}</productName>
