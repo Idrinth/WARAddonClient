@@ -90,7 +90,9 @@
         <profile>
             <id>default-build</id>
             <activation>
-                <activeByDefault>true</activeByDefault>
+		<property>
+                   <name>!skip-default</name>
+		</property>
             </activation>
             <build>
                 <resources>
