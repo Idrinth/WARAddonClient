@@ -172,7 +172,7 @@
                             </sources>
                           </mapping>
 			  <mapping>
-		            <directory>/usr/share/applications/WARAddonClient.desktop</directory>
+		            <directory>/usr/share/applications/</directory>
                             <sources>
                               <softlinkSource>
 		               <location>/opt/WARAddonClient/WARAddonClient.desktop</location>
@@ -180,7 +180,7 @@
                             </sources>
                           </mapping>
                           <mapping>
-			   <directory>/usr/bin/waraddonclient</directory>
+			   <directory>/usr/bin/</directory>
 			    <sources>
 			      <softlinkSource>
 				<location>/opt/WARAddonClient/waraddonclient</location>
