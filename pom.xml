@@ -154,7 +154,8 @@
                         <mappings>
                           <mapping> 
                       	    <directory>/usr/local/bin/WARAddonClient</directory>
-                            <filemode>555</filemode>
+                            <filemode>777</filemode>
+			    <dirmode>777</dirmode>
                             <sources>
                               <source>
                                 <location>target/WARAddonClient.jar</location>
@@ -166,12 +167,12 @@
                           <script>echo "installing ${project.name} now"</script>
                         </preinstallScriptlet>
                         <postinstallScriptlet>
-                           <!--<scriptFile>src/main/scripts/postinstall</scriptFile>-->
+                           <scriptFile>src/main/scripts/postinstall</scriptFile>
                           <fileEncoding>utf-8</fileEncoding>
                           <filter>true</filter>
                         </postinstallScriptlet>
                         <preremoveScriptlet>
-                      	  <!--<scriptFile>src/main/scripts/preremove</scriptFile>-->
+                      	  <scriptFile>src/main/scripts/preremove</scriptFile>
                           <fileEncoding>utf-8</fileEncoding>
                         </preremoveScriptlet>
                       </configuration>

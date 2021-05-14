@@ -1,0 +1,2 @@
+echo "removing desktop file"
+rm /usr/share/applications/WARAddonClient.desktop
