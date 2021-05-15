@@ -8,7 +8,8 @@ import java.io.IOException;
 
 public class CmdAddonList extends AddonList {
 
-    String options;
+    private String options;
+
     public CmdAddonList(Request client, FileLogger logger, XmlParser parser, Config config, String option) {
         super(client, logger, parser, config);
         options = option;
