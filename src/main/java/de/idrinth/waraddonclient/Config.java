@@ -4,6 +4,7 @@ import java.awt.Dimension;
 import java.awt.Point;
 import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.util.prefs.Preferences;
 import org.apache.commons.io.IOUtils;
@@ -28,6 +29,8 @@ public class Config {
 
     private static final String LOG_FILE = "waraddonclient.log";
 
+    private static final String LINUX_LOG_FILE = "/var/log/waraddonclient.log";
+
     private static final String ADDON_FOLDER = "/Interface/AddOns/";
 
     private static final String LOGS = "/logs/";
@@ -42,10 +45,16 @@ public class Config {
 
     private final File jarDir;
 
-    public Config() throws IOException {
+    public Config() throws IOException, URISyntaxException {
         version = IOUtils.toString(Config.class.getResourceAsStream("/version"), StandardCharsets.UTF_8);
-        jarDir = new File(ClassLoader.getSystemClassLoader().getResource(".").getPath());
-        logFile = new File(jarDir.getAbsolutePath() + "/" + LOG_FILE);
+        if (System.getProperty("os.name").startsWith("Windows")) {
+            jarDir = new File(ClassLoader.getSystemClassLoader().getResource(".").getPath());
+            logFile = new File(jarDir.getAbsolutePath() + "/" + LOG_FILE);
+        }
+        else {
+            jarDir = new File(Main.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath());
+            logFile = new File(LINUX_LOG_FILE);
+        }
     }
 
     public void setWARPath(String path) {

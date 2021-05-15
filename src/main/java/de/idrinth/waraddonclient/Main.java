@@ -17,6 +17,7 @@ import de.idrinth.waraddonclient.service.Version;
 import de.idrinth.waraddonclient.service.XmlParser;
 import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
@@ -73,7 +74,7 @@ public final class Main {
                 window.setVisible(true);
             });
 
-        } catch (ParserConfigurationException |FileSystem.FileSystemException|IOException|CertificateException|KeyManagementException|KeyStoreException|NoSuchAlgorithmException ex) {
+        } catch (ParserConfigurationException |FileSystem.FileSystemException|IOException|CertificateException|KeyManagementException|KeyStoreException|NoSuchAlgorithmException|URISyntaxException ex) {
             JOptionPane.showMessageDialog(null, ex.getLocalizedMessage());
             Runtime.getRuntime().exit(0);
         }
