@@ -25,6 +25,11 @@ This is an optional way of installing it and BUGs may or may not be fixed.
 You can grab the <a href="https://github.com/Idrinth/WARAddonClient/releases/latest">deb-file in the latest Release</a>. Download it and install the WARAddonClient on your computer.
 This is an optional way of installing it and BUGs may or may not be fixed.
 
+#### Linux (Arch)
+
+You can use the <a href="https://aur.archlinux.org/packages/waraddonclient/">AUR package</a> to install the WARAddonClient on your computer.
+This is an optional way of installing it and BUGs may or may not be fixed.
+
 ### JAR-Release (Prefered)
 
 This is a java-Application, so you'll need to be able to run .jar files on the system you desire to use this on.
