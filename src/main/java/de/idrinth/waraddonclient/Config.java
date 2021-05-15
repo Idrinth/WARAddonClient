@@ -46,8 +46,8 @@ public class Config {
 
     public Config() throws IOException {
         version = IOUtils.toString(Config.class.getResourceAsStream("/version"), StandardCharsets.UTF_8);
+        jarDir = new File(ClassLoader.getSystemClassLoader().getResource(".").getPath());
         if (System.getProperty("os.name").startsWith("Windows")) {
-            jarDir = new File(ClassLoader.getSystemClassLoader().getResource(".").getPath());
             logFile = new File(jarDir.getAbsolutePath() + "/" + LOG_FILE);
         }
         else {
