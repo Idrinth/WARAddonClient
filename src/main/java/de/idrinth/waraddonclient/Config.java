@@ -40,9 +40,12 @@ public class Config {
 
     private final File logFile;
 
+    private final File jarDir;
+
     public Config() throws IOException {
         version = IOUtils.toString(Config.class.getResourceAsStream("/version"), StandardCharsets.UTF_8);
-        logFile = new File(LOG_FILE);
+        jarDir = new File(ClassLoader.getSystemClassLoader().getResource(".").getPath());
+        logFile = new File(jarDir.getAbsolutePath() + "/" + LOG_FILE);
     }
 
     public void setWARPath(String path) {
@@ -119,5 +122,9 @@ public class Config {
 
     public String getURL() {
         return BASE_URL;
+    }
+    
+    public File getJarDir() {
+        return jarDir;
     }
 }

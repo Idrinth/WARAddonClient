@@ -1,7 +1,6 @@
 package de.idrinth.waraddonclient.gui;
 
 import de.idrinth.waraddonclient.Config;
-import de.idrinth.waraddonclient.Main;
 import de.idrinth.waraddonclient.service.Backup;
 import de.idrinth.waraddonclient.model.Addon;
 import de.idrinth.waraddonclient.model.GuiAddonList;
@@ -11,6 +10,7 @@ import net.lingala.zip4j.exception.ZipException;
 import javax.swing.table.TableRowSorter;
 import de.idrinth.waraddonclient.service.Version;
 import de.idrinth.waraddonclient.service.FileLogger;
+import de.idrinth.waraddonclient.service.Restarter;
 import de.idrinth.waraddonclient.service.Shedule;
 import java.awt.Desktop;
 import java.awt.FileDialog;
@@ -34,9 +34,12 @@ public class Window extends JFrame {
     private final Config config;
 
     private final Backup backup;
+    
+    private final Restarter restarter;
 
-    public Window(GuiAddonList addonList, Version version, ThemeManager manager, FileLogger logger, Shedule schedule, Config config, Backup backup) {
+    public Window(GuiAddonList addonList, Version version, ThemeManager manager, FileLogger logger, Shedule schedule, Config config, Backup backup, Restarter restarter) {
         this.addonList = addonList;
+        this.restarter = restarter;
         this.logger = logger;
         this.config = config;
         this.backup = backup;
@@ -673,7 +676,7 @@ public class Window extends JFrame {
 
     private void menuRestartActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuRestartActionPerformed
         try {
-            Main.restart();
+            restarter.restart();
         } catch (IOException ex) {
             logger.error(ex);
             JOptionPane.showMessageDialog(this, "Couldn't restart app.");

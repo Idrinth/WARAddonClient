@@ -22,6 +22,7 @@ import de.idrinth.waraddonclient.gui.themes.JTattooNoireLookAndFeelInfo;
 import de.idrinth.waraddonclient.gui.themes.JTattooSmartLookAndFeelInfo;
 import de.idrinth.waraddonclient.gui.themes.JTattooTextureLookAndFeelInfo;
 import de.idrinth.waraddonclient.service.FileLogger;
+import de.idrinth.waraddonclient.service.Restarter;
 import java.awt.event.ActionEvent;
 import java.io.IOException;
 import javax.swing.JMenu;
@@ -33,10 +34,13 @@ public final class ThemeManager {
     private final FileLogger logger;
     
     private final Config config;
+    
+    private final Restarter restarter;
 
-    public ThemeManager(FileLogger logger, Config config) {
+    public ThemeManager(FileLogger logger, Config config, Restarter restarter) {
         this.logger = logger;
         this.config = config;
+        this.restarter = restarter;
         install();
         String preference = config.getTheme();
         for (UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
@@ -84,7 +88,7 @@ public final class ThemeManager {
                 }
                 config.setTheme(info.getName());
                 try {
-                    Main.restart();
+                    restarter.restart();
                 } catch (IOException ex) {
                     logger.error("Failed to restart");
                 }
