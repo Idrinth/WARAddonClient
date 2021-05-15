@@ -28,7 +28,7 @@ public class Config {
 
     private static final String LOG_FILE = "waraddonclient.log";
 
-    private static final String LINUX_LOG_FILE = "/tmp/waraddonclient.log";
+    private static final String LINUX_LOG_FILE = "/var/log/waraddonclient.log";
 
     private static final String ADDON_FOLDER = "/Interface/AddOns/";
 
@@ -42,10 +42,13 @@ public class Config {
 
     private final File logFile;
 
+    private final File jarDir;
+
     public Config() throws IOException {
         version = IOUtils.toString(Config.class.getResourceAsStream("/version"), StandardCharsets.UTF_8);
         if (System.getProperty("os.name").startsWith("Windows")) {
-            logFile = new File(LOG_FILE);
+            jarDir = new File(ClassLoader.getSystemClassLoader().getResource(".").getPath());
+            logFile = new File(jarDir.getAbsolutePath() + "/" + LOG_FILE);
         }
         else {
             logFile = new File(LINUX_LOG_FILE);
@@ -126,5 +129,9 @@ public class Config {
 
     public String getURL() {
         return BASE_URL;
+    }
+    
+    public File getJarDir() {
+        return jarDir;
     }
 }
