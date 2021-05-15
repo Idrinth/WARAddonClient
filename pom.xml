@@ -204,7 +204,7 @@
                                             </mapper>
                                         </data>
                                         <data>
-                                            <src>waraddonclient-arch-pkgbuild/waraddonclient/waraddonclient</src>
+                                            <src>waraddonclient-arch-pkgbuild/waraddonclient</src>
                                             <type>file</type>
                                             <mapper>
                                                 <type>perm</type>
@@ -293,7 +293,7 @@
                                             <location>target/WARAddonClient.desktop</location>
                                         </source>
                                         <source>
-                                            <location>waraddonclient-arch-pkgbuild/waraddonclient/waraddonclient</location>
+                                            <location>waraddonclient-arch-pkgbuild/waraddonclient</location>
                                         </source>
                                     </sources>
                                 </mapping>
