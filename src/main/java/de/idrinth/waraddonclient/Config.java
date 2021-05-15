@@ -28,6 +28,8 @@ public class Config {
 
     private static final String LOG_FILE = "waraddonclient.log";
 
+    private static final String LINUX_LOG_FILE = "/tmp/waraddonclient.log";
+
     private static final String ADDON_FOLDER = "/Interface/AddOns/";
 
     private static final String LOGS = "/logs/";
@@ -42,7 +44,12 @@ public class Config {
 
     public Config() throws IOException {
         version = IOUtils.toString(Config.class.getResourceAsStream("/version"), StandardCharsets.UTF_8);
-        logFile = new File(LOG_FILE);
+        if (System.getProperty("os.name").startsWith("Windows")) {
+            logFile = new File(LOG_FILE);
+        }
+        else {
+            logFile = new File(LINUX_LOG_FILE);
+        }
     }
 
     public void setWARPath(String path) {
