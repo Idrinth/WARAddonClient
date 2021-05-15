@@ -47,15 +47,15 @@ public final class Main {
             Shedule schedule = new Shedule();
             Request client = new Request(new TrustManager(logger), logger, config);
             if (options.contains("--updateonly")) {
-                new CmdAddonList(client, logger, new XmlParser(), config, "update").run();
+                new CmdAddonList(client, logger, new XmlParser(), config).update();
             }
             if (options.contains("--install")) {
                 String addonName = options.get(options.indexOf("--install") + 1);
-                new CmdAddonList(client, logger, new XmlParser(), config, "install" + addonName).run();
+                new CmdAddonList(client, logger, new XmlParser(), config).install(addonName);
             }
             if (options.contains("--remove")) {
                 String addonName = options.get(options.indexOf("--remove") + 1);
-                new CmdAddonList(client, logger, new XmlParser(), config, "remove" + addonName).run();
+                new CmdAddonList(client, logger, new XmlParser(), config).remove(addonName);
             }
             //if we have options we assume no GUI is wanted and exit once the options have done their job
             if (!options.isEmpty()) {

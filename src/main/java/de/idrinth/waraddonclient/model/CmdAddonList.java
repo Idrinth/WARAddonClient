@@ -8,11 +8,8 @@ import java.io.IOException;
 
 public class CmdAddonList extends AddonList {
 
-    private String options;
-
-    public CmdAddonList(Request client, FileLogger logger, XmlParser parser, Config config, String option) {
+    public CmdAddonList(Request client, FileLogger logger, XmlParser parser, Config config) {
         super(client, logger, parser, config);
-        options = option;
     }
 
     @Override
@@ -22,34 +19,39 @@ public class CmdAddonList extends AddonList {
         } catch (IOException exception) {
             logger.error(exception);
         }
-        if (options.startsWith("update")) {
-            rows.stream().filter(addon -> (addon.getStatus().equals("X"))).forEachOrdered(addon -> {
-                try {
-                    addon.install();
-                } catch (IOException ex) {
-                    logger.error(ex);
-                }
-            });
-        }
-        else if (options.startsWith("install")) {
-            rows.stream().filter(addon -> (addon.getName().equals(options.replace("install", "").trim()))).forEachOrdered(addon -> {
-                try {
-                    addon.install();
-                } catch (IOException ex) {
-                    logger.error(ex);
-                }
-            });
-        }
-        else if (options.startsWith("remove")) {
-            rows.stream().filter(addon -> (addon.getName().equals(options.replace("remove", "").trim()))).forEachOrdered(addon -> {
-                try {
-                    addon.uninstall();
-                } catch (IOException ex) {
-                    logger.error(ex);
-                }
-            });
-        }
+    }
 
+    public void install (String addonName) {
+        run();
+        rows.stream().filter(addon -> (addon.getName().equals(addonName))).forEachOrdered(addon -> {
+            try {
+                addon.install();
+            } catch (IOException ex) {
+                logger.error(ex);
+            }
+        });
+    }
+
+    public void remove (String addonName) {
+        run();
+        rows.stream().filter(addon -> (addon.getName().equals(addonName))).forEachOrdered(addon -> {
+            try {
+                addon.uninstall();
+            } catch (IOException ex) {
+                logger.error(ex);
+            }
+        });
+    }
+
+    public void update () {
+        run();
+        rows.stream().filter(addon -> (addon.getStatus().equals("X"))).forEachOrdered(addon -> {
+            try {
+                addon.install();
+            } catch (IOException ex) {
+                logger.error(ex);
+            }
+        });
     }
     
 }
