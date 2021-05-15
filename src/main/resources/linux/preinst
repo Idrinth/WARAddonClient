@@ -1,0 +1,4 @@
+#!/bin/bash
+echo "Installing waraddonclient"
+touch /var/log/waraddonclient.log
+chmod 777 /var/log/waraddonclient.log

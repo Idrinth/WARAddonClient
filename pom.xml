@@ -156,6 +156,7 @@
                         <filtering>true</filtering>
                         <includes>
                             <include>control</include>
+			    <include>preinst</include>
                         </includes>
                     </resource>
                 </resources>
@@ -315,7 +316,7 @@
                                 </mapping>
                             </mappings>
                             <preinstallScriptlet>
-                                <script>echo "installing ${project.name} now"</script>
+			      <scriptFile>src/main/resources/linux/preinst</scriptFile>
                             </preinstallScriptlet>
                             <postinstallScriptlet>
                                 <fileEncoding>utf-8</fileEncoding>
