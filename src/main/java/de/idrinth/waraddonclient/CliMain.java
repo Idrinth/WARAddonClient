@@ -47,7 +47,6 @@ public class CliMain extends BaseMain {
             }
             if (cli.hasOption("setlocation")) {
                 config.setWARPath(cli.getOptionValue("setlocation"));
-                System.out.println("WAR-Path set.");
                 return;
             }
             file.checkPosition();
