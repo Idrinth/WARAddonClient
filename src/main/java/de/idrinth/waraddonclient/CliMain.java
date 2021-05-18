@@ -28,8 +28,8 @@ public class CliMain extends BaseMain {
         
         Options options = new Options();
         options.addOption("v", "version", false, "Get the version of the WARAddonClient.");
-        options.addOption("s", "setlocation", true, "Set the location of the WAR-Folder.");
-        options.addOption("u", "updateonly", false, "Update all avaible Addons to the latest version.");
+        options.addOption("s", "set-location", true, "Set the location of the WAR-Folder.");
+        options.addOption("u", "update-only", false, "Update all avaible Addons to the latest version.");
         options.addOption("i", "install", true, "Install/Update given addon.");
         options.addOption("r", "remove", true, "Remove given addon.");
         options.addOption("h", "help", false, "This output.");
@@ -45,15 +45,15 @@ public class CliMain extends BaseMain {
                 formatter.printHelp("waraddonclient", options, true);
                 return;
             }
-            if (cli.hasOption("setlocation")) {
-                config.setWARPath(cli.getOptionValue("setlocation"));
+            if (cli.hasOption("set-location")) {
+                config.setWARPath(cli.getOptionValue("set-location"));
                 System.out.println("WAR-Path set.");
                 return;
             }
             file.checkPosition();
             CmdAddonList addonList = new CmdAddonList(client, logger, new XmlParser(), config);
             addonList.run();
-            if (cli.hasOption("updateonly")) {
+            if (cli.hasOption("update-only")) {
                 addonList.update();
             }
             if (cli.hasOption("install")) {
