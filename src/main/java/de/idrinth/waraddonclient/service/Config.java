@@ -1,5 +1,6 @@
-package de.idrinth.waraddonclient;
+package de.idrinth.waraddonclient.service;
 
+import de.idrinth.waraddonclient.Main;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.io.File;
@@ -47,12 +48,10 @@ public class Config {
 
     public Config() throws IOException, URISyntaxException {
         version = IOUtils.toString(Config.class.getResourceAsStream("/version"), StandardCharsets.UTF_8);
+        jarDir = new File(Main.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath()).getParentFile();
         if (System.getProperty("os.name").startsWith("Windows")) {
-            jarDir = new File(ClassLoader.getSystemClassLoader().getResource(".").getPath());
             logFile = new File(jarDir.getAbsolutePath() + "/" + LOG_FILE);
-        }
-        else {
-            jarDir = new File(Main.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath());
+        } else {
             logFile = new File(LINUX_LOG_FILE);
         }
     }

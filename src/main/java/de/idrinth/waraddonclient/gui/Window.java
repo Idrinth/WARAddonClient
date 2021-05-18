@@ -1,6 +1,6 @@
 package de.idrinth.waraddonclient.gui;
 
-import de.idrinth.waraddonclient.Config;
+import de.idrinth.waraddonclient.service.Config;
 import de.idrinth.waraddonclient.service.Backup;
 import de.idrinth.waraddonclient.model.Addon;
 import de.idrinth.waraddonclient.model.GuiAddonList;

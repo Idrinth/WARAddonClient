@@ -1,6 +1,6 @@
 package de.idrinth.waraddonclient.model;
 
-import de.idrinth.waraddonclient.Config;
+import de.idrinth.waraddonclient.service.Config;
 import de.idrinth.waraddonclient.service.FileLogger;
 import de.idrinth.waraddonclient.service.Request;
 import de.idrinth.waraddonclient.service.XmlParser;
@@ -22,7 +22,6 @@ public class CmdAddonList extends AddonList {
     }
 
     public void install (String addonName) {
-        run();
         rows.stream().filter(addon -> (addon.getName().equals(addonName))).forEachOrdered(addon -> {
             try {
                 addon.install();
@@ -33,7 +32,6 @@ public class CmdAddonList extends AddonList {
     }
 
     public void remove (String addonName) {
-        run();
         rows.stream().filter(addon -> (addon.getName().equals(addonName))).forEachOrdered(addon -> {
             try {
                 addon.uninstall();
@@ -44,7 +42,6 @@ public class CmdAddonList extends AddonList {
     }
 
     public void update () {
-        run();
         rows.stream().filter(addon -> (addon.getStatus().equals("X"))).forEachOrdered(addon -> {
             try {
                 addon.install();

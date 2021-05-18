@@ -1,6 +1,6 @@
 package de.idrinth.waraddonclient.model;
 
-import de.idrinth.waraddonclient.Config;
+import de.idrinth.waraddonclient.service.Config;
 import de.idrinth.waraddonclient.Utils;
 import de.idrinth.waraddonclient.service.FileLogger;
 import de.idrinth.waraddonclient.service.Request;

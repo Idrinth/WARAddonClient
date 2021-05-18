@@ -1,6 +1,5 @@
 package de.idrinth.waraddonclient.service;
 
-import de.idrinth.waraddonclient.Config;
 import java.io.File;
 import java.io.IOException;
 
