@@ -46,7 +46,6 @@ public class CliMain extends BaseMain {
             if (cli.hasOption("set-location") || cli.hasOption("setlocation")) {
                 String path = (cli.getOptionValue("set-location") != null) ? cli.getOptionValue("set-location") : cli.getOptionValue("setlocation");
                 config.setWARPath(path);
-                System.out.println("WAR-Path set.");
                 return;
             }
             file.checkPosition();
