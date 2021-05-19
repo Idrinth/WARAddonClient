@@ -1,14 +1,10 @@
 package de.idrinth.waraddonclient.service;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class MultiLogger extends BaseLogger {
     private final List<BaseLogger> loggers = new ArrayList<>();
-    public MultiLogger(BaseLogger ...loggers) {
-        this.loggers.addAll(Arrays.asList(loggers));
-    }
 
     public void add(BaseLogger logger) {
         for (BaseLogger loggr : loggers) {

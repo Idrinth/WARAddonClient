@@ -19,7 +19,7 @@ public final class FileLogger extends BaseLogger {
 
     @Override
     protected void log(String message, String severity) {
-        if (severity.equals("INFO")) {
+        if (severity.equals(info)) {
             return;
         }
         try {

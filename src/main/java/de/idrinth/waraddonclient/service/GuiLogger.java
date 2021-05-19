@@ -6,7 +6,7 @@ public class GuiLogger extends BaseLogger {
 
     @Override
     protected void log(String message, String severity) {
-        if (!severity.equals("Error")) {
+        if (!severity.equals(error)) {
             return;
         }
         JOptionPane.showMessageDialog(null, message);
