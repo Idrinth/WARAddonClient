@@ -2,8 +2,10 @@ package de.idrinth.waraddonclient;
 
 import de.idrinth.waraddonclient.service.Config;
 import de.idrinth.waraddonclient.model.TrustManager;
+import de.idrinth.waraddonclient.service.BaseLogger;
 import de.idrinth.waraddonclient.service.FileLogger;
 import de.idrinth.waraddonclient.service.FileSystem;
+import de.idrinth.waraddonclient.service.MultiLogger;
 import de.idrinth.waraddonclient.service.Request;
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -14,13 +16,20 @@ import java.security.cert.CertificateException;
 import javax.xml.parsers.ParserConfigurationException;
 
 abstract class BaseMain {
-    protected abstract void main(FileLogger logger, Config config, Request client, FileSystem file) throws FileSystem.FileSystemException, ParserConfigurationException, IOException;
-    public void run() throws CertificateException, IOException, URISyntaxException, KeyManagementException, KeyStoreException, NoSuchAlgorithmException, FileSystem.FileSystemException, ParserConfigurationException {
-        Config config = new Config();
-        FileLogger logger = new FileLogger(config.getLogFile());
-        Request client = new Request(new TrustManager(logger), logger, config);
-        FileSystem file = new FileSystem(config);
-        this.main(logger, config, client, file);
+    private final MultiLogger logger = new MultiLogger();
+    protected final void add(BaseLogger logger) {
+        this.logger.add(logger);
     }
-    public abstract void error(Exception ex);
+    protected abstract void main(MultiLogger logger, Config config, Request client, FileSystem file) throws FileSystem.FileSystemException, ParserConfigurationException, IOException;
+    public void run() {
+        try {
+            Config config = new Config();
+            add(new FileLogger(config.getLogFile()));
+            Request client = new Request(new TrustManager(logger), logger, config);
+            FileSystem file = new FileSystem(config);
+            this.main(logger, config, client, file);
+        } catch (ParserConfigurationException|FileSystem.FileSystemException|IOException|CertificateException|KeyManagementException|KeyStoreException|NoSuchAlgorithmException|URISyntaxException ex) {
+            logger.error(ex);
+        }
+    }
 }

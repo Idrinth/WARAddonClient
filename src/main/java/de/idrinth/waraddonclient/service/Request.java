@@ -18,11 +18,11 @@ public class Request {
 
     private final javax.net.ssl.SSLContext sslContext;
 
-    private final FileLogger logger;
+    private final BaseLogger logger;
     
     private final Config config;
 
-    public Request(TrustManager manager, FileLogger logger, Config config) throws NoSuchAlgorithmException, KeyStoreException, KeyManagementException {
+    public Request(TrustManager manager, BaseLogger logger, Config config) throws NoSuchAlgorithmException, KeyStoreException, KeyManagementException {
         this.logger = logger;
         this.config = config;
         sslContext = org.apache.http.ssl.SSLContextBuilder.create().loadTrustMaterial(

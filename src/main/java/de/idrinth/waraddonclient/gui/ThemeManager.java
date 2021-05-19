@@ -21,7 +21,7 @@ import de.idrinth.waraddonclient.gui.themes.JTattooMintLookAndFeelInfo;
 import de.idrinth.waraddonclient.gui.themes.JTattooNoireLookAndFeelInfo;
 import de.idrinth.waraddonclient.gui.themes.JTattooSmartLookAndFeelInfo;
 import de.idrinth.waraddonclient.gui.themes.JTattooTextureLookAndFeelInfo;
-import de.idrinth.waraddonclient.service.FileLogger;
+import de.idrinth.waraddonclient.service.BaseLogger;
 import de.idrinth.waraddonclient.service.Restarter;
 import java.awt.event.ActionEvent;
 import java.io.IOException;
@@ -31,13 +31,13 @@ import javax.swing.UnsupportedLookAndFeelException;
 
 public final class ThemeManager {
 
-    private final FileLogger logger;
+    private final BaseLogger logger;
     
     private final Config config;
     
     private final Restarter restarter;
 
-    public ThemeManager(FileLogger logger, Config config, Restarter restarter) {
+    public ThemeManager(BaseLogger logger, Config config, Restarter restarter) {
         this.logger = logger;
         this.config = config;
         this.restarter = restarter;

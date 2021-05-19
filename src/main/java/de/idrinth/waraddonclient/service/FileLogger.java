@@ -7,7 +7,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import org.apache.commons.io.FileUtils;
 
-public final class FileLogger {
+public final class FileLogger extends BaseLogger {
     private final File output;
 
     public FileLogger(File output) throws IOException {
@@ -17,7 +17,11 @@ public final class FileLogger {
         this.output = output;
     }
 
-    public void log(String message, String severity) {
+    @Override
+    protected void log(String message, String severity) {
+        if (severity.equals("INFO")) {
+            return;
+        }
         try {
             FileUtils.writeStringToFile(
                 output,
@@ -28,29 +32,5 @@ public final class FileLogger {
         } catch (Exception exception) {
             //ignore
         }
-    }
-
-    public void info(Throwable message) {
-        info(message.getLocalizedMessage());
-    }
-
-    public void warn(Throwable message) {
-        warn(message.getLocalizedMessage());
-    }
-
-    public void error(Throwable message) {
-        error(message.getLocalizedMessage());
-    }
-
-    public void info(String message) {
-        log(message, "INFO");
-    }
-
-    public void warn(String message) {
-        log(message, "WARN");
-    }
-
-    public void error(String message) {
-        log(message, "ERROR");
     }
 }

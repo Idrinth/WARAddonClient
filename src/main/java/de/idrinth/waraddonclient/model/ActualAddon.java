@@ -3,7 +3,7 @@ package de.idrinth.waraddonclient.model;
 import com.github.zafarkhaja.semver.Version;
 import de.idrinth.waraddonclient.service.Config;
 import de.idrinth.waraddonclient.Utils;
-import de.idrinth.waraddonclient.service.FileLogger;
+import de.idrinth.waraddonclient.service.BaseLogger;
 import de.idrinth.waraddonclient.service.Request;
 import de.idrinth.waraddonclient.service.XmlParser;
 import java.io.File;
@@ -44,13 +44,13 @@ public class ActualAddon implements de.idrinth.waraddonclient.model.Addon {
 
     private final Request client;
     
-    private final FileLogger logger;
+    private final BaseLogger logger;
     
     private final XmlParser parser;
     
     private final Config config;
     
-    public ActualAddon(javax.json.JsonObject addon, Request client, FileLogger logger, XmlParser parser, Config config) throws InvalidArgumentException {
+    public ActualAddon(javax.json.JsonObject addon, Request client, BaseLogger logger, XmlParser parser, Config config) throws InvalidArgumentException {
         if (addon == null) {
             throw new InvalidArgumentException("Addon is null");
         }

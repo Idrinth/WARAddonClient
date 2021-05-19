@@ -1,7 +1,7 @@
 package de.idrinth.waraddonclient.model;
 
 import de.idrinth.waraddonclient.service.Config;
-import de.idrinth.waraddonclient.service.FileLogger;
+import de.idrinth.waraddonclient.service.BaseLogger;
 import de.idrinth.waraddonclient.service.Request;
 import de.idrinth.waraddonclient.service.XmlParser;
 import java.io.IOException;
@@ -9,7 +9,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 public class CmdAddonList extends AddonList {
 
-    public CmdAddonList(Request client, FileLogger logger, XmlParser parser, Config config) {
+    public CmdAddonList(Request client, BaseLogger logger, XmlParser parser, Config config) {
         super(client, logger, parser, config);
     }
 
@@ -33,7 +33,7 @@ public class CmdAddonList extends AddonList {
             }
         });
         if (!found.get()) {
-            System.out.println("No addon found matching name: " + addonName);
+            logger.error("No addon found matching name: " + addonName);
         }
     }
 
@@ -48,7 +48,7 @@ public class CmdAddonList extends AddonList {
             }
         });
         if (!found.get()) {
-            System.out.println("No addon found matching name: " + addonName);
+            logger.error("No addon found matching name: " + addonName);
         }
     }
 

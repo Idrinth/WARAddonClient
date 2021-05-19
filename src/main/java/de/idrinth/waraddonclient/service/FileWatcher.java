@@ -14,11 +14,11 @@ public class FileWatcher implements java.lang.Runnable {
 
     private final WatchService watcher;
 
-    private final FileLogger logger;
+    private final BaseLogger logger;
     
     private final Config config;
 
-    public FileWatcher(GuiAddonList addonList, FileLogger logger, Config config) throws IOException {
+    public FileWatcher(GuiAddonList addonList, BaseLogger logger, Config config) throws IOException {
         this.addonList = addonList;
         this.logger = logger;
         this.config = config;

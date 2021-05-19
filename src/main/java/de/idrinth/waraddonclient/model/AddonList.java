@@ -1,7 +1,7 @@
 package de.idrinth.waraddonclient.model;
 
 import de.idrinth.waraddonclient.service.Config;
-import de.idrinth.waraddonclient.service.FileLogger;
+import de.idrinth.waraddonclient.service.BaseLogger;
 import de.idrinth.waraddonclient.service.Request;
 import de.idrinth.waraddonclient.service.XmlParser;
 import java.io.IOException;
@@ -17,13 +17,13 @@ public abstract class AddonList implements Runnable {
     
     protected final Request client;
     
-    protected final FileLogger logger;
+    protected final BaseLogger logger;
     
     private final XmlParser parser;
     
     private final Config config;
 
-    public AddonList(Request client, FileLogger logger, XmlParser parser, Config config) {
+    public AddonList(Request client, BaseLogger logger, XmlParser parser, Config config) {
         this.client = client;
         this.logger = logger;
         this.parser = parser;
