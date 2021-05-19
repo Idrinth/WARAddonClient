@@ -536,10 +536,12 @@ public class Window extends JFrame {
     private void removeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeButtonActionPerformed
         try {
             activeAddon.uninstall();
+            updateList();
+            JOptionPane.showMessageDialog(this, "The requested Addon was removed.");
         } catch (IOException exception) {
             logger.error(exception);
+            JOptionPane.showMessageDialog(this, "Sadly Removing failed, check if the folder is writeable.");
         }
-        updateList();
     }//GEN-LAST:event_removeButtonActionPerformed
 
     /**
