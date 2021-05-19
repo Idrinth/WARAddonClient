@@ -6,8 +6,6 @@ import de.idrinth.waraddonclient.service.FileLogger;
 import de.idrinth.waraddonclient.service.FileSystem;
 import de.idrinth.waraddonclient.service.Request;
 import de.idrinth.waraddonclient.service.XmlParser;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.xml.parsers.ParserConfigurationException;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -27,12 +25,12 @@ public class CliMain extends BaseMain {
     protected void main(FileLogger logger, Config config, Request client, FileSystem file) throws FileSystem.FileSystemException, ParserConfigurationException {
         
         Options options = new Options();
-        options.addOption("v", "version", false, "Get the version of the WARAddonClient.");
-        options.addOption("s", "setlocation", true, "Set the location of the WAR-Folder.");
+        Options helpMenu = new Options();
+        makeCommonOptions(options);
+        makeCommonOptions(helpMenu);
         options.addOption("u", "updateonly", false, "Update all avaible Addons to the latest version.");
-        options.addOption("i", "install", true, "Install/Update given addon.");
-        options.addOption("r", "remove", true, "Remove given addon.");
-        options.addOption("h", "help", false, "This output.");
+        options.addOption("s", "setlocation", true, "Update all avaible Addons to the latest version.");
+
         CommandLineParser parser = new DefaultParser();
         try {
             CommandLine cli = parser.parse(options, args);
@@ -42,17 +40,18 @@ public class CliMain extends BaseMain {
             }
             if (cli.hasOption("help")) {
                 HelpFormatter formatter = new HelpFormatter();
-                formatter.printHelp("waraddonclient", options, true);
+                formatter.printHelp("waraddonclient", helpMenu, true);
                 return;
             }
-            if (cli.hasOption("setlocation")) {
-                config.setWARPath(cli.getOptionValue("setlocation"));
+            if (cli.hasOption("set-location") || cli.hasOption("setlocation")) {
+                String path = (cli.getOptionValue("set-location") != null) ? cli.getOptionValue("set-location") : cli.getOptionValue("setlocation");
+                config.setWARPath(path);
                 return;
             }
             file.checkPosition();
             CmdAddonList addonList = new CmdAddonList(client, logger, new XmlParser(), config);
             addonList.run();
-            if (cli.hasOption("updateonly")) {
+            if (cli.hasOption("update-all") || cli.hasOption("updateonly")) {
                 addonList.update();
             }
             if (cli.hasOption("install")) {
@@ -63,13 +62,22 @@ public class CliMain extends BaseMain {
             }
         } catch(ParseException ex) {
             HelpFormatter formatter = new HelpFormatter();
-            formatter.printHelp("waraddonclient", options, true);
-            this.error(ex);
+            error(ex);
+            formatter.printHelp("waraddonclient", helpMenu, true);
         }
     }
 
     @Override
     public void error(Exception ex) {
-        ex.printStackTrace();
+        System.out.println(ex.getMessage());
+    }
+
+    public void makeCommonOptions (Options options) {
+        options.addOption("v", "version", false, "Get the version of the WARAddonClient.");
+        options.addOption("s", "set-location", true, "Set the location of the WAR-Folder.");
+        options.addOption("u", "update-all", false, "Update all avaible Addons to the latest version.");
+        options.addOption("i", "install", true, "Install/Update given addon.");
+        options.addOption("r", "remove", true, "Remove given addon.");
+        options.addOption("h", "help", false, "This output.");
     }
 }
