@@ -16,10 +16,10 @@ import java.security.cert.CertificateException;
 import javax.xml.parsers.ParserConfigurationException;
 
 abstract class BaseMain {
-    private final MultiLogger logger = new MultiLogger();
+    private final MultiLogger multiLogger = new MultiLogger();
 
     protected final void add(BaseLogger baseLogger) {
-        logger.add(baseLogger);
+        multiLogger.add(baseLogger);
     }
 
     protected abstract void main(MultiLogger logger, Config config, Request client, FileSystem file) throws FileSystem.FileSystemException, ParserConfigurationException, IOException;
@@ -28,11 +28,11 @@ abstract class BaseMain {
         try {
             Config config = new Config();
             add(new FileLogger(config.getLogFile()));
-            Request client = new Request(new TrustManager(logger), logger, config);
+            Request client = new Request(new TrustManager(multiLogger), multiLogger, config);
             FileSystem file = new FileSystem(config);
-            this.main(logger, config, client, file);
+            this.main(multiLogger, config, client, file);
         } catch (ParserConfigurationException|FileSystem.FileSystemException|IOException|CertificateException|KeyManagementException|KeyStoreException|NoSuchAlgorithmException|URISyntaxException ex) {
-            logger.error(ex);
+            multiLogger.error(ex);
         }
     }
 }
