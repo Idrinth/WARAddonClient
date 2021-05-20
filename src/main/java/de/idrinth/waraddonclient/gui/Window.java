@@ -5,6 +5,7 @@ import de.idrinth.waraddonclient.service.Config;
 import de.idrinth.waraddonclient.service.Backup;
 import de.idrinth.waraddonclient.model.Addon;
 import de.idrinth.waraddonclient.model.GuiAddonList;
+import de.idrinth.waraddonclient.model.NoAddon;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import net.lingala.zip4j.exception.ZipException;
@@ -26,7 +27,7 @@ import javax.swing.table.DefaultTableModel;
 
 public class Window extends JFrame {
 
-    private Addon activeAddon = new de.idrinth.waraddonclient.model.NoAddon();
+    private Addon activeAddon = new NoAddon();
     
     private final GuiAddonList addonList;
 
@@ -755,7 +756,10 @@ public class Window extends JFrame {
         @Override
         public void valueChanged(ListSelectionEvent event) {
             try {
-                activeAddon = addonList.get(addonListTable.convertRowIndexToModel(addonListTable.getSelectedRow()));
+                int row = addonListTable.getSelectedRow();
+                if (row != -1) {
+                    activeAddon = addonList.get(addonListTable.convertRowIndexToModel(row));
+                }
             } catch (java.lang.ArrayIndexOutOfBoundsException exception) {
                 logger.error(exception);
                 return;

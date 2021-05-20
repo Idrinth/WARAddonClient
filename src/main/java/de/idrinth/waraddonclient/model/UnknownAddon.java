@@ -48,8 +48,7 @@ public class UnknownAddon implements Addon {
             throw new InvalidArgumentException("Folder is known Add-On folder.");
         }
         for (java.io.File fileEntry : folder.listFiles()) {
-            if (!fileEntry.isDirectory()
-                    && FilenameUtils.getExtension(fileEntry.getName()).equalsIgnoreCase("mod")) {
+            if (!fileEntry.isDirectory() && FilenameUtils.getExtension(fileEntry.getName()).equalsIgnoreCase("mod")) {
                 try {
                     NodeList list = parser.parse(fileEntry).getElementsByTagName("UiMod");
                     installed = list.item(0).getAttributes().getNamedItem("version").getTextContent();

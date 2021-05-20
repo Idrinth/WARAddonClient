@@ -40,7 +40,7 @@ public class Config {
 
     private static final String VERSION_FILE = "/self.idrinth";
 
-    private final Preferences prefs = Preferences.userRoot().node(Config.class.getClass().getName());
+    private final Preferences prefs = Preferences.userRoot().node(Config.class.getCanonicalName());
 
     private final String version;
 

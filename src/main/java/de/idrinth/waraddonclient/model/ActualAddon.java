@@ -279,23 +279,28 @@ public class ActualAddon implements de.idrinth.waraddonclient.model.Addon {
             tmp.mkdirs();
             zipFile.extractAll(tmp.getAbsolutePath());
             StringBuilder sb = new StringBuilder();
+            ArrayList<String> folders = new ArrayList<>();
             for (File folder : tmp.listFiles()) {
                 sb.append("<folder>");
                 sb.append(folder.getName());
                 sb.append("</folder>");
+                folders.add(folder.getName());
             }
             Utils.deleteFolder(tmp);
             File target = find(name);
+            folders.add(target.getName());
             target.mkdirs();
-            FileUtils.writeStringToFile(
-                new File(target.getAbsoluteFile() + config.getVersionFile()),
-                "<?xml version=\"1.0\" encoding=\"UTF-8\"?><UiMod>"
-                + "<name>" + name + "</name>"
-                + "<version>" + version + "</version>"
-                + "<folders>" + sb + "</folders>"
-                + "</UiMod>",
-                StandardCharsets.UTF_8
-            );
+            for (String folder : folders) {
+                FileUtils.writeStringToFile(
+                    new File(config.getAddonFolder() + folder + config.getVersionFile()),
+                    "<?xml version=\"1.0\" encoding=\"UTF-8\"?><UiMod>"
+                    + "<name>" + name + "</name>"
+                    + "<version>" + version + "</version>"
+                    + "<folders>" + sb + "</folders>"
+                    + "</UiMod>",
+                    StandardCharsets.UTF_8
+                );
+            }
         }
     }
 
