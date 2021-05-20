@@ -12,7 +12,6 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import javax.xml.parsers.FactoryConfigurationError;
 import net.lingala.zip4j.ZipFile;
 import org.apache.commons.io.FileUtils;
@@ -236,7 +235,18 @@ public class ActualAddon implements de.idrinth.waraddonclient.model.Addon {
         private void uninstall(File addonFolder) throws IOException {
             try {
                 File versionFile = new File(addonFolder.getPath() + VERSION_FILE);
+                if (!versionFile.exists()) {
+                    File zip = getZip();
+                    writeMetaDataFile(new ZipFile(zip));
+                    FileUtils.deleteQuietly(zip);
+                }
                 NodeList list = parser.parse(versionFile).getElementsByTagName("folder");
+                if (list.getLength() == 0) {
+                    File zip = getZip();
+                    writeMetaDataFile(new ZipFile(zip));
+                    FileUtils.deleteQuietly(zip);
+                    list = parser.parse(versionFile).getElementsByTagName("folder");
+                }
                 for (int i=0;i<list.getLength();i++) {
                     Utils.deleteFolder(new File(config.getAddonFolder() + list.item(i).getTextContent()));
                 }
@@ -247,14 +257,8 @@ public class ActualAddon implements de.idrinth.waraddonclient.model.Addon {
             installed="-";
         }
 
-        /**
-         * downloads a zip for the install()-method
-         *
-         * @return java.io.File
-         * @throws java.lang.Exception
-         */
         private java.io.File getZip() throws IOException {
-            File zip = new File(config.getAddonFolder() + slug + ".zip");
+            File zip = new File(System.getProperty("java.io.tmpdir") + "/" + slug + ".zip");
             try (InputStream stream = client.getAddonDownload(slug + "/download/" + version.replace(".", "-") + "/")) {
                 FileUtils.copyInputStreamToFile(stream, zip);
             }
@@ -265,6 +269,12 @@ public class ActualAddon implements de.idrinth.waraddonclient.model.Addon {
             File zip = getZip();
             ZipFile zipFile = new ZipFile(zip);
             zipFile.extractAll(config.getAddonFolder());
+            writeMetaDataFile(zipFile);
+            FileUtils.deleteQuietly(zip);
+            installed=version;
+        }
+
+        private void writeMetaDataFile(ZipFile zipFile) throws IOException {
             File tmp = new File(System.getProperty("java.io.tmpdir") + "/waraddonfolder/" + name);
             Utils.deleteFolder(tmp);
             tmp.mkdirs();
@@ -276,7 +286,6 @@ public class ActualAddon implements de.idrinth.waraddonclient.model.Addon {
                 sb.append("</folder>");
             }
             Utils.deleteFolder(tmp);
-            FileUtils.deleteQuietly(zip);
             File target = find(name);
             target.mkdirs();
             FileUtils.writeStringToFile(
@@ -288,9 +297,7 @@ public class ActualAddon implements de.idrinth.waraddonclient.model.Addon {
                 + "</UiMod>",
                 StandardCharsets.UTF_8
             );
-            installed=version;
         }
-
     }
 
     private class VersionFinder {
