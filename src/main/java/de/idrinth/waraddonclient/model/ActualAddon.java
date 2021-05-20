@@ -3,7 +3,7 @@ package de.idrinth.waraddonclient.model;
 import com.github.zafarkhaja.semver.Version;
 import de.idrinth.waraddonclient.service.Config;
 import de.idrinth.waraddonclient.Utils;
-import de.idrinth.waraddonclient.service.BaseLogger;
+import de.idrinth.waraddonclient.service.logger.BaseLogger;
 import de.idrinth.waraddonclient.service.Request;
 import de.idrinth.waraddonclient.service.XmlParser;
 import java.io.File;
@@ -12,6 +12,7 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
+import javax.json.JsonArray;
 import javax.xml.parsers.FactoryConfigurationError;
 import net.lingala.zip4j.ZipFile;
 import org.apache.commons.io.FileUtils;
@@ -40,8 +41,6 @@ public class ActualAddon implements de.idrinth.waraddonclient.model.Addon {
 
     private ArrayList<String> tags = new ArrayList<>();
 
-    private static final String VERSION_FILE = "/self.idrinth";
-
     private final Request client;
     
     private final BaseLogger logger;
@@ -64,7 +63,7 @@ public class ActualAddon implements de.idrinth.waraddonclient.model.Addon {
         version = getStringFromObject("version", addon);
         slug = getStringFromObject("slug", addon);
         name = getStringFromObject("name", addon);
-        javax.json.JsonArray tagList = addon.getJsonArray("tags");
+        JsonArray tagList = addon.getJsonArray("tags");
         int counter = 0;
         while (tagList.size() > counter) {
             tags.add(tagList.getString(counter));
@@ -234,7 +233,7 @@ public class ActualAddon implements de.idrinth.waraddonclient.model.Addon {
 
         private void uninstall(File addonFolder) throws IOException {
             try {
-                File versionFile = new File(addonFolder.getPath() + VERSION_FILE);
+                File versionFile = new File(addonFolder.getPath() + config.getVersionFile());
                 if (!versionFile.exists()) {
                     File zip = getZip();
                     writeMetaDataFile(new ZipFile(zip));
@@ -289,7 +288,7 @@ public class ActualAddon implements de.idrinth.waraddonclient.model.Addon {
             File target = find(name);
             target.mkdirs();
             FileUtils.writeStringToFile(
-                new File(target.getAbsoluteFile() + VERSION_FILE),
+                new File(target.getAbsoluteFile() + config.getVersionFile()),
                 "<?xml version=\"1.0\" encoding=\"UTF-8\"?><UiMod>"
                 + "<name>" + name + "</name>"
                 + "<version>" + version + "</version>"
@@ -328,7 +327,7 @@ public class ActualAddon implements de.idrinth.waraddonclient.model.Addon {
          * tries to find and set the default version
          */
         private boolean getDownloadVersion() {
-            File versionFile = new File(folder.getPath() + VERSION_FILE);
+            File versionFile = new File(folder.getPath() + config.getVersionFile());
             if (versionFile.exists()) {
                 try {
                     NodeList list = parser.parse(versionFile).getElementsByTagName("version");
@@ -418,12 +417,5 @@ public class ActualAddon implements de.idrinth.waraddonclient.model.Addon {
     @Override
     public String getUrl() {
         return url;
-    }
-
-    public class InvalidArgumentException extends Exception {
-
-        private InvalidArgumentException(String error) {
-            super(error);
-        }
     }
 }

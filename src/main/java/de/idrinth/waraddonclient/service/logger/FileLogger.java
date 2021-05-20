@@ -1,4 +1,4 @@
-package de.idrinth.waraddonclient.service;
+package de.idrinth.waraddonclient.service.logger;
 
 import java.io.File;
 import java.io.IOException;
@@ -19,7 +19,7 @@ public final class FileLogger extends BaseLogger {
 
     @Override
     protected void log(String message, String severity) {
-        if (severity.equals(info)) {
+        if (severity.equals(LEVEL_INFO)) {
             return;
         }
         try {

@@ -2,7 +2,7 @@ package de.idrinth.waraddonclient.model;
 
 import de.idrinth.waraddonclient.service.Config;
 import de.idrinth.waraddonclient.Utils;
-import de.idrinth.waraddonclient.service.BaseLogger;
+import de.idrinth.waraddonclient.service.logger.BaseLogger;
 import de.idrinth.waraddonclient.service.Request;
 import de.idrinth.waraddonclient.service.XmlParser;
 import java.awt.event.ActionListener;
@@ -10,6 +10,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import javax.json.JsonArray;
 import javax.swing.JMenu;
 import javax.swing.table.DefaultTableModel;
@@ -28,6 +29,8 @@ public class GuiAddonList extends AddonList
 
     private final HashMap<String, WatchedFile> watchedFilesMap = new HashMap<>();
     
+    private final ArrayList<String[]> rowsToAdd = new ArrayList<>();
+    
     public GuiAddonList(Request client, BaseLogger logger, XmlParser parser, Config config) {
         super(client, logger, parser, config);
     }
@@ -39,29 +42,40 @@ public class GuiAddonList extends AddonList
 
     public void setModel(DefaultTableModel model) {
         this.model = model;
+        for (String[] row: rowsToAdd) {
+            model.addRow(row);
+        }
+        rowsToAdd.clear();
     }
     /**
      * processes the addon lst to see what addon is tagged with a specific tag
      */
     private void processAddons() {
-        for (int counter = 0; counter < size(); counter++) {
-            for (String tag : get(counter).getTags()) {
+        for (Addon addon : rows) {
+            for (String tag : addon.getTags()) {
                 if (!tags.containsKey(tag)) {
                     tags.put(tag, new Tag(tag, listener));
                 }
-                tags.get(tag).addMember(get(counter));
+                tags.get(tag).addMember(addon);
                 if (!tagNames.contains(tag)) {
                     tagNames.add(tag);
                 }
             }
         }
     }
+    
+    @Override
+    public void add(Addon addon) {
+        super.add(addon);
+        if (model == null) {
+            rowsToAdd.add(addon.getTableRow());
+            return;
+        }
+        model.addRow(addon.getTableRow());
+    }
 
-    /**
-     * get the selected tags
-     */
-    public java.util.ArrayList<String> getActiveTags() {
-        java.util.ArrayList<String> active = new ArrayList<>();
+    public List<String> getActiveTags() {
+        ArrayList<String> active = new ArrayList<>();
         tagNames.stream().filter(tag -> (tags.get(tag).isActive())).forEach(tag -> active.add(tag));
         return active;
     }
@@ -78,7 +92,7 @@ public class GuiAddonList extends AddonList
                 menu.remove(tags.get(name).getMenu());
                 tags.remove(name);
                 tagNames.remove(name);
-            } else if (menu != null && tags.get(name).getMenu().getParent() == null) {
+            } else {
                 menu.add(tags.get(name).getMenu());
             }
         });
@@ -90,6 +104,7 @@ public class GuiAddonList extends AddonList
 
     @Override
     public void run() {
+        processAddonDir();
         try {
             new JsonProcessor(client.getAddonList(), model).run();
             processAddons();
@@ -107,16 +122,11 @@ public class GuiAddonList extends AddonList
 
         private final ArrayList<ActualAddon> list = new ArrayList<>();
 
-        /**
-         * Adds an addon to watch an be handled here
-         *
-         * @param addon
-         */
-        public void addAddon(de.idrinth.waraddonclient.model.ActualAddon addon) {
+        public void addAddon(ActualAddon addon) {
             list.add(addon);
         }
 
-        public void setFileToProcess(java.io.File file2process) {
+        public void setFileToProcess(File file2process) {
             while (active) {
                 Utils.sleep(100, logger);
             }
@@ -125,9 +135,6 @@ public class GuiAddonList extends AddonList
             new java.lang.Thread(this).start();
         }
 
-        /**
-         * check if a file was actually updated and is avaible
-         */
         @Override
         public void run() {
             if (file == null || !file.exists()) {
@@ -150,7 +157,6 @@ public class GuiAddonList extends AddonList
 
         protected void newAddon(ActualAddon addon) {
             super.newAddon(addon);
-            model.addRow(addon.getTableRow());
             if (!addon.getFile().isEmpty()) {
                 if (!watchedFilesMap.containsKey(addon.getFile().toLowerCase())) {
                     watchedFilesMap.put(addon.getFile().toLowerCase(), new WatchedFile());
@@ -161,6 +167,15 @@ public class GuiAddonList extends AddonList
 
         protected void existingAddon(ActualAddon addon) {
             super.existingAddon(addon);
+            updateModel(addon);
+        }
+
+        protected void unknownAddon(ActualAddon addon) {
+            super.unknownAddon(addon);
+            updateModel(addon);
+        }
+        
+        private void updateModel(ActualAddon addon) {
             String[] data = list.get(addon.getName()).getTableRow();
             model.setValueAt(data[0], rows.indexOf(list.get(addon.getName())), 0);
             model.setValueAt(data[1], rows.indexOf(list.get(addon.getName())), 1);

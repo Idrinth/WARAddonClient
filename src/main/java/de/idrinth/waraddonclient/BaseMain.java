@@ -2,10 +2,10 @@ package de.idrinth.waraddonclient;
 
 import de.idrinth.waraddonclient.service.Config;
 import de.idrinth.waraddonclient.model.TrustManager;
-import de.idrinth.waraddonclient.service.BaseLogger;
-import de.idrinth.waraddonclient.service.FileLogger;
+import de.idrinth.waraddonclient.service.logger.BaseLogger;
+import de.idrinth.waraddonclient.service.logger.FileLogger;
 import de.idrinth.waraddonclient.service.FileSystem;
-import de.idrinth.waraddonclient.service.MultiLogger;
+import de.idrinth.waraddonclient.service.logger.MultiLogger;
 import de.idrinth.waraddonclient.service.Request;
 import java.io.IOException;
 import java.net.URISyntaxException;

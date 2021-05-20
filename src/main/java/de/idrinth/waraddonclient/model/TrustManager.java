@@ -1,6 +1,6 @@
 package de.idrinth.waraddonclient.model;
 
-import de.idrinth.waraddonclient.service.BaseLogger;
+import de.idrinth.waraddonclient.service.logger.BaseLogger;
 import java.io.IOException;
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;

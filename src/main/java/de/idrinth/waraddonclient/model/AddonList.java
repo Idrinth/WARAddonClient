@@ -1,9 +1,10 @@
 package de.idrinth.waraddonclient.model;
 
 import de.idrinth.waraddonclient.service.Config;
-import de.idrinth.waraddonclient.service.BaseLogger;
+import de.idrinth.waraddonclient.service.logger.BaseLogger;
 import de.idrinth.waraddonclient.service.Request;
 import de.idrinth.waraddonclient.service.XmlParser;
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -11,9 +12,11 @@ import javax.json.JsonArray;
 
 public abstract class AddonList implements Runnable {
 
-    protected final HashMap<String, ActualAddon> list = new HashMap<>();
+    protected final HashMap<String, Addon> list = new HashMap<>();
 
-    protected final ArrayList<ActualAddon> rows = new ArrayList<>();
+    protected final ArrayList<Addon> rows = new ArrayList<>();
+    
+    private final HashMap<String, String> unknowns = new CaseInsensitiveHashMap<>();
     
     protected final Request client;
     
@@ -29,12 +32,23 @@ public abstract class AddonList implements Runnable {
         this.parser = parser;
         this.config = config;
     }
+    
+    protected void processAddonDir() {
+        for (File folder : new File(config.getAddonFolder()).listFiles()) {
+            try {
+                add(new UnknownAddon(folder, client, logger, parser, config));
+                unknowns.put(folder.getName(), rows.get(rows.size() - 1).getName());
+            } catch (InvalidArgumentException ex) {
+                logger.info(ex);
+            }
+        }
+    }
 
-    public ActualAddon get(int position) {
+    public Addon get(int position) {
         return rows.get(position);
     }
 
-    public ActualAddon get(String name) {
+    public Addon get(String name) {
         return list.get(name);
     }
 
@@ -52,7 +66,7 @@ public abstract class AddonList implements Runnable {
      *
      * @param addon
      */
-    public void add(de.idrinth.waraddonclient.model.ActualAddon addon) {
+    public void add(Addon addon) {
         list.put(addon.getName(), addon);
         rows.add(addon);
     }
@@ -72,7 +86,7 @@ public abstract class AddonList implements Runnable {
             for (int counter = json.size(); counter > 0; counter--) {
                 try {
                     processJsonAddon(new ActualAddon(json.getJsonObject(counter - 1), client, logger, parser, config));
-                } catch (ActualAddon.InvalidArgumentException ex) {
+                } catch (InvalidArgumentException ex) {
                     logger.error(ex);
                 }
             }
@@ -82,16 +96,32 @@ public abstract class AddonList implements Runnable {
             add(addon);
         }
 
-        private void processJsonAddon(de.idrinth.waraddonclient.model.ActualAddon addon) {
+        private void processJsonAddon(ActualAddon addon) {
             if (list.containsKey(addon.getName())) {
                 existingAddon(addon);
+                return;
+            }
+            if (unknowns.containsKey(addon.getName())) {
+                unknownAddon(addon);
                 return;
             }
             newAddon(addon);
         }
 
         protected void existingAddon(ActualAddon addon) {
-            list.get(addon.getName()).update(addon);
+            if (ActualAddon.class.isInstance(list.get(addon.getName()))) {
+                ((ActualAddon) list.get(addon.getName())).update(addon);
+                return;
+            }
+            rows.set(rows.indexOf(list.get(addon.getName())), addon);
+            list.put(addon.getName(), addon);
+        }
+
+        protected void unknownAddon(ActualAddon addon) {
+            String name = unknowns.get(addon.getName());
+            rows.set(rows.indexOf(list.get(name)), addon);
+            list.put(addon.getName(), addon);
+            list.remove(name);
         }
     }
 }

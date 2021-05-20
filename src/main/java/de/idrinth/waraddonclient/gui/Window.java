@@ -9,7 +9,7 @@ import java.net.URISyntaxException;
 import net.lingala.zip4j.exception.ZipException;
 import javax.swing.table.TableRowSorter;
 import de.idrinth.waraddonclient.service.Version;
-import de.idrinth.waraddonclient.service.BaseLogger;
+import de.idrinth.waraddonclient.service.logger.BaseLogger;
 import de.idrinth.waraddonclient.service.Restarter;
 import de.idrinth.waraddonclient.service.Shedule;
 import java.awt.Desktop;
@@ -392,6 +392,7 @@ public class Window extends JFrame {
         mainMenu.add(menuFile);
 
         menuTags.setText("Tags");
+        menuTags.setMaximumSize(new java.awt.Dimension(40, 22));
         mainMenu.add(menuTags);
 
         menuTools.setText("Tools");
@@ -703,9 +704,10 @@ public class Window extends JFrame {
      */
     private void updateList() {
         for (int position = 0; position < addonListTable.getRowCount(); position++) {
-            de.idrinth.waraddonclient.model.ActualAddon addon = addonList.get(addonListTable.convertRowIndexToModel(position));
-            addonListTable.setValueAt(addon.getInstalled(), position, 3);
+            Addon addon = addonList.get(addonListTable.convertRowIndexToModel(position));
             addonListTable.setValueAt(addon.getStatus(), position, 0);
+            addonListTable.setValueAt(addon.getVersion(), position, 2);
+            addonListTable.setValueAt(addon.getInstalled(), position, 3);
         }
     }
 

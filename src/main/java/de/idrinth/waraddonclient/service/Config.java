@@ -38,6 +38,8 @@ public class Config {
 
     private static final String BASE_URL = "https://tools.idrinth.de/";
 
+    private static final String VERSION_FILE = "/self.idrinth";
+
     private final Preferences prefs = Preferences.userRoot().node(Config.class.getClass().getName());
 
     private final String version;
@@ -134,5 +136,8 @@ public class Config {
     
     public File getJarDir() {
         return jarDir;
+    }
+    public String getVersionFile() {
+        return VERSION_FILE;
     }
 }

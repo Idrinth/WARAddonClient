@@ -30,4 +30,6 @@ public interface Addon {
     public String getUrl();
     
     public boolean showSettings();
+    
+    public String[] getTableRow();
 }

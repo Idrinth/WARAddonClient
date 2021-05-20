@@ -1,7 +1,7 @@
 package de.idrinth.waraddonclient.model;
 
 import de.idrinth.waraddonclient.service.Config;
-import de.idrinth.waraddonclient.service.BaseLogger;
+import de.idrinth.waraddonclient.service.logger.BaseLogger;
 import de.idrinth.waraddonclient.service.Request;
 import de.idrinth.waraddonclient.service.XmlParser;
 import java.io.IOException;
@@ -15,6 +15,7 @@ public class CmdAddonList extends AddonList {
 
     @Override
     public void run() {
+        processAddonDir();
         try {
             new JsonProcessor(client.getAddonList()).run();
         } catch (IOException exception) {
