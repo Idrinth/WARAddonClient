@@ -1,5 +1,6 @@
 package de.idrinth.waraddonclient.gui;
 
+import darrylbu.util.MenuScroller;
 import de.idrinth.waraddonclient.service.Config;
 import de.idrinth.waraddonclient.service.Backup;
 import de.idrinth.waraddonclient.model.Addon;
@@ -60,6 +61,7 @@ public class Window extends JFrame {
         localVersion.setText(config.getVersion());
         addonList.setMenu(menuTags, (java.awt.event.ActionEvent evt) -> newFilter());
         schedule.register(300, addonList);
+        MenuScroller.setScrollerFor(menuTags);
         (new TableListener()).updateUi();
     }
 
