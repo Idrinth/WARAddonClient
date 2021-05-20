@@ -68,7 +68,8 @@ public class UnknownAddon implements Addon {
     @Override
     public ArrayList<String> getTags() {
         ArrayList <String> list = new ArrayList<>();
-        list.add("untagged");
+        list.add("Not Tagged");
+        list.add("Auto-Discovered");
         return list;
     }
 
@@ -79,7 +80,7 @@ public class UnknownAddon implements Addon {
      * @return boolean
      */
     public boolean hasTag(String tag) {
-        return false;
+        return "Not Tagged".equals(tag) || "Auto-Discovered".equals(tag);
     }
 
     public String getVersion() {

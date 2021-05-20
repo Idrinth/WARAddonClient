@@ -51,12 +51,12 @@ public class GuiAddonList extends AddonList
      * processes the addon lst to see what addon is tagged with a specific tag
      */
     private void processAddons() {
-        for (int counter = 0; counter < size(); counter++) {
-            for (String tag : get(counter).getTags()) {
+        for (Addon addon : rows) {
+            for (String tag : addon.getTags()) {
                 if (!tags.containsKey(tag)) {
                     tags.put(tag, new Tag(tag, listener));
                 }
-                tags.get(tag).addMember((ActualAddon) get(counter));
+                tags.get(tag).addMember(addon);
                 if (!tagNames.contains(tag)) {
                     tagNames.add(tag);
                 }
@@ -92,7 +92,7 @@ public class GuiAddonList extends AddonList
                 menu.remove(tags.get(name).getMenu());
                 tags.remove(name);
                 tagNames.remove(name);
-            } else if (menu != null && tags.get(name).getMenu().getParent() == null) {
+            } else {
                 menu.add(tags.get(name).getMenu());
             }
         });

@@ -392,6 +392,7 @@ public class Window extends JFrame {
         mainMenu.add(menuFile);
 
         menuTags.setText("Tags");
+        menuTags.setMaximumSize(new java.awt.Dimension(40, 22));
         mainMenu.add(menuTags);
 
         menuTools.setText("Tools");

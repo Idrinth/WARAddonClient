@@ -18,4 +18,27 @@ public class CliLogger extends BaseLogger {
         }
         System.err.println(formatted);
     }
+    @Override
+    public void info(Throwable message) {
+        super.info(message);
+        if (verbose) {
+            message.printStackTrace();
+        }
+    }
+
+    @Override
+    public void warn(Throwable message) {
+        super.warn(message);
+        if (verbose) {
+            message.printStackTrace();
+        }
+    }
+
+    @Override
+    public void error(Throwable message) {
+        super.error(message);
+        if (verbose) {
+            message.printStackTrace();
+        }
+    }
 }

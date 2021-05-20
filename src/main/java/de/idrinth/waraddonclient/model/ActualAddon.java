@@ -12,6 +12,7 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
+import javax.json.JsonArray;
 import javax.xml.parsers.FactoryConfigurationError;
 import net.lingala.zip4j.ZipFile;
 import org.apache.commons.io.FileUtils;
@@ -62,7 +63,7 @@ public class ActualAddon implements de.idrinth.waraddonclient.model.Addon {
         version = getStringFromObject("version", addon);
         slug = getStringFromObject("slug", addon);
         name = getStringFromObject("name", addon);
-        javax.json.JsonArray tagList = addon.getJsonArray("tags");
+        JsonArray tagList = addon.getJsonArray("tags");
         int counter = 0;
         while (tagList.size() > counter) {
             tags.add(tagList.getString(counter));

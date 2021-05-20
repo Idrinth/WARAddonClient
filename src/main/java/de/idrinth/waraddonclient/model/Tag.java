@@ -8,7 +8,7 @@ public class Tag {
 
     private final String name;
 
-    private final HashMap<String, ActualAddon> list = new java.util.HashMap<>();
+    private final HashMap<String, Addon> list = new java.util.HashMap<>();
 
     private final JCheckBoxMenuItem item;
 
@@ -20,7 +20,7 @@ public class Tag {
         item.addActionListener(update);
     }
 
-    public javax.swing.JCheckBoxMenuItem getMenu() {
+    public JCheckBoxMenuItem getMenu() {
         return item;
     }
 
@@ -32,7 +32,7 @@ public class Tag {
         return !list.isEmpty();
     }
 
-    public void addMember(ActualAddon addon) {
+    public void addMember(Addon addon) {
         list.put(addon.getName(), addon);
     }
 
