@@ -89,7 +89,7 @@ public class Request {
             }
             client.close();
         } catch (java.io.IOException exception) {
-            logger.error(exception);
+            //do nothing, not important
         }
         return version;
     }

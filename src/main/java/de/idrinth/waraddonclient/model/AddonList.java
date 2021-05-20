@@ -36,8 +36,10 @@ public abstract class AddonList implements Runnable {
     protected void processAddonDir() {
         for (File folder : new File(config.getAddonFolder()).listFiles()) {
             try {
-                add(new UnknownAddon(folder, client, logger, parser, config));
-                unknowns.put(folder.getName(), rows.get(rows.size() - 1).getName());
+                if (folder.isDirectory()) {
+                    add(new UnknownAddon(folder, client, logger, parser, config));
+                    unknowns.put(folder.getName(), rows.get(rows.size() - 1).getName());
+                }
             } catch (InvalidArgumentException ex) {
                 logger.info(ex);
             }
