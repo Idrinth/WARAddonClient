@@ -1,4 +1,4 @@
-package de.idrinth.waraddonclient.service;
+package de.idrinth.waraddonclient.service.logger;
 
 public class CliLogger extends BaseLogger {
     private final boolean verbose;
@@ -10,7 +10,7 @@ public class CliLogger extends BaseLogger {
     @Override
     protected void log(String message, String severity) {
         String formatted = "[" + severity + "] " + message;
-        if (severity.equals(info)) {
+        if (severity.equals(LEVEL_INFO)) {
             if (verbose) {
                 System.out.println(formatted);
             }

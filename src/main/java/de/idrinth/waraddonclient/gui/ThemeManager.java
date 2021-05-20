@@ -21,7 +21,7 @@ import de.idrinth.waraddonclient.gui.themes.JTattooMintLookAndFeelInfo;
 import de.idrinth.waraddonclient.gui.themes.JTattooNoireLookAndFeelInfo;
 import de.idrinth.waraddonclient.gui.themes.JTattooSmartLookAndFeelInfo;
 import de.idrinth.waraddonclient.gui.themes.JTattooTextureLookAndFeelInfo;
-import de.idrinth.waraddonclient.service.BaseLogger;
+import de.idrinth.waraddonclient.service.logger.BaseLogger;
 import de.idrinth.waraddonclient.service.Restarter;
 import java.awt.event.ActionEvent;
 import java.io.IOException;

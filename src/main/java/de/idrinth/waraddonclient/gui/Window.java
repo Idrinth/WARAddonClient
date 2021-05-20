@@ -9,7 +9,7 @@ import java.net.URISyntaxException;
 import net.lingala.zip4j.exception.ZipException;
 import javax.swing.table.TableRowSorter;
 import de.idrinth.waraddonclient.service.Version;
-import de.idrinth.waraddonclient.service.BaseLogger;
+import de.idrinth.waraddonclient.service.logger.BaseLogger;
 import de.idrinth.waraddonclient.service.Restarter;
 import de.idrinth.waraddonclient.service.Shedule;
 import java.awt.Desktop;

@@ -1,5 +1,6 @@
 package de.idrinth.waraddonclient.service;
 
+import de.idrinth.waraddonclient.service.logger.BaseLogger;
 import de.idrinth.waraddonclient.Utils;
 import javax.swing.JLabel;
 

@@ -1,4 +1,4 @@
-package de.idrinth.waraddonclient.service;
+package de.idrinth.waraddonclient.service.logger;
 
 import java.util.ArrayList;
 import java.util.List;
