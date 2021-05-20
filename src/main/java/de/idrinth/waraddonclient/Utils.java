@@ -1,6 +1,6 @@
 package de.idrinth.waraddonclient;
 
-import de.idrinth.waraddonclient.service.FileLogger;
+import de.idrinth.waraddonclient.service.BaseLogger;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -29,7 +29,7 @@ public class Utils {
         emptyFolder(folder);
         Files.deleteIfExists(folder.toPath());
     }
-    public static void sleep(int duration, FileLogger logger) {
+    public static void sleep(int duration, BaseLogger logger) {
         try {
             Thread.sleep(duration);
         } catch (InterruptedException exception) {

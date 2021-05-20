@@ -17,13 +17,7 @@ public final class Main {
     }
 
     public static void main(String[] args) {
-        BaseMain main = get(args);
-        try {
-            main.run();
-        } catch (ParserConfigurationException|FileSystem.FileSystemException|IOException|CertificateException|KeyManagementException|KeyStoreException|NoSuchAlgorithmException|URISyntaxException ex) {
-            main.error(ex);
-            Runtime.getRuntime().exit(0);
-        }
+        get(args).run();
     }
     private static BaseMain get(String[] args) {
         return args.length > 0 ? new CliMain(args) : new GuiMain();

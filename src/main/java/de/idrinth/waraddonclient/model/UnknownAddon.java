@@ -2,7 +2,7 @@ package de.idrinth.waraddonclient.model;
 
 import de.idrinth.waraddonclient.Utils;
 import de.idrinth.waraddonclient.service.Config;
-import de.idrinth.waraddonclient.service.FileLogger;
+import de.idrinth.waraddonclient.service.BaseLogger;
 import de.idrinth.waraddonclient.service.Request;
 import de.idrinth.waraddonclient.service.XmlParser;
 import java.io.File;
@@ -30,7 +30,7 @@ public class UnknownAddon implements Addon {
 
     private final Request client;
     
-    private final FileLogger logger;
+    private final BaseLogger logger;
     
     private final XmlParser parser;
     
@@ -38,7 +38,7 @@ public class UnknownAddon implements Addon {
     
     private final File folder;
     
-    public UnknownAddon(File folder, Request client, FileLogger logger, XmlParser parser, Config config) throws InvalidArgumentException {
+    public UnknownAddon(File folder, Request client, BaseLogger logger, XmlParser parser, Config config) throws InvalidArgumentException {
         this.client = client;
         this.logger = logger;
         this.parser = parser;

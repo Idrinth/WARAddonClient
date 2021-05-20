@@ -1,6 +1,6 @@
 package de.idrinth.waraddonclient.model;
 
-import de.idrinth.waraddonclient.service.FileLogger;
+import de.idrinth.waraddonclient.service.BaseLogger;
 import java.io.IOException;
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
@@ -15,9 +15,9 @@ public class TrustManager implements TrustStrategy {
 
     private javax.net.ssl.X509TrustManager manager;
     
-    private final FileLogger logger;
+    private final BaseLogger logger;
 
-    public TrustManager(FileLogger logger) throws CertificateException, KeyManagementException, KeyStoreException, IOException, NoSuchAlgorithmException {
+    public TrustManager(BaseLogger logger) throws CertificateException, KeyManagementException, KeyStoreException, IOException, NoSuchAlgorithmException {
         this.logger = logger;
         getStore();
         //tools.idrinth.de
