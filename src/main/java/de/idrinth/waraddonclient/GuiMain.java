@@ -6,21 +6,26 @@ import de.idrinth.waraddonclient.gui.ThemeManager;
 import de.idrinth.waraddonclient.gui.Window;
 import de.idrinth.waraddonclient.model.GuiAddonList;
 import de.idrinth.waraddonclient.service.Backup;
-import de.idrinth.waraddonclient.service.FileLogger;
 import de.idrinth.waraddonclient.service.FileSystem;
 import de.idrinth.waraddonclient.service.FileWatcher;
+import de.idrinth.waraddonclient.service.GuiLogger;
+import de.idrinth.waraddonclient.service.MultiLogger;
 import de.idrinth.waraddonclient.service.Request;
 import de.idrinth.waraddonclient.service.Restarter;
 import de.idrinth.waraddonclient.service.Shedule;
 import de.idrinth.waraddonclient.service.Version;
 import de.idrinth.waraddonclient.service.XmlParser;
 import java.io.IOException;
-import javax.swing.JOptionPane;
 import javax.xml.parsers.ParserConfigurationException;
 
 public class GuiMain extends BaseMain {
+
+    public GuiMain() {
+        add(new GuiLogger());
+    }
+    
    @Override
-   protected void main(FileLogger logger, Config config, Request client, FileSystem file) throws FileSystem.FileSystemException, ParserConfigurationException, IOException {
+   protected void main(MultiLogger logger, Config config, Request client, FileSystem file) throws FileSystem.FileSystemException, ParserConfigurationException, IOException {
        file.processPosition();
        Shedule schedule = new Shedule();
        Restarter restarter = new  Restarter(config);
@@ -34,10 +39,5 @@ public class GuiMain extends BaseMain {
            new FrameRestorer(config).restore(window);
            window.setVisible(true);
        });
-    }
-
-    @Override
-    public void error(Exception ex) {
-        JOptionPane.showMessageDialog(null, ex.getLocalizedMessage());
     }
 }

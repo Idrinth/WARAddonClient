@@ -2,7 +2,7 @@ package de.idrinth.waraddonclient.model;
 
 import de.idrinth.waraddonclient.service.Config;
 import de.idrinth.waraddonclient.Utils;
-import de.idrinth.waraddonclient.service.FileLogger;
+import de.idrinth.waraddonclient.service.BaseLogger;
 import de.idrinth.waraddonclient.service.Request;
 import de.idrinth.waraddonclient.service.XmlParser;
 import java.awt.event.ActionListener;
@@ -28,7 +28,7 @@ public class GuiAddonList extends AddonList
 
     private final HashMap<String, WatchedFile> watchedFilesMap = new HashMap<>();
     
-    public GuiAddonList(Request client, FileLogger logger, XmlParser parser, Config config) {
+    public GuiAddonList(Request client, BaseLogger logger, XmlParser parser, Config config) {
         super(client, logger, parser, config);
     }
 

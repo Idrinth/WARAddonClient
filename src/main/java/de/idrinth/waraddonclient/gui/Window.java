@@ -9,7 +9,7 @@ import java.net.URISyntaxException;
 import net.lingala.zip4j.exception.ZipException;
 import javax.swing.table.TableRowSorter;
 import de.idrinth.waraddonclient.service.Version;
-import de.idrinth.waraddonclient.service.FileLogger;
+import de.idrinth.waraddonclient.service.BaseLogger;
 import de.idrinth.waraddonclient.service.Restarter;
 import de.idrinth.waraddonclient.service.Shedule;
 import java.awt.Desktop;
@@ -29,7 +29,7 @@ public class Window extends JFrame {
     
     private final GuiAddonList addonList;
 
-    private final FileLogger logger;
+    private final BaseLogger logger;
     
     private final Config config;
 
@@ -37,7 +37,7 @@ public class Window extends JFrame {
     
     private final Restarter restarter;
 
-    public Window(GuiAddonList addonList, Version version, ThemeManager manager, FileLogger logger, Shedule schedule, Config config, Backup backup, Restarter restarter) {
+    public Window(GuiAddonList addonList, Version version, ThemeManager manager, BaseLogger logger, Shedule schedule, Config config, Backup backup, Restarter restarter) {
         this.addonList = addonList;
         this.restarter = restarter;
         this.logger = logger;
