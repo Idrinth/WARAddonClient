@@ -55,7 +55,7 @@ public class UnknownAddon implements Addon {
                     installed = list.item(0).getAttributes().getNamedItem("version").getTextContent();
                     name = list.item(0).getAttributes().getNamedItem("name").getTextContent();
                 } catch (FactoryConfigurationError | SAXException | IOException exception) {
-                    logger.error(exception);
+                    logger.warn(exception);
                 }
             }
         }
