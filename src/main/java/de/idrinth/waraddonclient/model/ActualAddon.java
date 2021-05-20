@@ -185,11 +185,11 @@ public class ActualAddon implements de.idrinth.waraddonclient.model.Addon {
     }
 
     public void install() throws IOException {
-        (new Updater()).run(true);
+        (new Updater()).run(find(name), true);
     }
 
     public void uninstall() throws IOException {
-        (new Updater()).run(false);
+        (new Updater()).run(find(name), false);
     }
 
     public void fileWasChanged(File changedFile) {
@@ -223,15 +223,8 @@ public class ActualAddon implements de.idrinth.waraddonclient.model.Addon {
     }
 
     private class Updater {
-
-        /**
-         * deleted,updates or installs the addon
-         *
-         * @param redeploy
-         * @throws java.lang.Exception
-         */
-        public void run(boolean redeploy) throws IOException {
-            uninstall();
+        public void run(File folder, boolean redeploy) throws IOException {
+            uninstall(folder);
             if (redeploy) {
                 install();
             }
@@ -239,20 +232,33 @@ public class ActualAddon implements de.idrinth.waraddonclient.model.Addon {
             config.setEnabled(name, false);
         }
 
-        private void uninstall() throws IOException {
-            File addonFolder = new File(config.getAddonFolder() + name);
+        private void uninstall(File addonFolder) throws IOException {
+            try {
+                File versionFile = new File(addonFolder.getPath() + VERSION_FILE);
+                if (!versionFile.exists()) {
+                    File zip = getZip();
+                    writeMetaDataFile(new ZipFile(zip));
+                    FileUtils.deleteQuietly(zip);
+                }
+                NodeList list = parser.parse(versionFile).getElementsByTagName("folder");
+                if (list.getLength() == 0) {
+                    File zip = getZip();
+                    writeMetaDataFile(new ZipFile(zip));
+                    FileUtils.deleteQuietly(zip);
+                    list = parser.parse(versionFile).getElementsByTagName("folder");
+                }
+                for (int i=0;i<list.getLength();i++) {
+                    Utils.deleteFolder(new File(config.getAddonFolder() + list.item(i).getTextContent()));
+                }
+            } catch (IOException | SAXException e) {
+                logger.warn(e);
+            }
             Utils.deleteFolder(addonFolder);
             installed="-";
         }
 
-        /**
-         * downloads a zip for the install()-method
-         *
-         * @return java.io.File
-         * @throws java.lang.Exception
-         */
         private java.io.File getZip() throws IOException {
-            File zip = new File(config.getAddonFolder() + slug + ".zip");
+            File zip = new File(System.getProperty("java.io.tmpdir") + "/" + slug + ".zip");
             try (InputStream stream = client.getAddonDownload(slug + "/download/" + version.replace(".", "-") + "/")) {
                 FileUtils.copyInputStreamToFile(stream, zip);
             }
@@ -261,18 +267,37 @@ public class ActualAddon implements de.idrinth.waraddonclient.model.Addon {
 
         private void install() throws IOException {
             File zip = getZip();
-            (new ZipFile(zip)).extractAll(config.getAddonFolder());
+            ZipFile zipFile = new ZipFile(zip);
+            zipFile.extractAll(config.getAddonFolder());
+            writeMetaDataFile(zipFile);
             FileUtils.deleteQuietly(zip);
+            installed=version;
+        }
+
+        private void writeMetaDataFile(ZipFile zipFile) throws IOException {
+            File tmp = new File(System.getProperty("java.io.tmpdir") + "/waraddonfolder/" + name);
+            Utils.deleteFolder(tmp);
+            tmp.mkdirs();
+            zipFile.extractAll(tmp.getAbsolutePath());
+            StringBuilder sb = new StringBuilder();
+            for (File folder : tmp.listFiles()) {
+                sb.append("<folder>");
+                sb.append(folder.getName());
+                sb.append("</folder>");
+            }
+            Utils.deleteFolder(tmp);
             File target = find(name);
             target.mkdirs();
             FileUtils.writeStringToFile(
                 new File(target.getAbsoluteFile() + VERSION_FILE),
-                "<?xml version=\"1.0\" encoding=\"UTF-8\"?><UiMod><name>" + name + "</name><version>" + version + "</version></UiMod>",
+                "<?xml version=\"1.0\" encoding=\"UTF-8\"?><UiMod>"
+                + "<name>" + name + "</name>"
+                + "<version>" + version + "</version>"
+                + "<folders>" + sb + "</folders>"
+                + "</UiMod>",
                 StandardCharsets.UTF_8
             );
-            installed=version;
         }
-
     }
 
     private class VersionFinder {
