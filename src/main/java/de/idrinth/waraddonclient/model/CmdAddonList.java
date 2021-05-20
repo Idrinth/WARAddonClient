@@ -15,6 +15,7 @@ public class CmdAddonList extends AddonList {
 
     @Override
     public void run() {
+        processAddonDir();
         try {
             new JsonProcessor(client.getAddonList()).run();
         } catch (IOException exception) {

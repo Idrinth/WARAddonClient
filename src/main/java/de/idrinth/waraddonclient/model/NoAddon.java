@@ -69,4 +69,13 @@ public class NoAddon implements de.idrinth.waraddonclient.model.Addon {
         return false;
     }
 
+    @Override
+    public String[] getTableRow() {
+        String[] row = new String[4];
+        row[0] = "";
+        row[1] = "";
+        row[2] = "";
+        row[3] = "";
+        return row;
+    }
 }

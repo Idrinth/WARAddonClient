@@ -40,8 +40,6 @@ public class ActualAddon implements de.idrinth.waraddonclient.model.Addon {
 
     private ArrayList<String> tags = new ArrayList<>();
 
-    private static final String VERSION_FILE = "/self.idrinth";
-
     private final Request client;
     
     private final FileLogger logger;
@@ -234,7 +232,7 @@ public class ActualAddon implements de.idrinth.waraddonclient.model.Addon {
 
         private void uninstall(File addonFolder) throws IOException {
             try {
-                File versionFile = new File(addonFolder.getPath() + VERSION_FILE);
+                File versionFile = new File(addonFolder.getPath() + config.getVersionFile());
                 if (!versionFile.exists()) {
                     File zip = getZip();
                     writeMetaDataFile(new ZipFile(zip));
@@ -289,7 +287,7 @@ public class ActualAddon implements de.idrinth.waraddonclient.model.Addon {
             File target = find(name);
             target.mkdirs();
             FileUtils.writeStringToFile(
-                new File(target.getAbsoluteFile() + VERSION_FILE),
+                new File(target.getAbsoluteFile() + config.getVersionFile()),
                 "<?xml version=\"1.0\" encoding=\"UTF-8\"?><UiMod>"
                 + "<name>" + name + "</name>"
                 + "<version>" + version + "</version>"
@@ -328,7 +326,7 @@ public class ActualAddon implements de.idrinth.waraddonclient.model.Addon {
          * tries to find and set the default version
          */
         private boolean getDownloadVersion() {
-            File versionFile = new File(folder.getPath() + VERSION_FILE);
+            File versionFile = new File(folder.getPath() + config.getVersionFile());
             if (versionFile.exists()) {
                 try {
                     NodeList list = parser.parse(versionFile).getElementsByTagName("version");
@@ -418,12 +416,5 @@ public class ActualAddon implements de.idrinth.waraddonclient.model.Addon {
     @Override
     public String getUrl() {
         return url;
-    }
-
-    public class InvalidArgumentException extends Exception {
-
-        private InvalidArgumentException(String error) {
-            super(error);
-        }
     }
 }
