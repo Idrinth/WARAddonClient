@@ -1,7 +1,7 @@
 package de.idrinth.waraddonclient.gui;
 
 import de.idrinth.waraddonclient.model.GuiAddonList;
-import de.idrinth.waraddonclient.model.Addon;
+import de.idrinth.waraddonclient.model.addon.Addon;
 import java.util.List;
 import javax.swing.RowFilter;
 

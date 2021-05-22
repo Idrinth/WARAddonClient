@@ -1,8 +1,9 @@
-package de.idrinth.waraddonclient.model;
+package de.idrinth.waraddonclient.model.addon;
 
 import com.github.zafarkhaja.semver.Version;
 import de.idrinth.waraddonclient.service.Config;
 import de.idrinth.waraddonclient.Utils;
+import de.idrinth.waraddonclient.model.InvalidArgumentException;
 import de.idrinth.waraddonclient.service.logger.BaseLogger;
 import de.idrinth.waraddonclient.service.Request;
 import de.idrinth.waraddonclient.service.XmlParser;
@@ -13,13 +14,14 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import javax.json.JsonArray;
+import javax.json.JsonObject;
 import javax.xml.parsers.FactoryConfigurationError;
 import net.lingala.zip4j.ZipFile;
 import org.apache.commons.io.FileUtils;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-public class ActualAddon implements de.idrinth.waraddonclient.model.Addon {
+public class ActualAddon implements de.idrinth.waraddonclient.model.addon.Addon {
 
     private HashMap<String, String> descriptions = new HashMap<>();
     
@@ -37,6 +39,10 @@ public class ActualAddon implements de.idrinth.waraddonclient.model.Addon {
 
     private final String name;
 
+    private int endorsements;
+
+    private int downloads;
+
     private String installed = "-";
 
     private ArrayList<String> tags = new ArrayList<>();
@@ -49,6 +55,8 @@ public class ActualAddon implements de.idrinth.waraddonclient.model.Addon {
     
     private final Config config;
     
+    private String[] versions;
+    
     public ActualAddon(javax.json.JsonObject addon, Request client, BaseLogger logger, XmlParser parser, Config config) throws InvalidArgumentException {
         if (addon == null) {
             throw new InvalidArgumentException("Addon is null");
@@ -57,12 +65,19 @@ public class ActualAddon implements de.idrinth.waraddonclient.model.Addon {
         this.logger = logger;
         this.parser = parser;
         this.config = config;
-        descriptions.put("en", getStringFromObject("description", addon));
-        descriptions.put("fr", getStringFromObject("description_fr", addon));
-        descriptions.put("de", getStringFromObject("description_de", addon));
         version = getStringFromObject("version", addon);
         slug = getStringFromObject("slug", addon);
         name = getStringFromObject("name", addon);
+        try {
+            downloads = Integer.parseInt(getStringFromObject("downloads", addon));
+        } catch (NumberFormatException ex) {
+            downloads = 0;
+        }
+        try {
+            endorsements = Integer.parseInt(getStringFromObject("endorsements", addon));
+        } catch (NumberFormatException ex) {
+            endorsements = 0;
+        }
         JsonArray tagList = addon.getJsonArray("tags");
         int counter = 0;
         while (tagList.size() > counter) {
@@ -143,12 +158,14 @@ public class ActualAddon implements de.idrinth.waraddonclient.model.Addon {
      *
      * @return String[[
      */
-    public String[] getTableRow() {
-        String[] row = new String[4];
-        row[0] = this.getStatus();
-        row[1] = this.name;
-        row[2] = this.version;
-        row[3] = this.installed;
+    public Object[] getTableRow() {
+        Object[] row = new Object[6];
+        row[0] = getStatus();
+        row[1] = name;
+        row[2] = version;
+        row[3] = installed;
+        row[4] = endorsements;
+        row[5] = downloads;
         return row;
     }
 
@@ -159,12 +176,23 @@ public class ActualAddon implements de.idrinth.waraddonclient.model.Addon {
      * @return String
      */
     public String getDescription(String language) {
+        if (descriptions.isEmpty()) {
+            try {
+                JsonObject addon = client.getAddon(slug);
+                descriptions.put("en", getStringFromObject("description", addon));
+                descriptions.put("de", getStringFromObject("description_de", addon));
+                descriptions.put("fr", getStringFromObject("description_fr", addon));
+                //versions = (String[]) addon.getJsonArray("versions").toArray();
+            } catch (IOException ex) {
+                logger.error("Failed loading addon-data from server.");
+            }
+        }
         String description = "<p><strong>There is currently no Description for " + name + ".</strong></p>"
                 + "<p>You can help by adding one at <a href=\"http://tools.idrinth.de/addons/" + slug
                 + "/\">http://tools.idrinth.de/addons/" + slug + "/</a>.</p>";
         if (descriptions.containsKey(language) && !descriptions.get(language).isEmpty()) {
             description = descriptions.get(language);
-        } else if (!descriptions.get("en").isEmpty()) {
+        } else if (descriptions.get("en") != null &&  !descriptions.get("en").isEmpty()) {
             description = descriptions.get("en");
         }
         return "<html>" + description;
@@ -219,6 +247,16 @@ public class ActualAddon implements de.idrinth.waraddonclient.model.Addon {
             return "X";
         }
         return "X";
+    }
+
+    @Override
+    public int getEndorsements() {
+        return endorsements;
+    }
+
+    @Override
+    public int getDownloads() {
+        return downloads;
     }
 
     private class Updater {

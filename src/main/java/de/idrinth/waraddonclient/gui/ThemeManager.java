@@ -2,7 +2,6 @@ package de.idrinth.waraddonclient.gui;
 
 import de.idrinth.waraddonclient.service.Config;
 import de.idrinth.waraddonclient.gui.themes.DarculaLookAndFeelInfo;
-import de.idrinth.waraddonclient.Main;
 import de.idrinth.waraddonclient.gui.themes.FlatDarculaLookAndFeelInfo;
 import de.idrinth.waraddonclient.gui.themes.FlatDarkLookAndFeelInfo;
 import de.idrinth.waraddonclient.gui.themes.FlatIntelliJLookAndFeelInfo;

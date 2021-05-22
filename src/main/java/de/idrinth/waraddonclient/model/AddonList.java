@@ -1,5 +1,8 @@
 package de.idrinth.waraddonclient.model;
 
+import de.idrinth.waraddonclient.model.addon.UnknownAddon;
+import de.idrinth.waraddonclient.model.addon.ActualAddon;
+import de.idrinth.waraddonclient.model.addon.Addon;
 import de.idrinth.waraddonclient.service.Config;
 import de.idrinth.waraddonclient.service.logger.BaseLogger;
 import de.idrinth.waraddonclient.service.Request;

@@ -1,5 +1,6 @@
 package de.idrinth.waraddonclient.model;
 
+import de.idrinth.waraddonclient.model.addon.Addon;
 import java.awt.event.ActionListener;
 import java.util.HashMap;
 import javax.swing.JCheckBoxMenuItem;

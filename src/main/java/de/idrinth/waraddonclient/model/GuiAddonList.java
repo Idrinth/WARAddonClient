@@ -1,5 +1,7 @@
 package de.idrinth.waraddonclient.model;
 
+import de.idrinth.waraddonclient.model.addon.Addon;
+import de.idrinth.waraddonclient.model.addon.ActualAddon;
 import de.idrinth.waraddonclient.service.Config;
 import de.idrinth.waraddonclient.Utils;
 import de.idrinth.waraddonclient.service.logger.BaseLogger;
@@ -29,7 +31,7 @@ public class GuiAddonList extends AddonList
 
     private final HashMap<String, WatchedFile> watchedFilesMap = new HashMap<>();
     
-    private final ArrayList<String[]> rowsToAdd = new ArrayList<>();
+    private final ArrayList<Object[]> rowsToAdd = new ArrayList<>();
     
     public GuiAddonList(Request client, BaseLogger logger, XmlParser parser, Config config) {
         super(client, logger, parser, config);
@@ -42,7 +44,7 @@ public class GuiAddonList extends AddonList
 
     public void setModel(DefaultTableModel model) {
         this.model = model;
-        for (String[] row: rowsToAdd) {
+        for (Object[] row: rowsToAdd) {
             model.addRow(row);
         }
         rowsToAdd.clear();
@@ -107,11 +109,11 @@ public class GuiAddonList extends AddonList
         processAddonDir();
         try {
             new JsonProcessor(client.getAddonList(), model).run();
-            processAddons();
-            processTags();
         } catch (IOException exception) {
-            logger.error(exception);
+           logger.error(exception);
         }
+        processAddons();
+        processTags();
     }
 
     public class WatchedFile implements java.lang.Runnable {
@@ -176,11 +178,14 @@ public class GuiAddonList extends AddonList
         }
         
         private void updateModel(ActualAddon addon) {
-            String[] data = list.get(addon.getName()).getTableRow();
-            model.setValueAt(data[0], rows.indexOf(list.get(addon.getName())), 0);
-            model.setValueAt(data[1], rows.indexOf(list.get(addon.getName())), 1);
-            model.setValueAt(data[2], rows.indexOf(list.get(addon.getName())), 2);
-            model.setValueAt(data[3], rows.indexOf(list.get(addon.getName())), 3);
+            Object[] data = list.get(addon.getName()).getTableRow();
+            int index = rows.indexOf(list.get(addon.getName()));
+            model.setValueAt(data[0], index, 0);
+            model.setValueAt(data[1], index, 1);
+            model.setValueAt(data[2], index, 2);
+            model.setValueAt(data[3], index, 3);
+            model.setValueAt(data[4], index, 4);
+            model.setValueAt(data[5], index, 5);
         }
     }
 }

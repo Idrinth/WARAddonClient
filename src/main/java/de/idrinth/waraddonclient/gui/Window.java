@@ -3,9 +3,9 @@ package de.idrinth.waraddonclient.gui;
 import darrylbu.util.MenuScroller;
 import de.idrinth.waraddonclient.service.Config;
 import de.idrinth.waraddonclient.service.Backup;
-import de.idrinth.waraddonclient.model.Addon;
+import de.idrinth.waraddonclient.model.addon.Addon;
 import de.idrinth.waraddonclient.model.GuiAddonList;
-import de.idrinth.waraddonclient.model.NoAddon;
+import de.idrinth.waraddonclient.model.addon.NoAddon;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import net.lingala.zip4j.exception.ZipException;
@@ -129,10 +129,11 @@ public class Window extends JFrame {
         javax.swing.JMenuItem menuGuilded = new javax.swing.JMenuItem();
         javax.swing.JMenuItem menuBuyMeACoffee = new javax.swing.JMenuItem();
         javax.swing.JMenuItem menuSource = new javax.swing.JMenuItem();
+        javax.swing.JMenuItem menuWebpage = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        base.setDividerLocation(300);
+        base.setDividerLocation(350);
         base.setToolTipText("");
         base.setMinimumSize(new java.awt.Dimension(300, 200));
         base.setName(""); // NOI18N
@@ -156,14 +157,14 @@ public class Window extends JFrame {
 
             },
             new String [] {
-                "Status", "Name", "Version", "Installed"
+                "Status", "Name", "Version", "Installed", "Endorsements", "Downloads"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
+                java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Integer.class, java.lang.Integer.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false, false, false
+                false, false, false, false, false, false
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -200,13 +201,15 @@ public class Window extends JFrame {
         leftSideLayout.setHorizontalGroup(
             leftSideLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(leftSideLayout.createSequentialGroup()
-                .addComponent(inputSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 151, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(buttonDeleteSearch)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(buttonUpdateAll)
-                .addGap(0, 30, Short.MAX_VALUE))
-            .addComponent(scroll, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                .addGroup(leftSideLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(leftSideLayout.createSequentialGroup()
+                        .addComponent(inputSearch, javax.swing.GroupLayout.DEFAULT_SIZE, 219, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(buttonDeleteSearch)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(buttonUpdateAll))
+                    .addComponent(scroll, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+                .addContainerGap())
         );
         leftSideLayout.setVerticalGroup(
             leftSideLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -258,14 +261,6 @@ public class Window extends JFrame {
         tabMainLayout.setHorizontalGroup(
             tabMainLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(tabMainLayout.createSequentialGroup()
-                .addGap(21, 21, 21)
-                .addComponent(installButton)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(addonTitle, javax.swing.GroupLayout.DEFAULT_SIZE, 238, Short.MAX_VALUE)
-                .addGap(18, 18, 18)
-                .addComponent(removeButton)
-                .addGap(24, 24, 24))
-            .addGroup(tabMainLayout.createSequentialGroup()
                 .addComponent(localVersion)
                 .addGap(1, 1, 1)
                 .addComponent(slash)
@@ -274,6 +269,13 @@ public class Window extends JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(currentTags, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addComponent(scrollDescription, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(tabMainLayout.createSequentialGroup()
+                .addComponent(installButton)
+                .addGap(42, 42, 42)
+                .addComponent(addonTitle, javax.swing.GroupLayout.DEFAULT_SIZE, 300, Short.MAX_VALUE)
+                .addGap(36, 36, 36)
+                .addComponent(removeButton)
+                .addContainerGap())
         );
         tabMainLayout.setVerticalGroup(
             tabMainLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -321,7 +323,6 @@ public class Window extends JFrame {
         tabSettings.setLayout(tabSettingsLayout);
         tabSettingsLayout.setHorizontalGroup(
             tabSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(scrollSettings)
             .addGroup(tabSettingsLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(tabSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -329,17 +330,18 @@ public class Window extends JFrame {
                         .addComponent(uploadEnable)
                         .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(tabSettingsLayout.createSequentialGroup()
-                        .addComponent(uploadLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 185, Short.MAX_VALUE)
+                        .addComponent(uploadLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 256, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(uploadUrl, javax.swing.GroupLayout.PREFERRED_SIZE, 265, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(tabSettingsLayout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(uploadFile, javax.swing.GroupLayout.PREFERRED_SIZE, 265, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                        .addComponent(uploadFile, javax.swing.GroupLayout.PREFERRED_SIZE, 265, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(scrollSettings, javax.swing.GroupLayout.Alignment.TRAILING)))
             .addGroup(tabSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(tabSettingsLayout.createSequentialGroup()
                     .addContainerGap()
                     .addComponent(uploadFileLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 189, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addContainerGap(273, Short.MAX_VALUE)))
+                    .addContainerGap(344, Short.MAX_VALUE)))
         );
         tabSettingsLayout.setVerticalGroup(
             tabSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -479,6 +481,14 @@ public class Window extends JFrame {
             }
         });
         menuLinks.add(menuSource);
+
+        menuWebpage.setText("Webpage");
+        menuWebpage.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuWebpageActionPerformed(evt);
+            }
+        });
+        menuLinks.add(menuWebpage);
 
         mainMenu.add(menuLinks);
 
@@ -689,6 +699,14 @@ public class Window extends JFrame {
         }
     }//GEN-LAST:event_menuRestartActionPerformed
 
+    private void menuWebpageActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuWebpageActionPerformed
+        try {
+            Desktop.getDesktop().browse(new java.net.URI("https://tools.idrinth.de/"));
+        } catch (URISyntaxException | IOException ex) {
+            logger.error(ex);
+        }
+    }//GEN-LAST:event_menuWebpageActionPerformed
+
     /**
      * handles actual changing of languages
      *
@@ -709,8 +727,11 @@ public class Window extends JFrame {
         for (int position = 0; position < addonListTable.getRowCount(); position++) {
             Addon addon = addonList.get(addonListTable.convertRowIndexToModel(position));
             addonListTable.setValueAt(addon.getStatus(), position, 0);
+            addonListTable.setValueAt(addon.getName(), position, 1);
             addonListTable.setValueAt(addon.getVersion(), position, 2);
             addonListTable.setValueAt(addon.getInstalled(), position, 3);
+            addonListTable.setValueAt(addon.getEndorsements(), position, 4);
+            addonListTable.setValueAt(addon.getDownloads(), position, 5);
         }
     }
 

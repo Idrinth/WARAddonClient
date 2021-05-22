@@ -1,6 +1,7 @@
-package de.idrinth.waraddonclient.model;
+package de.idrinth.waraddonclient.model.addon;
 
 import de.idrinth.waraddonclient.Utils;
+import de.idrinth.waraddonclient.model.InvalidArgumentException;
 import de.idrinth.waraddonclient.service.Config;
 import de.idrinth.waraddonclient.service.logger.BaseLogger;
 import de.idrinth.waraddonclient.service.Request;
@@ -95,12 +96,14 @@ public class UnknownAddon implements Addon {
      *
      * @return String[[
      */
-    public String[] getTableRow() {
-        String[] row = new String[4];
+    public Object[] getTableRow() {
+        Object[] row = new Object[6];
         row[0] = this.getStatus();
         row[1] = this.name;
-        row[2] = "";
+        row[2] = getVersion();
         row[3] = this.installed;
+        row[4] = 0;
+        row[5] = 0;
         return row;
     }
 
@@ -216,5 +219,15 @@ public class UnknownAddon implements Addon {
     @Override
     public void install() throws IOException {
         throw new UnsupportedOperationException("You can't install an unknown Add-On.");
+    }
+
+    @Override
+    public int getEndorsements() {
+        return 0;
+    }
+
+    @Override
+    public int getDownloads() {
+        return 0;
     }
 }

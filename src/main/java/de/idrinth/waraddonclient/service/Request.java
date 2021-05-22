@@ -8,6 +8,9 @@ import de.idrinth.waraddonclient.model.TrustManager;
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
+import javax.json.Json;
+import javax.json.JsonArray;
+import javax.json.JsonObject;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
 
@@ -33,8 +36,15 @@ public class Request {
     }
 
     public javax.json.JsonArray getAddonList() throws IOException {
-        org.apache.http.HttpResponse response = executionHandler(new org.apache.http.client.methods.HttpGet(config.getURL() + "addon-api/"));
-        javax.json.JsonArray data = javax.json.Json.createReader(response.getEntity().getContent()).readArray();
+        HttpResponse response = executionHandler(new HttpGet(config.getURL() + "addon-api2/"));
+        JsonArray data = Json.createReader(response.getEntity().getContent()).readArray();
+        client.close();
+        return data;
+    }
+
+    public JsonObject getAddon(String slug) throws IOException {
+        HttpResponse response = executionHandler(new HttpGet(config.getURL() + "addon-api2/"+slug+"/"));
+        JsonObject data = Json.createReader(response.getEntity().getContent()).readObject();
         client.close();
         return data;
     }

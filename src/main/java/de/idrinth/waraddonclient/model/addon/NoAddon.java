@@ -1,8 +1,8 @@
-package de.idrinth.waraddonclient.model;
+package de.idrinth.waraddonclient.model.addon;
 
 import java.io.IOException;
 
-public class NoAddon implements de.idrinth.waraddonclient.model.Addon {
+public class NoAddon implements de.idrinth.waraddonclient.model.addon.Addon {
 
     @Override
     public java.util.ArrayList<String> getTags() {
@@ -70,12 +70,24 @@ public class NoAddon implements de.idrinth.waraddonclient.model.Addon {
     }
 
     @Override
-    public String[] getTableRow() {
-        String[] row = new String[4];
+    public Object[] getTableRow() {
+        Object[] row = new Object[6];
         row[0] = "";
         row[1] = "";
         row[2] = "";
         row[3] = "";
+        row[4] = 0;
+        row[5] = 0;
         return row;
+    }
+
+    @Override
+    public int getEndorsements() {
+        return 0;
+    }
+
+    @Override
+    public int getDownloads() {
+        return 0;
     }
 }

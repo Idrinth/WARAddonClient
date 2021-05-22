@@ -1,4 +1,4 @@
-package de.idrinth.waraddonclient.model;
+package de.idrinth.waraddonclient.model.addon;
 
 import java.io.IOException;
 import java.util.List;
@@ -31,5 +31,9 @@ public interface Addon {
     
     public boolean showSettings();
     
-    public String[] getTableRow();
+    public Object[] getTableRow();
+
+    public int getEndorsements();
+
+    public int getDownloads();
 }
