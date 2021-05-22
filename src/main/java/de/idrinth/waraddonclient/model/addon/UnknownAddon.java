@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import javax.xml.parsers.FactoryConfigurationError;
 import org.apache.commons.io.FilenameUtils;
+import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
@@ -39,6 +40,8 @@ public class UnknownAddon implements Addon {
     
     private final File folder;
     
+    private String defaultDescription = "";
+    
     public UnknownAddon(File folder, Request client, BaseLogger logger, XmlParser parser, Config config) throws InvalidArgumentException {
         this.client = client;
         this.logger = logger;
@@ -51,9 +54,14 @@ public class UnknownAddon implements Addon {
         for (java.io.File fileEntry : folder.listFiles()) {
             if (!fileEntry.isDirectory() && FilenameUtils.getExtension(fileEntry.getName()).equalsIgnoreCase("mod")) {
                 try {
-                    NodeList list = parser.parse(fileEntry).getElementsByTagName("UiMod");
+                    Document doc = parser.parse(fileEntry);
+                    NodeList list = doc.getElementsByTagName("UiMod");
                     installed = list.item(0).getAttributes().getNamedItem("version").getTextContent();
                     name = list.item(0).getAttributes().getNamedItem("name").getTextContent();
+                    NodeList description = doc.getElementsByTagName("Description");
+                    if (description.getLength() > 0) {
+                        defaultDescription = description.item(0).getAttributes().getNamedItem("text").getTextContent();
+                    }
                 } catch (FactoryConfigurationError | SAXException | IOException exception) {
                     logger.warn(exception);
                 }
@@ -115,7 +123,8 @@ public class UnknownAddon implements Addon {
      */
     public String getDescription(String language) {
         return "<p><strong>There is currently no Description for " + name + ".</strong></p>"
-                + "<p>You can help by adding the addon and one at <a href=\"http://tools.idrinth.de/addons/\">http://tools.idrinth.de/addons/</a>.</p>";
+                + "<p>You can help by adding the addon and one at <a href=\"http://tools.idrinth.de/addons/\">http://tools.idrinth.de/addons/</a>.</p>"
+                + "<p>"+defaultDescription+"</p>";
     }
 
     /**

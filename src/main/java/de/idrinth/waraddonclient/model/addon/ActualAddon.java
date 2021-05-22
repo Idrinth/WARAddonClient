@@ -57,6 +57,8 @@ public class ActualAddon implements de.idrinth.waraddonclient.model.addon.Addon 
     
     private String[] versions;
     
+    private String defaultDescription = "";
+    
     public ActualAddon(javax.json.JsonObject addon, Request client, BaseLogger logger, XmlParser parser, Config config) throws InvalidArgumentException {
         if (addon == null) {
             throw new InvalidArgumentException("Addon is null");
@@ -182,14 +184,14 @@ public class ActualAddon implements de.idrinth.waraddonclient.model.addon.Addon 
                 descriptions.put("en", getStringFromObject("description", addon));
                 descriptions.put("de", getStringFromObject("description_de", addon));
                 descriptions.put("fr", getStringFromObject("description_fr", addon));
-                //versions = (String[]) addon.getJsonArray("versions").toArray();
             } catch (IOException ex) {
                 logger.error("Failed loading addon-data from server.");
             }
         }
         String description = "<p><strong>There is currently no Description for " + name + ".</strong></p>"
                 + "<p>You can help by adding one at <a href=\"http://tools.idrinth.de/addons/" + slug
-                + "/\">http://tools.idrinth.de/addons/" + slug + "/</a>.</p>";
+                + "/\">http://tools.idrinth.de/addons/" + slug + "/</a>.</p>"
+                + "<p>"+defaultDescription+"</p>";
         if (descriptions.containsKey(language) && !descriptions.get(language).isEmpty()) {
             description = descriptions.get(language);
         } else if (descriptions.get("en") != null &&  !descriptions.get("en").isEmpty()) {
