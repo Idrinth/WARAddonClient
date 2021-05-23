@@ -7,6 +7,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
+import java.util.Objects;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 import org.apache.commons.io.IOUtils;
@@ -68,10 +69,10 @@ public class Config {
                 //do nothing
             }
         }
-        version = IOUtils.toString(Config.class.getResourceAsStream("/version"), StandardCharsets.UTF_8);
+        version = IOUtils.toString(Objects.requireNonNull(Config.class.getResourceAsStream("/version")), StandardCharsets.UTF_8);
         jarDir = new File(Main.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath()).getParentFile();
         if (System.getProperty("os.name").startsWith("Windows")) {
-            logFile = new File(jarDir.getAbsolutePath() + "/" + LOG_FILE);
+            logFile = new File(jarDir.getAbsolutePath(), LOG_FILE);
         } else {
             logFile = new File(LINUX_LOG_FILE);
         }
