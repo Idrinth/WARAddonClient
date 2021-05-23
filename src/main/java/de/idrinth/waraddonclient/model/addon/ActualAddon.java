@@ -13,6 +13,7 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Objects;
 import javax.json.JsonArray;
 import javax.json.JsonObject;
 import javax.xml.parsers.FactoryConfigurationError;
@@ -54,11 +55,7 @@ public class ActualAddon implements de.idrinth.waraddonclient.model.addon.Addon 
     private final XmlParser parser;
     
     private final Config config;
-    
-    private String[] versions;
-    
-    private String defaultDescription = "";
-    
+
     public ActualAddon(javax.json.JsonObject addon, Request client, BaseLogger logger, XmlParser parser, Config config) throws InvalidArgumentException {
         if (addon == null) {
             throw new InvalidArgumentException("Addon is null");
@@ -93,7 +90,7 @@ public class ActualAddon implements de.idrinth.waraddonclient.model.addon.Addon 
     private File find(String name) {
         File folder = new File(config.getAddonFolder());
         if (folder.exists()) {
-            for (File innerFolder : folder.listFiles()) {
+            for (File innerFolder : Objects.requireNonNull(folder.listFiles())) {
                 if (innerFolder.getName().equalsIgnoreCase(name)) {
                     return innerFolder;
                 }
@@ -114,7 +111,7 @@ public class ActualAddon implements de.idrinth.waraddonclient.model.addon.Addon 
      * @return boolean
      */
     public boolean hasTag(String tag) {
-        return tags.stream().anyMatch(hasTag -> (tag.equalsIgnoreCase(hasTag)));
+        return tags.stream().anyMatch(tag::equalsIgnoreCase);
     }
 
     /**
@@ -188,10 +185,11 @@ public class ActualAddon implements de.idrinth.waraddonclient.model.addon.Addon 
                 logger.error("Failed loading addon-data from server.");
             }
         }
+        String defaultDescription = "";
         String description = "<p><strong>There is currently no Description for " + name + ".</strong></p>"
                 + "<p>You can help by adding one at <a href=\"http://tools.idrinth.de/addons/" + slug
                 + "/\">http://tools.idrinth.de/addons/" + slug + "/</a>.</p>"
-                + "<p>"+defaultDescription+"</p>";
+                + "<p>"+ defaultDescription +"</p>";
         if (descriptions.containsKey(language) && !descriptions.get(language).isEmpty()) {
             description = descriptions.get(language);
         } else if (descriptions.get("en") != null &&  !descriptions.get("en").isEmpty()) {
@@ -320,7 +318,7 @@ public class ActualAddon implements de.idrinth.waraddonclient.model.addon.Addon 
             zipFile.extractAll(tmp.getAbsolutePath());
             StringBuilder sb = new StringBuilder();
             ArrayList<String> folders = new ArrayList<>();
-            for (File folder : tmp.listFiles()) {
+            for (File folder : Objects.requireNonNull(tmp.listFiles())) {
                 sb.append("<folder>");
                 sb.append(folder.getName());
                 sb.append("</folder>");
@@ -353,7 +351,7 @@ public class ActualAddon implements de.idrinth.waraddonclient.model.addon.Addon 
         }
 
         private boolean processDirectory() {
-            for (java.io.File fileEntry : folder.listFiles()) {
+            for (java.io.File fileEntry : Objects.requireNonNull(folder.listFiles())) {
                 if (!fileEntry.isDirectory()
                         && org.apache.commons.io.FilenameUtils.getExtension(fileEntry.getName()).equalsIgnoreCase("mod")) {
                     try {
@@ -409,7 +407,7 @@ public class ActualAddon implements de.idrinth.waraddonclient.model.addon.Addon 
         hasSettings = false;
         File folder = find(name);
         if (folder.exists()) {
-            for (File fileEntry : folder.listFiles()) {
+            for (File fileEntry : Objects.requireNonNull(folder.listFiles())) {
                 processFile(fileEntry);
                 if (hasSettings) {
                     return;

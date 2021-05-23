@@ -30,7 +30,7 @@ public class TextCategory extends RowFilter<Addon, Integer> {
 
     private boolean isInAllowedCategory(Addon addon) {
         List<String> tags = addonList.getActiveTags();
-        return tags.isEmpty() || tags.stream().anyMatch(tag -> (addon.hasTag(tag)));
+        return tags.isEmpty() || tags.stream().anyMatch(addon::hasTag);
     }
 
 }

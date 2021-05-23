@@ -11,6 +11,8 @@ import java.security.NoSuchAlgorithmException;
 import javax.json.Json;
 import javax.json.JsonArray;
 import javax.json.JsonObject;
+import javax.json.JsonReader;
+
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
 
@@ -37,14 +39,18 @@ public class Request {
 
     public javax.json.JsonArray getAddonList() throws IOException {
         HttpResponse response = executionHandler(new HttpGet(config.getURL() + "addon-api2/"));
-        JsonArray data = Json.createReader(response.getEntity().getContent()).readArray();
+        JsonReader reader = Json.createReader(response.getEntity().getContent());
+        JsonArray data = reader.readArray();
+        reader.close();
         client.close();
         return data;
     }
 
     public JsonObject getAddon(String slug) throws IOException {
         HttpResponse response = executionHandler(new HttpGet(config.getURL() + "addon-api2/"+slug+"/"));
-        JsonObject data = Json.createReader(response.getEntity().getContent()).readObject();
+        JsonReader reader = Json.createReader(response.getEntity().getContent());
+        JsonObject data = reader.readObject();
+        reader.close();
         client.close();
         return data;
     }
@@ -75,17 +81,15 @@ public class Request {
         return response;
     }
 
-    public boolean upload(String url, File file) {
+    public void upload(String url, File file) {
         org.apache.http.client.methods.HttpPost request = new org.apache.http.client.methods.HttpPost(url);
         request.setEntity(new org.apache.http.entity.FileEntity(file));
         try {
-            boolean wasSuccess = executionHandler(request) != null;
+            executionHandler(request);
             client.close();
-            return wasSuccess;
         } catch (IOException exception) {
             logger.error(exception);
         }
-        return false;
     }
 
     public String getVersion() {
@@ -93,10 +97,10 @@ public class Request {
         try {
             HttpGet request = new HttpGet("https://api.github.com/repos/Idrinth/WARAddonClient/releases/latest");
             HttpResponse response = executionHandler(request);
-            if (response != null) {
-                javax.json.JsonObject data = javax.json.Json.createReader(response.getEntity().getContent()).readObject();
-                version = data.getString("tag_name");
-            }
+            JsonReader reader = Json.createReader(response.getEntity().getContent());
+            JsonObject data = reader.readObject();
+            reader.close();
+            version = data.getString("tag_name");
             client.close();
         } catch (java.io.IOException exception) {
             //do nothing, not important
