@@ -10,13 +10,14 @@ import org.apache.commons.cli.ParseException;
 
 public class AliasParser extends DefaultParser {
 
+    @Override
     public CommandLine parse(Options options, String[] arguments, Properties properties, boolean stopAtNonOption) throws ParseException
     {
         Options internals = new Options();
         
         for (Option option : options.getOptions()) {
             internals.addOption(option);
-            if (AliasOption.class.isInstance(option)) {
+            if (option instanceof AliasOption) {
                 AliasOption aliasOption = (AliasOption) option;
                 for (String alias : aliasOption.getAliases()) {
                     internals.addOption(new AliasedOption(alias, aliasOption.hasArg(), aliasOption.getDescription(), aliasOption.getLongOpt()));
@@ -26,15 +27,15 @@ public class AliasParser extends DefaultParser {
         CommandLine cmd = super.parse(internals, arguments, properties, stopAtNonOption);
         CommandLine.Builder builder = new CommandLine.Builder();
         for (Option option : cmd.getOptions()) {
-            if (!AliasedOption.class.isInstance(option)) {
+            if (!(option instanceof AliasedOption)) {
                 builder.addOption(option);
-            } else if (AliasedOption.class.isInstance(option)) {
+            } else {
                 AliasedOption aliased = (AliasedOption) option;
                 aliased.setLongOpt(aliased.getOriginal());
                 builder.addOption(aliased);
             }
         }
-        cmd.getArgList().forEach(arg -> builder.addArg(arg));
+        cmd.getArgList().forEach(builder::addArg);
         return builder.build();
     }
 }

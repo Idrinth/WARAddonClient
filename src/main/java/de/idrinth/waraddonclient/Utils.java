@@ -4,6 +4,7 @@ import de.idrinth.waraddonclient.service.logger.BaseLogger;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.Objects;
 
 public class Utils {
 
@@ -14,7 +15,7 @@ public class Utils {
         if (folder == null || !folder.exists()) {
             return;
         }
-        for (File file : folder.listFiles()) {
+        for (File file : Objects.requireNonNull(folder.listFiles())) {
             if (file.isDirectory()) {
                 emptyFolder(file);
             }

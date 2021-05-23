@@ -25,7 +25,7 @@ public class Backup {
         zip.addFolder(new java.io.File(warDir+"/Interface"));
     }
 
-    public void restore(java.io.File backup) throws ZipException, IOException {
+    public void restore(java.io.File backup) throws IOException {
         create();
         String warDir = config.getWARPath();
         net.lingala.zip4j.ZipFile zip = new net.lingala.zip4j.ZipFile(backup);

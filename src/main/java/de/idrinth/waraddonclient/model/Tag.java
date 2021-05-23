@@ -38,6 +38,6 @@ public class Tag {
     }
 
     public void checkMembers() {
-        list.keySet().stream().filter(addon -> (!list.get(addon).hasTag(name))).forEach(addon -> list.remove(addon));
+        list.keySet().stream().filter(addon -> (!list.get(addon).hasTag(name))).forEach(list::remove);
     }
 }

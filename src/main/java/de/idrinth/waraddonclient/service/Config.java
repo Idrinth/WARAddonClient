@@ -54,13 +54,13 @@ public class Config {
         //check to look for old conf
         if (getWARPath().equals(".")) {
             Preferences oldPref = Preferences.userRoot().node(Config.class.getCanonicalName());
-            prefs.put(KEY_THEME, oldPref.get(KEY_THEME, "Nimbus"));
-            prefs.put(KEY_WAR_PATH, oldPref.get(KEY_WAR_PATH, "."));
-            prefs.put(KEY_LANGUAGE, oldPref.get(KEY_LANGUAGE, "en"));
-            prefs.putInt(KEY_WINDOW_HEIGHT, oldPref.getInt(KEY_WINDOW_HEIGHT, 450));
-            prefs.putInt(KEY_WINDOW_WIDTH, oldPref.getInt(KEY_WINDOW_WIDTH, 800));
-            prefs.putInt(KEY_WINDOW_LOCATION_X, oldPref.getInt(KEY_WINDOW_LOCATION_X, 0));
-            prefs.putInt(KEY_WINDOW_LOCATION_Y, oldPref.getInt(KEY_WINDOW_LOCATION_Y, 0));
+            prefs.put(KEY_THEME, oldPref.get(KEY_THEME, getTheme()));
+            prefs.put(KEY_WAR_PATH, oldPref.get(KEY_WAR_PATH, getWARPath()));
+            prefs.put(KEY_LANGUAGE, oldPref.get(KEY_LANGUAGE, getLanguage()));
+            prefs.putInt(KEY_WINDOW_HEIGHT, oldPref.getInt(KEY_WINDOW_HEIGHT, getWindowDimension().height));
+            prefs.putInt(KEY_WINDOW_WIDTH, oldPref.getInt(KEY_WINDOW_WIDTH, getWindowDimension().width));
+            prefs.putInt(KEY_WINDOW_LOCATION_X, oldPref.getInt(KEY_WINDOW_LOCATION_X, getWindowPosition().x));
+            prefs.putInt(KEY_WINDOW_LOCATION_Y, oldPref.getInt(KEY_WINDOW_LOCATION_Y, getWindowPosition().y));
             //cleanup and remove old preferences as we have now extracted all info from it
             try {
                 oldPref.removeNode();

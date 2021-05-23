@@ -36,7 +36,7 @@ public class FileSystem {
         checkPosition();
     }
 
-    public class FileSystemException extends Exception {
+    public static class FileSystemException extends Exception {
         public FileSystemException(String message) {
             super(message);
         }

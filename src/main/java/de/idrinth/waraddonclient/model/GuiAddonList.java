@@ -78,7 +78,7 @@ public class GuiAddonList extends AddonList
 
     public List<String> getActiveTags() {
         ArrayList<String> active = new ArrayList<>();
-        tagNames.stream().filter(tag -> (tags.get(tag).isActive())).forEach(tag -> active.add(tag));
+        tagNames.stream().filter(tag -> (tags.get(tag).isActive())).forEach(active::add);
         return active;
     }
 
@@ -143,7 +143,7 @@ public class GuiAddonList extends AddonList
                 active = false;
                 return;
             }
-            list.stream().forEach(addon -> addon.fileWasChanged(file));
+            list.forEach(addon -> addon.fileWasChanged(file));
             active = false;
         }
     }
@@ -157,6 +157,7 @@ public class GuiAddonList extends AddonList
             this.model = model;
         }
 
+        @Override
         protected void newAddon(ActualAddon addon) {
             super.newAddon(addon);
             if (!addon.getFile().isEmpty()) {
@@ -167,11 +168,13 @@ public class GuiAddonList extends AddonList
             }
         }
 
+        @Override
         protected void existingAddon(ActualAddon addon) {
             super.existingAddon(addon);
             updateModel(addon);
         }
 
+        @Override
         protected void unknownAddon(ActualAddon addon) {
             super.unknownAddon(addon);
             updateModel(addon);

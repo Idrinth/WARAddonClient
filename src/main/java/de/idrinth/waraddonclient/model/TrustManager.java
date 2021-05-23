@@ -13,7 +13,7 @@ public class TrustManager implements TrustStrategy {
 
     private java.security.KeyStore keyStore;
 
-    private javax.net.ssl.X509TrustManager manager;
+    private final javax.net.ssl.X509TrustManager manager;
     
     private final BaseLogger logger;
 
@@ -44,7 +44,7 @@ public class TrustManager implements TrustStrategy {
         return keyStore;
     }
 
-    private final void getStore() throws KeyManagementException, KeyStoreException, IOException, NoSuchAlgorithmException, CertificateException {
+    private void getStore() throws KeyManagementException, KeyStoreException, IOException, NoSuchAlgorithmException, CertificateException {
         String password = "changeit";
         keyStore = new KeystoreFinder().getKeystore(password);
         javax.net.ssl.TrustManagerFactory trustManagerFactory = javax.net.ssl.TrustManagerFactory.getInstance(javax.net.ssl.TrustManagerFactory.getDefaultAlgorithm());
@@ -56,11 +56,14 @@ public class TrustManager implements TrustStrategy {
         System.setProperty("javax.net.ssl.trustStorePassword", password);
     }
 
-    private final void addCertToStore(String name) throws IOException, CertificateException, KeyStoreException {
+    private void addCertToStore(String name) throws IOException, CertificateException, KeyStoreException {
         java.net.URL resource = getClass().getResource("/certificates/" + name + ".cer");
-        try (java.io.BufferedInputStream bis = new java.io.BufferedInputStream(resource.openStream())) {
-            java.security.cert.Certificate cert = java.security.cert.CertificateFactory.getInstance("X.509").generateCertificate(bis);
-            keyStore.setCertificateEntry(name, cert);
+        try {
+            assert resource != null;
+            try (java.io.BufferedInputStream bis = new java.io.BufferedInputStream(resource.openStream())) {
+                java.security.cert.Certificate cert = java.security.cert.CertificateFactory.getInstance("X.509").generateCertificate(bis);
+                keyStore.setCertificateEntry(name, cert);
+            }
         } catch(CertificateException e) {
             logger.error(e);
         }
@@ -77,7 +80,7 @@ public class TrustManager implements TrustStrategy {
         return false;
     }
 
-    class KeystoreFinder {
+    static class KeystoreFinder {
 
         private final String fileSeperator;
 

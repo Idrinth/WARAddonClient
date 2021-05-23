@@ -38,7 +38,7 @@ public class FileWatcher implements java.lang.Runnable {
     public void run() {
         try {
             WatchKey key = watcher.take();
-            key.pollEvents().stream().filter(event -> (isValidEvent(event))).map(event -> new File(config.getLogsFolder() + event.context().toString())).filter(file -> (isValidFile(file))).forEach(file -> addonList.getWatchedFiles().get(file.getName().toLowerCase()).setFileToProcess(file));
+            key.pollEvents().stream().filter(this::isValidEvent).map(event -> new File(config.getLogsFolder() + event.context().toString())).filter(this::isValidFile).forEach(file -> addonList.getWatchedFiles().get(file.getName().toLowerCase()).setFileToProcess(file));
             key.reset();
         } catch (InterruptedException ex) {
             logger.error(ex);
