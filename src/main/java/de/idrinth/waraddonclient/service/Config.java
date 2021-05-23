@@ -58,6 +58,8 @@ public class Config {
             prefs.put(KEY_LANGUAGE, oldPref.get(KEY_LANGUAGE, "en"));
             prefs.putInt(KEY_WINDOW_HEIGHT, oldPref.getInt(KEY_WINDOW_HEIGHT, 450));
             prefs.putInt(KEY_WINDOW_WIDTH, oldPref.getInt(KEY_WINDOW_WIDTH, 800));
+            prefs.putInt(KEY_WINDOW_LOCATION_X, oldPref.getInt(KEY_WINDOW_LOCATION_X, 0));
+            prefs.putInt(KEY_WINDOW_LOCATION_Y, oldPref.getInt(KEY_WINDOW_LOCATION_Y, 0));
             //cleanup and remove old preferences as we have now extracted all info from it
             try {
                 oldPref.removeNode();
