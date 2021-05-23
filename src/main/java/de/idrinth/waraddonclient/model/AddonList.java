@@ -11,6 +11,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Objects;
 import javax.json.JsonArray;
 
 public abstract class AddonList implements Runnable {
@@ -29,7 +30,7 @@ public abstract class AddonList implements Runnable {
     
     private final Config config;
 
-    public AddonList(Request client, BaseLogger logger, XmlParser parser, Config config) {
+    protected AddonList(Request client, BaseLogger logger, XmlParser parser, Config config) {
         this.client = client;
         this.logger = logger;
         this.parser = parser;
@@ -41,7 +42,7 @@ public abstract class AddonList implements Runnable {
         if (!addonFolder.isDirectory()) {
             return;
         }
-        for (File folder : addonFolder.listFiles()) {
+        for (File folder : Objects.requireNonNull(addonFolder.listFiles())) {
             File version = new File(folder.getAbsolutePath() + config.getVersionFile());
             if (folder.isDirectory() && !version.exists()) {
                 try {
@@ -119,7 +120,7 @@ public abstract class AddonList implements Runnable {
         }
 
         protected void existingAddon(ActualAddon addon) {
-            if (ActualAddon.class.isInstance(list.get(addon.getName()))) {
+            if (list.get(addon.getName()) instanceof ActualAddon) {
                 ((ActualAddon) list.get(addon.getName())).update(addon);
                 return;
             }

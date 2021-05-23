@@ -7,6 +7,8 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
+import java.util.Objects;
+import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 import org.apache.commons.io.IOUtils;
 
@@ -40,7 +42,7 @@ public class Config {
 
     private static final String VERSION_FILE = "/self.idrinth";
 
-    private final Preferences prefs = Preferences.userRoot().node(Config.class.getCanonicalName());
+    private final Preferences prefs =  Preferences.userNodeForPackage(Main.class);
 
     private final String version;
 
@@ -49,10 +51,28 @@ public class Config {
     private final File jarDir;
 
     public Config() throws IOException, URISyntaxException {
-        version = IOUtils.toString(Config.class.getResourceAsStream("/version"), StandardCharsets.UTF_8);
+        //check to look for old conf
+        if (getWARPath().equals(".")) {
+            Preferences oldPref = Preferences.userRoot().node(Config.class.getCanonicalName());
+            prefs.put(KEY_THEME, oldPref.get(KEY_THEME, "Nimbus"));
+            prefs.put(KEY_WAR_PATH, oldPref.get(KEY_WAR_PATH, "."));
+            prefs.put(KEY_LANGUAGE, oldPref.get(KEY_LANGUAGE, "en"));
+            prefs.putInt(KEY_WINDOW_HEIGHT, oldPref.getInt(KEY_WINDOW_HEIGHT, 450));
+            prefs.putInt(KEY_WINDOW_WIDTH, oldPref.getInt(KEY_WINDOW_WIDTH, 800));
+            prefs.putInt(KEY_WINDOW_LOCATION_X, oldPref.getInt(KEY_WINDOW_LOCATION_X, 0));
+            prefs.putInt(KEY_WINDOW_LOCATION_Y, oldPref.getInt(KEY_WINDOW_LOCATION_Y, 0));
+            //cleanup and remove old preferences as we have now extracted all info from it
+            try {
+                oldPref.removeNode();
+                oldPref.flush();
+            } catch (BackingStoreException e) {
+                //do nothing
+            }
+        }
+        version = IOUtils.toString(Objects.requireNonNull(Config.class.getResourceAsStream("/version")), StandardCharsets.UTF_8);
         jarDir = new File(Main.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath()).getParentFile();
         if (System.getProperty("os.name").startsWith("Windows")) {
-            logFile = new File(jarDir.getAbsolutePath() + "/" + LOG_FILE);
+            logFile = new File(jarDir.getAbsolutePath(), LOG_FILE);
         } else {
             logFile = new File(LINUX_LOG_FILE);
         }
