@@ -16,9 +16,11 @@ import java.util.HashMap;
 import java.util.Objects;
 import javax.json.JsonArray;
 import javax.json.JsonObject;
+import javax.swing.JEditorPane;
 import javax.xml.parsers.FactoryConfigurationError;
 import net.lingala.zip4j.ZipFile;
 import org.apache.commons.io.FileUtils;
+import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
@@ -55,6 +57,8 @@ public class ActualAddon implements de.idrinth.waraddonclient.model.addon.Addon 
     private final XmlParser parser;
     
     private final Config config;
+    
+    private String defaultDescription = "";
 
     public ActualAddon(javax.json.JsonObject addon, Request client, BaseLogger logger, XmlParser parser, Config config) throws InvalidArgumentException {
         if (addon == null) {
@@ -168,24 +172,7 @@ public class ActualAddon implements de.idrinth.waraddonclient.model.addon.Addon 
         return row;
     }
 
-    /**
-     * return a languages description if avaible, otherwise a default
-     *
-     * @param language
-     * @return String
-     */
     public String getDescription(String language) {
-        if (descriptions.isEmpty()) {
-            try {
-                JsonObject addon = client.getAddon(slug);
-                descriptions.put("en", getStringFromObject("description", addon));
-                descriptions.put("de", getStringFromObject("description_de", addon));
-                descriptions.put("fr", getStringFromObject("description_fr", addon));
-            } catch (IOException ex) {
-                logger.error("Failed loading addon-data from server.");
-            }
-        }
-        String defaultDescription = "";
         String description = "<p><strong>There is currently no Description for " + name + ".</strong></p>"
                 + "<p>You can help by adding one at <a href=\"http://tools.idrinth.de/addons/" + slug
                 + "/\">http://tools.idrinth.de/addons/" + slug + "/</a>.</p>"
@@ -195,7 +182,24 @@ public class ActualAddon implements de.idrinth.waraddonclient.model.addon.Addon 
         } else if (descriptions.get("en") != null &&  !descriptions.get("en").isEmpty()) {
             description = descriptions.get("en");
         }
-        return "<html>" + description;
+        return "<html>" + description.replaceAll("(\\\\n|\\\\r)+", " ").replaceAll("\\\\\"", "\"");
+    }
+
+    public Runnable loadDescription(JEditorPane field, String language) {
+        if (!descriptions.isEmpty()) {
+            return () -> {};
+        }
+        return () -> {
+            try {
+                JsonObject addon = client.getAddon(slug);
+                descriptions.put("en", getStringFromObject("description", addon));
+                descriptions.put("de", getStringFromObject("description_de", addon));
+                descriptions.put("fr", getStringFromObject("description_fr", addon));
+                field.setText(getDescription(language));
+            } catch (IOException ex) {
+                logger.error("Failed loading addon-data from server.");
+            }
+        };
     }
 
     /**
@@ -355,8 +359,13 @@ public class ActualAddon implements de.idrinth.waraddonclient.model.addon.Addon 
                 if (!fileEntry.isDirectory()
                         && org.apache.commons.io.FilenameUtils.getExtension(fileEntry.getName()).equalsIgnoreCase("mod")) {
                     try {
-                        NodeList list = parser.parse(fileEntry).getElementsByTagName("UiMod");
+                        Document doc = parser.parse(fileEntry);
+                        NodeList list = doc.getElementsByTagName("UiMod");
                         installed = list.item(0).getAttributes().getNamedItem("version").getTextContent();
+                        NodeList description = doc.getElementsByTagName("Description");
+                        if (description.getLength() > 0) {
+                            defaultDescription = description.item(0).getAttributes().getNamedItem("text").getTextContent();
+                        }
                         return true;
                     } catch (FactoryConfigurationError | SAXException | IOException exception) {
                         logger.error(exception);

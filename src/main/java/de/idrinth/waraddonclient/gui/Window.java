@@ -5,6 +5,7 @@ import de.idrinth.waraddonclient.service.Config;
 import de.idrinth.waraddonclient.service.Backup;
 import de.idrinth.waraddonclient.model.addon.Addon;
 import de.idrinth.waraddonclient.model.GuiAddonList;
+import de.idrinth.waraddonclient.model.addon.ActualAddon;
 import de.idrinth.waraddonclient.model.addon.NoAddon;
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -796,6 +797,9 @@ public class Window extends JFrame {
          */
         public void updateUi() {
             description.setText(activeAddon.getDescription(config.getLanguage()));
+            if (ActualAddon.class.isInstance(activeAddon)) {
+                new Thread(((ActualAddon) activeAddon).loadDescription(description, config.getLanguage())).start();
+            }
             addonTitle.setText(activeAddon.getName());
             installButton.setEnabled(true);
             removeButton.setEnabled(true);
