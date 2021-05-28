@@ -6,10 +6,7 @@ import de.idrinth.waraddonclient.service.*;
 import de.idrinth.waraddonclient.model.CmdAddonList;
 import de.idrinth.waraddonclient.service.logger.CliLogger;
 import de.idrinth.waraddonclient.service.logger.MultiLogger;
-
 import javax.xml.parsers.ParserConfigurationException;
-
-import net.lingala.zip4j.exception.ZipException;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.HelpFormatter;
