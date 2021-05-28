@@ -12,7 +12,8 @@ If you got ideas or requests, just open a ticket here :)
 
 #### Windows
 
-The only file you need is the <a href="https://github.com/Idrinth/WARAddonClient/releases/latest">exe-file in the latest Release</a>. Download it and install the WARAddonClient on your computer.
+The only file you need is the <a href="https://github.com/Idrinth/WARAddonClient/releases/latest">Setuop.exe-file in the latest Release</a>. Download it and install the WARAddonClient on your computer.
+To updatze download the other exe-File and replace it in the installed folder or use the new installer.
 This is an optional way of installing it and BUGs may or may not be fixed.
 
 #### Linux (rpm)
