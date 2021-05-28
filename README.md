@@ -8,6 +8,14 @@ If you got ideas or requests, just open a ticket here :)
 
 ## Users
 
+### JAR-Release (Prefered)
+
+This is a java-Application, so you'll need to be able to run .jar files on the system you desire to use this on.
+The only file you need is the <a href="https://github.com/Idrinth/WARAddonClient/releases/latest">jar-file in the latest Release</a>.
+After downloading it, copy it to your Warhammer Online directory and run it.
+
+Java is avaible at <a href="https://www.java.com" target="_blank">java.com</a> and is pretty much able to run on any system.
+
 ### Fully Packaged
 
 #### Windows
@@ -30,14 +38,6 @@ This is an optional way of installing it and BUGs may or may not be fixed.
 
 You can use the <a href="https://aur.archlinux.org/packages/waraddonclient/">AUR package</a> to install the WARAddonClient on your computer.
 This is an optional way of installing it and BUGs may or may not be fixed.
-
-### JAR-Release (Prefered)
-
-This is a java-Application, so you'll need to be able to run .jar files on the system you desire to use this on.
-The only file you need is the <a href="https://github.com/Idrinth/WARAddonClient/releases/latest">jar-file in the latest Release</a>.
-After downloading it, copy it to your Warhammer Online directory and run it.
-
-Java is avaible at <a href="https://www.java.com" target="_blank">java.com</a> and is pretty much able to run on any system.
 
 ## Addon Authors
 
