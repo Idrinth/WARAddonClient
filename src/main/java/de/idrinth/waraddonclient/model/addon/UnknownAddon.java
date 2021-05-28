@@ -5,6 +5,7 @@ import de.idrinth.waraddonclient.model.InvalidArgumentException;
 import de.idrinth.waraddonclient.service.Config;
 import de.idrinth.waraddonclient.service.logger.BaseLogger;
 import de.idrinth.waraddonclient.service.Request;
+import de.idrinth.waraddonclient.service.SilencingErrorHandler;
 import de.idrinth.waraddonclient.service.XmlParser;
 import java.io.File;
 import java.io.IOException;
@@ -54,7 +55,7 @@ public class UnknownAddon implements Addon {
         for (java.io.File fileEntry : folder.listFiles()) {
             if (!fileEntry.isDirectory() && FilenameUtils.getExtension(fileEntry.getName()).equalsIgnoreCase("mod")) {
                 try {
-                    Document doc = parser.parse(fileEntry);
+                    Document doc = parser.parse(fileEntry, new SilencingErrorHandler(logger));
                     NodeList list = doc.getElementsByTagName("UiMod");
                     installed = list.item(0).getAttributes().getNamedItem("version").getTextContent();
                     name = list.item(0).getAttributes().getNamedItem("name").getTextContent();
@@ -81,12 +82,6 @@ public class UnknownAddon implements Addon {
         return list;
     }
 
-    /**
-     * does this addon have the given tag?
-     *
-     * @param tag
-     * @return boolean
-     */
     public boolean hasTag(String tag) {
         return "Not Tagged".equals(tag) || "Auto-Discovered".equals(tag);
     }
@@ -115,23 +110,12 @@ public class UnknownAddon implements Addon {
         return row;
     }
 
-    /**
-     * return a languages description if avaible, otherwise a default
-     *
-     * @param language
-     * @return String
-     */
     public String getDescription(String language) {
         return "<p><strong>There is currently no Description for " + name + ".</strong></p>"
                 + "<p>You can help by adding the addon and one at <a href=\"http://tools.idrinth.de/addons/\">http://tools.idrinth.de/addons/</a>.</p>"
                 + "<p>"+defaultDescription+"</p>";
     }
 
-    /**
-     * get a list of descriptions
-     *
-     * @return java.util.HashMap
-     */
     public HashMap<String, String> getDescriptions() {
         return new HashMap<>();
     }
@@ -232,11 +216,11 @@ public class UnknownAddon implements Addon {
 
     @Override
     public int getEndorsements() {
-        return 0;
+        return -1;
     }
 
     @Override
     public int getDownloads() {
-        return 0;
+        return -1;
     }
 }

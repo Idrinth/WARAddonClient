@@ -6,6 +6,7 @@ import de.idrinth.waraddonclient.Utils;
 import de.idrinth.waraddonclient.model.InvalidArgumentException;
 import de.idrinth.waraddonclient.service.logger.BaseLogger;
 import de.idrinth.waraddonclient.service.Request;
+import de.idrinth.waraddonclient.service.SilencingErrorHandler;
 import de.idrinth.waraddonclient.service.XmlParser;
 import java.io.File;
 import java.io.IOException;
@@ -59,6 +60,8 @@ public class ActualAddon implements de.idrinth.waraddonclient.model.addon.Addon 
     private final Config config;
     
     private String defaultDescription = "";
+    
+    private boolean loadedDescription = false;
 
     public ActualAddon(javax.json.JsonObject addon, Request client, BaseLogger logger, XmlParser parser, Config config) throws InvalidArgumentException {
         if (addon == null) {
@@ -101,7 +104,7 @@ public class ActualAddon implements de.idrinth.waraddonclient.model.addon.Addon 
 
             }
         }
-        return  new File(config.getAddonFolder() + name);
+        return new File(config.getAddonFolder() + name);
     }
 
     public java.util.ArrayList<String> getTags() {
@@ -186,9 +189,10 @@ public class ActualAddon implements de.idrinth.waraddonclient.model.addon.Addon 
     }
 
     public Runnable loadDescription(JEditorPane field, String language) {
-        if (!descriptions.isEmpty()) {
+        if (!descriptions.isEmpty() || loadedDescription) {
             return () -> {};
         }
+        loadedDescription = true;
         return () -> {
             try {
                 JsonObject addon = client.getAddon(slug);
@@ -197,6 +201,7 @@ public class ActualAddon implements de.idrinth.waraddonclient.model.addon.Addon 
                 descriptions.put("fr", getStringFromObject("description_fr", addon));
                 field.setText(getDescription(language));
             } catch (IOException ex) {
+                loadedDescription = false;
                 logger.error("Failed loading addon-data from server.");
             }
         };
@@ -359,7 +364,7 @@ public class ActualAddon implements de.idrinth.waraddonclient.model.addon.Addon 
                 if (!fileEntry.isDirectory()
                         && org.apache.commons.io.FilenameUtils.getExtension(fileEntry.getName()).equalsIgnoreCase("mod")) {
                     try {
-                        Document doc = parser.parse(fileEntry);
+                        Document doc = parser.parse(fileEntry, new SilencingErrorHandler(logger));
                         NodeList list = doc.getElementsByTagName("UiMod");
                         installed = list.item(0).getAttributes().getNamedItem("version").getTextContent();
                         NodeList description = doc.getElementsByTagName("Description");
@@ -368,7 +373,7 @@ public class ActualAddon implements de.idrinth.waraddonclient.model.addon.Addon 
                         }
                         return true;
                     } catch (FactoryConfigurationError | SAXException | IOException exception) {
-                        logger.error(exception);
+                        logger.warn(exception);
                     }
                 }
             }
@@ -386,7 +391,7 @@ public class ActualAddon implements de.idrinth.waraddonclient.model.addon.Addon 
                     installed = list.item(0).getTextContent().replace("(sys)", "");
                     return true;
                 } catch (FactoryConfigurationError | SAXException | IOException exception) {
-                    logger.error(exception);
+                    logger.warn(exception);
                 }
             }
             return false;
