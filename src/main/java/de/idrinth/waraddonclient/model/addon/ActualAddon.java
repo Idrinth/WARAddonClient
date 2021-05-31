@@ -152,7 +152,7 @@ public class ActualAddon implements de.idrinth.waraddonclient.model.addon.Addon 
      * @param data
      * @return String
      */
-    private final String getStringFromObject(String key, javax.json.JsonObject data) {
+    private String getStringFromObject(String key, javax.json.JsonObject data) {
         if (key != null && data != null && data.containsKey(key) && !data.isNull(key)) {
             return java.util.regex.Pattern.compile("^\"|\"$").matcher(data.get(key).toString()).replaceAll("");
         }
