@@ -13,12 +13,12 @@ public class SilencingErrorHandler implements ErrorHandler {
     }
 
     @Override
-    public void warning(SAXParseException exception) throws SAXException {
+    public void warning(SAXParseException exception) {
         logger.info(exception);
     }
 
     @Override
-    public void error(SAXParseException exception) throws SAXException {
+    public void error(SAXParseException exception) {
         logger.warn(exception);
     }
 

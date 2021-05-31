@@ -210,7 +210,7 @@ public class UnknownAddon implements Addon {
     }
 
     @Override
-    public void install() throws IOException {
+    public void install() {
         throw new UnsupportedOperationException("You can't install an unknown Add-On.");
     }
 

@@ -35,12 +35,12 @@ public class NoAddon implements de.idrinth.waraddonclient.model.addon.Addon {
     }
 
     @Override
-    public void install() throws IOException {
+    public void install() {
         throw new UnsupportedOperationException("You can not uninstall an addon that doesn't exist.");
     }
 
     @Override
-    public void uninstall() throws IOException {
+    public void uninstall() {
         throw new UnsupportedOperationException("You can not uninstall an addon that doesn't exist");
     }
 
