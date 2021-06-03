@@ -8,7 +8,6 @@ import java.nio.file.StandardWatchEventKinds;
 import java.nio.file.WatchEvent;
 import java.nio.file.WatchKey;
 import java.nio.file.WatchService;
-import java.util.Arrays;
 
 public class FileWatcher implements java.lang.Runnable {
 
@@ -29,12 +28,7 @@ public class FileWatcher implements java.lang.Runnable {
             path.mkdirs();
         }
         watcher = path.toPath().getFileSystem().newWatchService();
-        path.toPath()
-        .register(
-            watcher,
-            Arrays.asList(
-                    StandardWatchEventKinds.ENTRY_CREATE, StandardWatchEventKinds.ENTRY_MODIFY)
-                .toArray(new WatchEvent.Kind<?>[] {}));
+        path.toPath().register(watcher, StandardWatchEventKinds.ENTRY_CREATE, StandardWatchEventKinds.ENTRY_MODIFY);
     }
 
     @Override
