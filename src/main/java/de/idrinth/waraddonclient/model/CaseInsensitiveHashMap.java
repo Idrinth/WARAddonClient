@@ -5,7 +5,7 @@ import java.util.HashMap;
 
 public class CaseInsensitiveHashMap<T> extends HashMap<String, T> {
 
-    private ArrayList<String> keys = new ArrayList<>();
+    private final ArrayList<String> keys = new ArrayList<>();
 
     @Override
     public T put(String key, T value) {

@@ -56,7 +56,7 @@ public class TrustManager implements TrustStrategy {
         System.setProperty("javax.net.ssl.trustStorePassword", password);
     }
 
-    private void addCertToStore(String name) throws IOException, CertificateException, KeyStoreException {
+    private void addCertToStore(String name) throws IOException, KeyStoreException {
         java.net.URL resource = getClass().getResource("/certificates/" + name + ".cer");
         try {
             assert resource != null;
