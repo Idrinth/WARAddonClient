@@ -27,7 +27,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-public class ActualAddon implements de.idrinth.waraddonclient.model.addon.Addon {
+public class ActualAddon implements Addon {
 
     private HashMap<String, String> descriptions = new HashMap<>();
     
@@ -112,7 +112,7 @@ public class ActualAddon implements de.idrinth.waraddonclient.model.addon.Addon 
         return new File(config.getAddonFolder() + name);
     }
 
-    public java.util.ArrayList<String> getTags() {
+    public ArrayList<String> getTags() {
         return tags;
     }
 
@@ -157,7 +157,7 @@ public class ActualAddon implements de.idrinth.waraddonclient.model.addon.Addon 
      * @param data
      * @return String
      */
-    private final String getStringFromObject(String key, javax.json.JsonObject data) {
+    private String getStringFromObject(String key, JsonObject data) {
         if (key != null && data != null && data.containsKey(key) && !data.isNull(key)) {
             return java.util.regex.Pattern.compile("^\"|\"$").matcher(data.get(key).toString()).replaceAll("");
         }
@@ -217,7 +217,7 @@ public class ActualAddon implements de.idrinth.waraddonclient.model.addon.Addon 
      *
      * @return java.util.HashMap
      */
-    public java.util.HashMap<String, String> getDescriptions() {
+    public HashMap<String, String> getDescriptions() {
         return descriptions;
     }
 
@@ -329,7 +329,7 @@ public class ActualAddon implements de.idrinth.waraddonclient.model.addon.Addon 
             installed="-";
         }
 
-        private java.io.File getZip() throws IOException {
+        private File getZip() throws IOException {
             File zip = new File(System.getProperty("java.io.tmpdir") + "/" + slug + ".zip");
             try (InputStream stream = client.getAddonDownload(slug + "/download/" + version.replace(".", "-") + "/")) {
                 FileUtils.copyInputStreamToFile(stream, zip);
@@ -386,7 +386,7 @@ public class ActualAddon implements de.idrinth.waraddonclient.model.addon.Addon 
         }
 
         private boolean processDirectory() {
-            for (java.io.File fileEntry : Objects.requireNonNull(folder.listFiles())) {
+            for (File fileEntry : Objects.requireNonNull(folder.listFiles())) {
                 if (!fileEntry.isDirectory()
                         && org.apache.commons.io.FilenameUtils.getExtension(fileEntry.getName()).equalsIgnoreCase("mod")) {
                     try {
@@ -456,7 +456,7 @@ public class ActualAddon implements de.idrinth.waraddonclient.model.addon.Addon 
         }
     }
 
-    private void processFile(java.io.File fileEntry) {
+    private void processFile(File fileEntry) {
         if (fileEntry.isDirectory()) {
             return;
         }

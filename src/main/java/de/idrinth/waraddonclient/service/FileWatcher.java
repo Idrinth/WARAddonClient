@@ -28,10 +28,7 @@ public class FileWatcher implements java.lang.Runnable {
             path.mkdirs();
         }
         watcher = path.toPath().getFileSystem().newWatchService();
-        WatchEvent.Kind[] modes = new WatchEvent.Kind[2];
-        modes[0] = StandardWatchEventKinds.ENTRY_CREATE;
-        modes[1] = StandardWatchEventKinds.ENTRY_MODIFY;
-        path.toPath().register(watcher, modes);
+        path.toPath().register(watcher, StandardWatchEventKinds.ENTRY_CREATE, StandardWatchEventKinds.ENTRY_MODIFY);
     }
 
     @Override
@@ -51,7 +48,7 @@ public class FileWatcher implements java.lang.Runnable {
      * @param event
      * @return
      */
-    private boolean isValidEvent(WatchEvent event) {
+    private boolean isValidEvent(WatchEvent<?> event) {
         return event.kind() == StandardWatchEventKinds.ENTRY_CREATE || event.kind() == StandardWatchEventKinds.ENTRY_MODIFY;
     }
 
