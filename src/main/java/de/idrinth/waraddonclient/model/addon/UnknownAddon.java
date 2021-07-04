@@ -3,6 +3,7 @@ package de.idrinth.waraddonclient.model.addon;
 import de.idrinth.waraddonclient.Utils;
 import de.idrinth.waraddonclient.model.InvalidArgumentException;
 import de.idrinth.waraddonclient.service.Config;
+import de.idrinth.waraddonclient.service.ProgressReporter;
 import de.idrinth.waraddonclient.service.logger.BaseLogger;
 import de.idrinth.waraddonclient.service.Request;
 import de.idrinth.waraddonclient.service.SilencingErrorHandler;
@@ -11,6 +12,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.concurrent.Executor;
 import javax.xml.parsers.FactoryConfigurationError;
 import org.apache.commons.io.FilenameUtils;
 import org.w3c.dom.Document;
@@ -43,12 +45,15 @@ public class UnknownAddon implements Addon {
     
     private String defaultDescription = "";
     
-    public UnknownAddon(File folder, Request client, BaseLogger logger, XmlParser parser, Config config) throws InvalidArgumentException {
+    private final Executor runner;
+    
+    public UnknownAddon(File folder, Request client, BaseLogger logger, XmlParser parser, Config config, Executor runner) throws InvalidArgumentException {
         this.client = client;
         this.logger = logger;
         this.parser = parser;
         this.config = config;
         this.folder = folder;
+        this.runner = runner;
         if (new File(folder.getAbsolutePath() + config.getVersionFile()).exists()) {
             throw new InvalidArgumentException("Folder is known Add-On folder.");
         }
@@ -124,9 +129,17 @@ public class UnknownAddon implements Addon {
         return name;
     }
 
-    public void uninstall() throws IOException {
-        Utils.deleteFolder(folder);
-        installed="-";
+    public void uninstall(ProgressReporter reporter) {
+        reporter.incrementMax(1);
+        runner.execute(() -> {
+            try {
+                Utils.deleteFolder(folder);
+            } catch (IOException ex) {
+                logger.error(ex);
+            }
+            reporter.incrementCurrent();
+            installed="-";
+        });
     }
 
     public void fileWasChanged(File changedFile) {
@@ -210,7 +223,7 @@ public class UnknownAddon implements Addon {
     }
 
     @Override
-    public void install() {
+    public void install(ProgressReporter reporter) {
         throw new UnsupportedOperationException("You can't install an unknown Add-On.");
     }
 

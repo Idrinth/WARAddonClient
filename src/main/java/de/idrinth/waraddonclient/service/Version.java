@@ -24,7 +24,7 @@ public class Version implements java.lang.Runnable {
         try {
             label.setText(client.getVersion());
         } catch (java.lang.Exception exception) {
-            logger.error(exception);
+            logger.warn(exception);
         }
     }
 }

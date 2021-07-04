@@ -1,6 +1,7 @@
 package de.idrinth.waraddonclient.model;
 
 import de.idrinth.waraddonclient.service.Config;
+import de.idrinth.waraddonclient.service.ProgressReporter;
 import de.idrinth.waraddonclient.service.logger.BaseLogger;
 import de.idrinth.waraddonclient.service.Request;
 import de.idrinth.waraddonclient.service.XmlParser;
@@ -9,8 +10,11 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 public class CmdAddonList extends AddonList {
 
-    public CmdAddonList(Request client, BaseLogger logger, XmlParser parser, Config config) {
+    private final ProgressReporter reporter;
+
+    public CmdAddonList(Request client, BaseLogger logger, XmlParser parser, Config config, ProgressReporter reporter) {
         super(client, logger, parser, config);
+        this.reporter = reporter;
     }
 
     @Override
@@ -25,42 +29,38 @@ public class CmdAddonList extends AddonList {
 
     public void install (String addonName) {
         AtomicBoolean found = new AtomicBoolean(false);
-        rows.stream().filter(addon -> (addon.getName().equals(addonName))).forEachOrdered(addon -> {
-            try {
-                addon.install();
-                found.set(true);
-            } catch (IOException ex) {
-                logger.error(ex);
+        reporter.start("Install", () -> {
+            if (!found.get()) {
+                logger.error("No addon found matching name: " + addonName);
             }
         });
-        if (!found.get()) {
-            logger.error("No addon found matching name: " + addonName);
-        }
+        rows.stream().filter(addon -> (addon.getName().equals(addonName))).forEachOrdered(addon -> {
+            addon.install(reporter);
+            found.set(true);
+        });
+        reporter.stop();
     }
 
     public void remove (String addonName) {
         AtomicBoolean found = new AtomicBoolean(false);
-        rows.stream().filter(addon -> (addon.getName().equals(addonName))).forEachOrdered(addon -> {
-            try {
-                addon.uninstall();
-                found.set(true);
-            } catch (IOException ex) {
-                logger.error(ex);
+        reporter.start("Remove", () -> {
+            if (!found.get()) {
+                logger.error("No addon found matching name: " + addonName);
             }
         });
-        if (!found.get()) {
-            logger.error("No addon found matching name: " + addonName);
-        }
+        rows.stream().filter(addon -> (addon.getName().equals(addonName))).forEachOrdered(addon -> {
+            addon.uninstall(reporter);
+            found.set(true);
+        });
+        reporter.stop();
     }
 
     public void update () {
+        reporter.start("Updating All", () -> {});
         rows.stream().filter(addon -> (addon.getStatus().equals("X"))).forEachOrdered(addon -> {
-            try {
-                addon.install();
-            } catch (IOException ex) {
-                logger.error(ex);
-            }
+            addon.install(reporter);
         });
+        reporter.stop();
     }
     
 }

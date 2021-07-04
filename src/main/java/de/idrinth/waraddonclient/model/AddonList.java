@@ -12,6 +12,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Objects;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 import javax.json.JsonArray;
 
 public abstract class AddonList implements Runnable {
@@ -30,6 +32,8 @@ public abstract class AddonList implements Runnable {
     
     private final Config config;
 
+    private final Executor runner = Executors.newSingleThreadExecutor();
+
     protected AddonList(Request client, BaseLogger logger, XmlParser parser, Config config) {
         this.client = client;
         this.logger = logger;
@@ -46,7 +50,7 @@ public abstract class AddonList implements Runnable {
             File version = new File(folder.getAbsolutePath() + config.getVersionFile());
             if (folder.isDirectory() && !version.exists()) {
                 try {
-                    add(new UnknownAddon(folder, client, logger, parser, config));
+                    add(new UnknownAddon(folder, client, logger, parser, config, runner));
                     unknowns.put(folder.getName(), rows.get(rows.size() - 1).getName());
                 } catch (InvalidArgumentException ex) {
                     logger.info(ex);
@@ -96,7 +100,7 @@ public abstract class AddonList implements Runnable {
             }
             for (int counter = json.size(); counter > 0; counter--) {
                 try {
-                    processJsonAddon(new ActualAddon(json.getJsonObject(counter - 1), client, logger, parser, config));
+                    processJsonAddon(new ActualAddon(json.getJsonObject(counter - 1), client, logger, parser, config, runner));
                 } catch (InvalidArgumentException ex) {
                     logger.error(ex);
                 }

@@ -1,6 +1,6 @@
 package de.idrinth.waraddonclient.model.addon;
 
-import java.io.IOException;
+import de.idrinth.waraddonclient.service.ProgressReporter;
 import java.util.List;
 
 public interface Addon {
@@ -19,9 +19,9 @@ public interface Addon {
 
     String getStatus();
 
-    void install() throws IOException;
+    public void install(ProgressReporter progress);
 
-    void uninstall() throws IOException;
+    public void uninstall(ProgressReporter progress);
 
     String getFile();
 
