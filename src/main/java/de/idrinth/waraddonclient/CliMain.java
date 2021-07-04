@@ -2,6 +2,7 @@ package de.idrinth.waraddonclient;
 
 import de.idrinth.waraddonclient.cli.AliasOption;
 import de.idrinth.waraddonclient.cli.AliasParser;
+import de.idrinth.waraddonclient.cli.Progress;
 import de.idrinth.waraddonclient.service.*;
 import de.idrinth.waraddonclient.model.CmdAddonList;
 import de.idrinth.waraddonclient.service.logger.CliLogger;
@@ -55,7 +56,7 @@ public class CliMain extends BaseMain {
                 logger.info("Set location to "+config.getWARPath());
             }
             file.checkPosition();
-            CmdAddonList addonList = new CmdAddonList(client, logger, new XmlParser(), config);
+            CmdAddonList addonList = new CmdAddonList(client, logger, new XmlParser(), config, new Progress());
             addonList.run();
             if (cli.hasOption("update-all")) {
                 addonList.update();

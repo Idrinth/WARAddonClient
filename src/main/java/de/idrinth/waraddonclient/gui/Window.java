@@ -7,6 +7,7 @@ import de.idrinth.waraddonclient.model.addon.Addon;
 import de.idrinth.waraddonclient.model.GuiAddonList;
 import de.idrinth.waraddonclient.model.addon.ActualAddon;
 import de.idrinth.waraddonclient.model.addon.NoAddon;
+import de.idrinth.waraddonclient.service.ProgressReporter;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import net.lingala.zip4j.exception.ZipException;
@@ -18,6 +19,8 @@ import de.idrinth.waraddonclient.service.Shedule;
 import java.awt.Desktop;
 import java.awt.FileDialog;
 import java.awt.Toolkit;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.event.HyperlinkEvent;
@@ -39,13 +42,16 @@ public class Window extends JFrame {
     private final Backup backup;
     
     private final Restarter restarter;
+    
+    private final ProgressReporter reporter;
 
-    public Window(GuiAddonList addonList, Version version, ThemeManager manager, BaseLogger logger, Shedule schedule, Config config, Backup backup, Restarter restarter) {
+    public Window(GuiAddonList addonList, Version version, ThemeManager manager, BaseLogger logger, Shedule schedule, Config config, Backup backup, Restarter restarter, ProgressReporter reporter) {
         this.addonList = addonList;
         this.restarter = restarter;
         this.logger = logger;
         this.config = config;
         this.backup = backup;
+        this.reporter = reporter;
         initComponents();
         manager.addTo(menuTheme);
         finishGuiBuilding(schedule);
@@ -515,14 +521,13 @@ public class Window extends JFrame {
      * @param evt
      */
     private void installButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_installButtonActionPerformed
-        try {
-            activeAddon.install();
-            updateList();
-            JOptionPane.showMessageDialog(this, "The requested Addon was installed.");
-        } catch (IOException exception) {
-            logger.error(exception);
-            JOptionPane.showMessageDialog(this, "Sadly Installing failed, check if the folder is writeable.");
-        }
+        reporter.start("Installing " + activeAddon.getName(), () -> {
+            this.setEnabled(true);
+            this.updateList();
+        });
+        this.setEnabled(false);
+        activeAddon.install(reporter);
+        reporter.stop();
     }//GEN-LAST:event_installButtonActionPerformed
 
     /**
@@ -549,14 +554,13 @@ public class Window extends JFrame {
      * @param evt
      */
     private void removeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeButtonActionPerformed
-        try {
-            activeAddon.uninstall();
-            updateList();
-            JOptionPane.showMessageDialog(this, "The requested Addon was removed.");
-        } catch (IOException exception) {
-            logger.error(exception);
-            JOptionPane.showMessageDialog(this, "Sadly Removing failed, check if the folder is writeable.");
-        }
+        reporter.start("Removing " + activeAddon.getName(), () -> {
+            this.setEnabled(true);
+            this.updateList();
+        });
+        this.setEnabled(false);
+        activeAddon.uninstall(reporter);
+        reporter.stop();
     }//GEN-LAST:event_removeButtonActionPerformed
 
     /**
@@ -610,28 +614,27 @@ public class Window extends JFrame {
     }//GEN-LAST:event_buttonDeleteSearchMouseClicked
 
     private void buttonUpdateAllMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_buttonUpdateAllMouseClicked
-        int errors = 0;
-        int count = 0;
-        for (int i = 0; i < addonList.size(); i++) {
-            Addon addon = addonList.get(i);
-            if (addon.getStatus().equals("X")) {
-                count++;
+        reporter.start("Updating All", () -> {
+            this.setEnabled(true);
+            this.updateList();
+        });
+        new Thread(() -> {
+            this.setEnabled(false);
+            reporter.incrementMax(addonList.size());
+            for (int i = 0; i < addonList.size(); i++) {
                 try {
-                    addon.install();
-                } catch (Exception ex) {
-                    errors++;
-                    logger.error(ex);
+                    Thread.sleep(10);
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(Window.class.getName()).log(Level.SEVERE, null, ex);
                 }
+                Addon addon = addonList.get(i);
+                if (addon.getStatus().equals("X")) {
+                    addon.install(reporter);
+                }
+                reporter.incrementCurrent();
             }
-        }
-        updateList();
-        if (count == 0) {
-            JOptionPane.showMessageDialog(this, "No Add-ons to update.");
-        } else if (errors == 0) {
-            JOptionPane.showMessageDialog(this, "All " + count + " Add-ons were updated.");
-        } else {
-            JOptionPane.showMessageDialog(this, "Updating " + errors + " out of " + count + " Add-ons failed.");
-        }
+            reporter.stop();
+        }).start();
     }//GEN-LAST:event_buttonUpdateAllMouseClicked
 
     private void menuCreateBackupActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuCreateBackupActionPerformed

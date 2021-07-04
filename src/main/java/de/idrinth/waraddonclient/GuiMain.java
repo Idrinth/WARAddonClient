@@ -2,6 +2,7 @@ package de.idrinth.waraddonclient;
 
 import de.idrinth.waraddonclient.service.Config;
 import de.idrinth.waraddonclient.gui.FrameRestorer;
+import de.idrinth.waraddonclient.gui.Progress;
 import de.idrinth.waraddonclient.gui.ThemeManager;
 import de.idrinth.waraddonclient.gui.Window;
 import de.idrinth.waraddonclient.model.GuiAddonList;
@@ -35,8 +36,11 @@ public class GuiMain extends BaseMain {
        schedule.register(30, watcher);
        java.awt.EventQueue.invokeLater(() -> {
            Version version = new Version(client, logger);
-           Window window = new Window(addonList, version, themes, logger, schedule, config, new Backup(config), restarter);
-           new FrameRestorer(config).restore(window);
+           Progress progress = new Progress();
+           FrameRestorer restorer = new FrameRestorer(config);
+           Window window = new Window(addonList, version, themes, logger, schedule, config, new Backup(config), restarter, progress);
+           restorer.restore(window);
+           restorer.restore(progress);
            window.setVisible(true);
        });
     }

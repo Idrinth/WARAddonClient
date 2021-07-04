@@ -1,6 +1,6 @@
 package de.idrinth.waraddonclient.model.addon;
 
-import java.io.IOException;
+import de.idrinth.waraddonclient.service.ProgressReporter;
 
 public class NoAddon implements de.idrinth.waraddonclient.model.addon.Addon {
 
@@ -35,12 +35,12 @@ public class NoAddon implements de.idrinth.waraddonclient.model.addon.Addon {
     }
 
     @Override
-    public void install() throws IOException {
+    public void install(ProgressReporter reporter) {
         throw new UnsupportedOperationException("You can not uninstall an addon that doesn't exist.");
     }
 
     @Override
-    public void uninstall() throws IOException {
+    public void uninstall(ProgressReporter reporter) {
         throw new UnsupportedOperationException("You can not uninstall an addon that doesn't exist");
     }
 

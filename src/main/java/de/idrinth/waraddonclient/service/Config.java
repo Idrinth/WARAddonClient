@@ -28,6 +28,14 @@ public class Config {
 
     private static final String KEY_WINDOW_HEIGHT = "window-height";
 
+    private static final String KEY_PROGRESS_LOCATION_X = "progress-x";
+
+    private static final String KEY_PROGRESS_LOCATION_Y = "progress-y";
+
+    private static final String KEY_PROGRESS_WIDTH = "progress-width";
+
+    private static final String KEY_PROGRESS_HEIGHT = "progress-height";
+
     private static final String KEY_PREFIX_ADDON_UPLOAD = "addon-upload-";
 
     private static final String LOG_FILE = "waraddonclient.log";
@@ -109,8 +117,8 @@ public class Config {
 
     public Dimension getWindowDimension() {
         return new Dimension(
-                prefs.getInt(KEY_WINDOW_WIDTH, 800),
-                prefs.getInt(KEY_WINDOW_HEIGHT, 450)
+            prefs.getInt(KEY_WINDOW_WIDTH, 800),
+            prefs.getInt(KEY_WINDOW_HEIGHT, 450)
         );
     }
 
@@ -121,8 +129,32 @@ public class Config {
 
     public Point getWindowPosition() {
         return new Point(
-                prefs.getInt(KEY_WINDOW_LOCATION_X, 0),
-                prefs.getInt(KEY_WINDOW_LOCATION_Y, 0)
+            prefs.getInt(KEY_WINDOW_LOCATION_X, 0),
+            prefs.getInt(KEY_WINDOW_LOCATION_Y, 0)
+        );
+    }
+
+    public void setProgressDimension(Dimension dimension) {
+        prefs.putInt(KEY_PROGRESS_WIDTH, dimension.width);
+        prefs.putInt(KEY_PROGRESS_HEIGHT, dimension.height);
+    }
+
+    public Dimension getProgressDimension() {
+        return new Dimension(
+            prefs.getInt(KEY_PROGRESS_WIDTH, 300),
+            prefs.getInt(KEY_PROGRESS_HEIGHT, 150)
+        );
+    }
+
+    public void setProgressPosition(Point point) {
+        prefs.putInt(KEY_PROGRESS_LOCATION_X, point.x);
+        prefs.putInt(KEY_PROGRESS_LOCATION_Y, point.y);
+    }
+
+    public Point getProgressPosition() {
+        return new Point(
+            prefs.getInt(KEY_PROGRESS_LOCATION_X, 0),
+            prefs.getInt(KEY_PROGRESS_LOCATION_Y, 0)
         );
     }
 

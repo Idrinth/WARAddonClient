@@ -18,16 +18,25 @@ public class FrameRestorer {
 
     public void restore(Window frame) {
         Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
-        frame.setLocation(getProcessedLocation(screen));
-        frame.setSize(getProcessedSize(screen));
+        frame.setLocation(getProcessedLocation(screen, config.getWindowPosition()));
+        frame.setSize(getProcessedSize(screen, config.getWindowDimension()));
         frame.addComponentListener(new Adapter(new DelayedRunner(400, () -> {
             config.setWindowDimension(frame.getSize());
             config.setWindowPosition(frame.getLocation());
         })));
     }
 
-    private Dimension getProcessedSize(Dimension screen) {
-        Dimension dimension = config.getWindowDimension();
+    public void restore(Progress frame) {
+        Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
+        frame.setLocation(getProcessedLocation(screen, config.getProgressPosition()));
+        frame.setSize(getProcessedSize(screen, config.getProgressDimension()));
+        frame.addComponentListener(new Adapter(new DelayedRunner(400, () -> {
+            config.setProgressDimension(frame.getSize());
+            config.setProgressPosition(frame.getLocation());
+        })));
+    }
+
+    private Dimension getProcessedSize(Dimension screen, Dimension dimension) {
         int width = dimension.width;
         int height = dimension.height;
         if (width <= 0 || width > screen.width) {
@@ -39,8 +48,7 @@ public class FrameRestorer {
         return new java.awt.Dimension(width, height);
     }
 
-    private Point getProcessedLocation(Dimension screen) {
-        Point point = config.getWindowPosition();
+    private Point getProcessedLocation(Dimension screen, Point point) {
         int x = point.x;
         int y = point.y;
         if (x < 0 || x > screen.width) {

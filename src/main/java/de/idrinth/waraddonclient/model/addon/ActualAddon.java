@@ -4,6 +4,7 @@ import com.github.zafarkhaja.semver.Version;
 import de.idrinth.waraddonclient.service.Config;
 import de.idrinth.waraddonclient.Utils;
 import de.idrinth.waraddonclient.model.InvalidArgumentException;
+import de.idrinth.waraddonclient.service.ProgressReporter;
 import de.idrinth.waraddonclient.service.logger.BaseLogger;
 import de.idrinth.waraddonclient.service.Request;
 import de.idrinth.waraddonclient.service.SilencingErrorHandler;
@@ -15,6 +16,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Objects;
+import java.util.concurrent.Executor;
 import javax.json.JsonArray;
 import javax.json.JsonObject;
 import javax.swing.JEditorPane;
@@ -62,8 +64,10 @@ public class ActualAddon implements de.idrinth.waraddonclient.model.addon.Addon 
     private String defaultDescription = "";
     
     private boolean loadedDescription = false;
+    
+    private Executor runner;
 
-    public ActualAddon(javax.json.JsonObject addon, Request client, BaseLogger logger, XmlParser parser, Config config) throws InvalidArgumentException {
+    public ActualAddon(javax.json.JsonObject addon, Request client, BaseLogger logger, XmlParser parser, Config config, Executor runner) throws InvalidArgumentException {
         if (addon == null) {
             throw new InvalidArgumentException("Addon is null");
         }
@@ -71,6 +75,7 @@ public class ActualAddon implements de.idrinth.waraddonclient.model.addon.Addon 
         this.logger = logger;
         this.parser = parser;
         this.config = config;
+        this.runner = runner;
         version = getStringFromObject("version", addon);
         slug = getStringFromObject("slug", addon);
         name = getStringFromObject("name", addon);
@@ -220,12 +225,14 @@ public class ActualAddon implements de.idrinth.waraddonclient.model.addon.Addon 
         return name;
     }
 
-    public void install() throws IOException {
-        (new Updater()).run(find(name), true);
+    public void install(ProgressReporter reporter) {
+        reporter.incrementMax(3);
+        runner.execute(new Updater(reporter, find(name), true));
     }
 
-    public void uninstall() throws IOException {
-        (new Updater()).run(find(name), false);
+    public void uninstall(ProgressReporter reporter) {
+        reporter.incrementMax(2);
+        runner.execute(new Updater(reporter, find(name), false));
     }
 
     public void fileWasChanged(File changedFile) {
@@ -268,13 +275,32 @@ public class ActualAddon implements de.idrinth.waraddonclient.model.addon.Addon 
         return downloads;
     }
 
-    private class Updater {
-        public void run(File folder, boolean redeploy) throws IOException {
-            uninstall(folder);
+    private class Updater implements Runnable {
+        private final boolean redeploy;
+        private final File folder;
+        private final ProgressReporter reporter;
+        public Updater(ProgressReporter reporter, File folder, boolean redeploy) {
+            this.reporter = reporter;
+            this.folder = folder;
+            this.redeploy = redeploy;
+        }
+        public void run() {
+            try {
+                uninstall(folder);
+            } catch (IOException ex) {
+                logger.error(ex);
+            }
+            reporter.incrementCurrent();
             if (redeploy) {
-                install();
+                try {
+                    install();
+                } catch (IOException ex) {
+                    logger.error(ex);
+                }
+                reporter.incrementCurrent();
             }
             refresh();
+            reporter.incrementCurrent();
             config.setEnabled(name, false);
         }
 
