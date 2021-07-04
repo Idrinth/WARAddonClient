@@ -71,6 +71,9 @@ public class Window extends JFrame {
         schedule.register(300, addonList);
         MenuScroller.setScrollerFor(menuTags);
         (new TableListener()).updateUi();
+        autoClose1.setSelected(config.getAutoClose() == 1);
+        autoClose10.setSelected(config.getAutoClose() == 10);
+        autoClose60.setSelected(config.getAutoClose() == 60);
     }
 
     private void newFilter() {
@@ -132,6 +135,10 @@ public class Window extends JFrame {
         menuFrancais = new javax.swing.JRadioButtonMenuItem();
         menuDeutsch = new javax.swing.JRadioButtonMenuItem();
         menuTheme = new javax.swing.JMenu();
+        javax.swing.JMenu autoCloseMenu = new javax.swing.JMenu();
+        autoClose1 = new javax.swing.JRadioButtonMenuItem();
+        autoClose10 = new javax.swing.JRadioButtonMenuItem();
+        autoClose60 = new javax.swing.JRadioButtonMenuItem();
         javax.swing.JMenu menuLinks = new javax.swing.JMenu();
         javax.swing.JMenuItem menuGuilded = new javax.swing.JMenuItem();
         javax.swing.JMenuItem menuBuyMeACoffee = new javax.swing.JMenuItem();
@@ -461,6 +468,37 @@ public class Window extends JFrame {
         menuTheme.setText("Theme");
         menuSettings.add(menuTheme);
 
+        autoCloseMenu.setText("Auto-Close");
+
+        autoClose1.setSelected(true);
+        autoClose1.setText("1 second");
+        autoClose1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                autoClose1ActionPerformed(evt);
+            }
+        });
+        autoCloseMenu.add(autoClose1);
+
+        autoClose10.setSelected(true);
+        autoClose10.setText("10 seconds");
+        autoClose10.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                autoClose10ActionPerformed(evt);
+            }
+        });
+        autoCloseMenu.add(autoClose10);
+
+        autoClose60.setSelected(true);
+        autoClose60.setText("60 seconds");
+        autoClose60.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                autoClose60ActionPerformed(evt);
+            }
+        });
+        autoCloseMenu.add(autoClose60);
+
+        menuSettings.add(autoCloseMenu);
+
         mainMenu.add(menuSettings);
 
         menuLinks.setText("Links");
@@ -711,6 +749,27 @@ public class Window extends JFrame {
         }
     }//GEN-LAST:event_menuWebpageActionPerformed
 
+    private void autoClose1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_autoClose1ActionPerformed
+        autoClose1.setSelected(true);
+        autoClose10.setSelected(false);
+        autoClose60.setSelected(false);
+        config.setAutoClose(1);
+    }//GEN-LAST:event_autoClose1ActionPerformed
+
+    private void autoClose10ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_autoClose10ActionPerformed
+        autoClose1.setSelected(true);
+        autoClose10.setSelected(false);
+        autoClose60.setSelected(false);
+        config.setAutoClose(10);
+    }//GEN-LAST:event_autoClose10ActionPerformed
+
+    private void autoClose60ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_autoClose60ActionPerformed
+        autoClose1.setSelected(true);
+        autoClose10.setSelected(false);
+        autoClose60.setSelected(false);
+        config.setAutoClose(60);
+    }//GEN-LAST:event_autoClose60ActionPerformed
+
     /**
      * handles actual changing of languages
      *
@@ -742,6 +801,9 @@ public class Window extends JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTable addonListTable;
     private javax.swing.JLabel addonTitle;
+    private javax.swing.JRadioButtonMenuItem autoClose1;
+    private javax.swing.JRadioButtonMenuItem autoClose10;
+    private javax.swing.JRadioButtonMenuItem autoClose60;
     private javax.swing.JLabel currentTags;
     private javax.swing.JEditorPane description;
     private javax.swing.JTextField inputSearch;

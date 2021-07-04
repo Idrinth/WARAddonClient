@@ -1,8 +1,13 @@
 package de.idrinth.waraddonclient.gui;
 
+import de.idrinth.waraddonclient.service.Config;
 import de.idrinth.waraddonclient.service.ProgressReporter;
 import java.awt.EventQueue;
 import java.awt.Toolkit;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import static java.util.concurrent.TimeUnit.SECONDS;
 import javax.swing.JFrame;
 
 public class Progress extends JFrame implements ProgressReporter {
@@ -14,8 +19,15 @@ public class Progress extends JFrame implements ProgressReporter {
     private Runnable callback;
 
     private boolean stopped;
+    
+    private final Config config;
+    
+    private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+    
+    private ScheduledFuture<?> future;
 
-    public Progress() {
+    public Progress(Config config) {
+        this.config = config;
         initComponents();
         setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/Images/logo.png")));
     }
@@ -76,14 +88,21 @@ public class Progress extends JFrame implements ProgressReporter {
     }// </editor-fold>//GEN-END:initComponents
 
     private void closeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_closeButtonActionPerformed
-        EventQueue.invokeLater(() -> this.setVisible(false));
-        callback.run();
+        if (callback != null) {
+            EventQueue.invokeLater(() -> this.setVisible(false));
+            callback.run();
+            callback = null;
+        }
     }//GEN-LAST:event_closeButtonActionPerformed
 
     private void finish()
     {
         stopped = false;
         EventQueue.invokeLater(() -> closeButton.setEnabled(true));
+        if (future != null) {
+            future.cancel(true);
+        }
+        future = scheduler.schedule(() -> closeButtonActionPerformed(null), config.getAutoClose(), SECONDS);
     }
 
     @Override

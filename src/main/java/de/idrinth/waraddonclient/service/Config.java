@@ -36,6 +36,8 @@ public class Config {
 
     private static final String KEY_PROGRESS_HEIGHT = "progress-height";
 
+    private static final String KEY_AUTO_CLOSE = "auto-close";
+
     private static final String KEY_PREFIX_ADDON_UPLOAD = "addon-upload-";
 
     private static final String LOG_FILE = "waraddonclient.log";
@@ -108,6 +110,14 @@ public class Config {
 
     public void setLanguage(String language) {
         prefs.put(KEY_LANGUAGE, language);
+    }
+
+    public int getAutoClose() {
+        return prefs.getInt(KEY_AUTO_CLOSE, 60);
+    }
+
+    public void setAutoClose(int autoClose) {
+        prefs.putInt(KEY_AUTO_CLOSE, autoClose);
     }
 
     public void setWindowDimension(Dimension dimension) {

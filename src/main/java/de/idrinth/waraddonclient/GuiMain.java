@@ -36,7 +36,7 @@ public class GuiMain extends BaseMain {
        schedule.register(30, watcher);
        java.awt.EventQueue.invokeLater(() -> {
            Version version = new Version(client, logger);
-           Progress progress = new Progress();
+           Progress progress = new Progress(config);
            FrameRestorer restorer = new FrameRestorer(config);
            Window window = new Window(addonList, version, themes, logger, schedule, config, new Backup(config), restarter, progress);
            restorer.restore(window);
