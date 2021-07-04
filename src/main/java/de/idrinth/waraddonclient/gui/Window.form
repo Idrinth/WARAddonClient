@@ -161,7 +161,7 @@
                 <MenuItem class="javax.swing.JRadioButtonMenuItem" name="autoClose1">
                   <Properties>
                     <Property name="selected" type="boolean" value="true"/>
-                    <Property name="text" type="java.lang.String" value="1 second"/>
+                    <Property name="text" type="java.lang.String" value="0 second"/>
                   </Properties>
                   <Events>
                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="autoClose1ActionPerformed"/>

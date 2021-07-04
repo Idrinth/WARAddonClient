@@ -71,7 +71,7 @@ public class Window extends JFrame {
         schedule.register(300, addonList);
         MenuScroller.setScrollerFor(menuTags);
         (new TableListener()).updateUi();
-        autoClose1.setSelected(config.getAutoClose() == 1);
+        autoClose1.setSelected(config.getAutoClose() == 0);
         autoClose10.setSelected(config.getAutoClose() == 10);
         autoClose60.setSelected(config.getAutoClose() == 60);
     }
@@ -471,7 +471,7 @@ public class Window extends JFrame {
         autoCloseMenu.setText("Auto-Close");
 
         autoClose1.setSelected(true);
-        autoClose1.setText("1 second");
+        autoClose1.setText("0 second");
         autoClose1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 autoClose1ActionPerformed(evt);
@@ -753,7 +753,7 @@ public class Window extends JFrame {
         autoClose1.setSelected(true);
         autoClose10.setSelected(false);
         autoClose60.setSelected(false);
-        config.setAutoClose(1);
+        config.setAutoClose(0);
     }//GEN-LAST:event_autoClose1ActionPerformed
 
     private void autoClose10ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_autoClose10ActionPerformed
