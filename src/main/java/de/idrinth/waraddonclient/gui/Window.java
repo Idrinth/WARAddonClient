@@ -21,7 +21,6 @@ import java.awt.FileDialog;
 import java.awt.Toolkit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
@@ -29,7 +28,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 
-public class Window extends JFrame {
+public class Window extends BaseFrame {
 
     private Addon activeAddon = new NoAddon();
     
@@ -46,6 +45,7 @@ public class Window extends JFrame {
     private final ProgressReporter reporter;
 
     public Window(GuiAddonList addonList, Version version, ThemeManager manager, BaseLogger logger, Shedule schedule, Config config, Backup backup, Restarter restarter, ProgressReporter reporter) {
+        super(config);
         this.addonList = addonList;
         this.restarter = restarter;
         this.logger = logger;
@@ -869,7 +869,7 @@ public class Window extends JFrame {
             installButton.setEnabled(true);
             removeButton.setEnabled(true);
             rightSide.setEnabledAt(1, false);
-            setTitle(activeAddon.getName() + " - Idrinth's WAR Addon Client " + config.getVersion());
+            setTitle(activeAddon.getName());
             rightSide.setEnabledAt(1, activeAddon.showSettings());
             uploadReason.setText(activeAddon.getReason());
             uploadUrl.setText(activeAddon.getUrl());

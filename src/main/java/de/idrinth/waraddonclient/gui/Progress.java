@@ -8,9 +8,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import static java.util.concurrent.TimeUnit.SECONDS;
-import javax.swing.JFrame;
 
-public class Progress extends JFrame implements ProgressReporter {
+public class Progress extends BaseFrame implements ProgressReporter {
 
     private int current=0;
 
@@ -27,6 +26,7 @@ public class Progress extends JFrame implements ProgressReporter {
     private ScheduledFuture<?> future;
 
     public Progress(Config config) {
+        super(config);
         this.config = config;
         initComponents();
         setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/Images/logo.png")));
