@@ -8,8 +8,11 @@ import javax.swing.JFrame;
 public class Progress extends JFrame implements ProgressReporter {
 
     private int current=0;
+
     private int max=0;
+
     private Runnable callback;
+
     private boolean stopped;
 
     public Progress() {

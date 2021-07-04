@@ -5,8 +5,11 @@ import de.idrinth.waraddonclient.service.ProgressReporter;
 public class Progress implements ProgressReporter {
 
     private int current=0;
+
     private int max=0;
+
     private Runnable callback;
+
     private boolean stopped;
 
     private void finish()
