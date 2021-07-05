@@ -16,7 +16,7 @@ public class FrameRestorer {
         this.config = config;
     }
 
-    public void restore(Window frame) {
+    public void restore(MainWindow frame) {
         Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
         frame.setLocation(getProcessedLocation(screen, config.getWindowPosition()));
         frame.setSize(getProcessedSize(screen, config.getWindowDimension()));
