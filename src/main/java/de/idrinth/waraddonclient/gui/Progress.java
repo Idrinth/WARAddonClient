@@ -3,7 +3,6 @@ package de.idrinth.waraddonclient.gui;
 import de.idrinth.waraddonclient.service.Config;
 import de.idrinth.waraddonclient.service.ProgressReporter;
 import java.awt.EventQueue;
-import java.awt.Toolkit;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
@@ -29,7 +28,6 @@ public class Progress extends BaseFrame implements ProgressReporter {
         super(config);
         this.config = config;
         initComponents();
-        setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/Images/logo.png")));
     }
 
     /**

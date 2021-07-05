@@ -21,40 +21,13 @@ import de.idrinth.waraddonclient.gui.themes.JTattooNoireLookAndFeelInfo;
 import de.idrinth.waraddonclient.gui.themes.JTattooSmartLookAndFeelInfo;
 import de.idrinth.waraddonclient.gui.themes.JTattooTextureLookAndFeelInfo;
 import de.idrinth.waraddonclient.service.logger.BaseLogger;
-import de.idrinth.waraddonclient.service.Restarter;
-import java.awt.event.ActionEvent;
-import java.io.IOException;
-import javax.swing.JMenu;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
-public final class ThemeManager {
-
-    private final BaseLogger logger;
-    
-    private final Config config;
-    
-    private final Restarter restarter;
-
-    public ThemeManager(BaseLogger logger, Config config, Restarter restarter) {
-        this.logger = logger;
-        this.config = config;
-        this.restarter = restarter;
-        install();
-        String preference = config.getTheme();
-        for (UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
-            if (preference.equals(info.getName())) {
-                try {
-                    UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException ex) {
-                    logger.warn("Unable to load theme " + info.getName());
-                }
-            }
-        }
-    }
-
-    private void install() {
+public final class ThemeManager
+{
+    public void install()
+    {
         UIManager.installLookAndFeel(new DarculaLookAndFeelInfo());
         UIManager.installLookAndFeel(new IdrinthLookAndFeelInfo());
         UIManager.installLookAndFeel(new JTattooAcrylLookAndFeelInfo());
@@ -76,23 +49,18 @@ public final class ThemeManager {
         UIManager.installLookAndFeel(new FlatDarculaLookAndFeelInfo());
     }
 
-    public void addTo(JMenu menu) {
+    public void applyTheme(BaseLogger logger, Config config)
+    {
+        String preference = config.getTheme();
         for (UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
-            javax.swing.JCheckBoxMenuItem item = new javax.swing.JCheckBoxMenuItem();
-            item.setText(info.getName());
-            item.setSelected(config.getTheme().equals(info.getName()));
-            item.addActionListener((ActionEvent evt) -> {
-                if (config.getTheme().equals(info.getName())) {
-                    return;
-                }
-                config.setTheme(info.getName());
+            if (preference.equals(info.getName())) {
                 try {
-                    restarter.restart();
-                } catch (IOException ex) {
-                    logger.error("Failed to restart");
+                    UIManager.setLookAndFeel(info.getClassName());
+                    break;
+                } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException ex) {
+                    logger.warn("Unable to load theme " + info.getName());
                 }
-            });
-            menu.add(item);
+            }
         }
     }
 }

@@ -1,6 +1,7 @@
 package de.idrinth.waraddonclient.gui;
 
 import de.idrinth.waraddonclient.service.Config;
+import java.awt.Toolkit;
 import javax.swing.JFrame;
 
 abstract class BaseFrame extends JFrame {
@@ -8,6 +9,7 @@ abstract class BaseFrame extends JFrame {
 
     protected BaseFrame(Config config) {
         this.config = config;
+        setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/Images/logo.png")));
     }
     
     @Override

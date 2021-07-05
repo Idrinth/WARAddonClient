@@ -11,4 +11,5 @@ public interface MainWindow {
     Dimension getSize();
     void addComponentListener(ComponentListener listener);
     void setVisible(boolean value);
+    void setEnabled(boolean value);
 }

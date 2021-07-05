@@ -102,8 +102,8 @@ public class Request {
             reader.close();
             version = data.getString("tag_name");
             client.close();
-        } catch (java.io.IOException exception) {
-            //do nothing, not important
+        } catch (java.io.IOException|java.lang.IllegalStateException exception) {
+            return "unknown";
         }
         return version;
     }
