@@ -17,18 +17,46 @@ import de.idrinth.waraddonclient.service.logger.BaseLogger;
 import de.idrinth.waraddonclient.service.Restarter;
 import de.idrinth.waraddonclient.service.Shedule;
 import java.awt.Desktop;
+import java.awt.Dimension;
 import java.awt.FileDialog;
+import java.awt.Font;
 import java.awt.Toolkit;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import javax.swing.GroupLayout;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JEditorPane;
+import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JRadioButtonMenuItem;
+import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
+import javax.swing.JTabbedPane;
+import javax.swing.JTable;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.LayoutStyle;
+import javax.swing.ListSelectionModel;
+import javax.swing.ScrollPaneConstants;
+import javax.swing.WindowConstants;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 
-public class Window extends BaseFrame {
+public class Window extends BaseFrame implements MainWindow {
 
     private Addon activeAddon = new NoAddon();
     
@@ -94,71 +122,71 @@ public class Window extends BaseFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        javax.swing.JSplitPane base = new javax.swing.JSplitPane();
-        javax.swing.JPanel leftSide = new javax.swing.JPanel();
-        inputSearch = new javax.swing.JTextField();
-        javax.swing.JScrollPane scroll = new javax.swing.JScrollPane();
-        addonListTable = new javax.swing.JTable();
-        javax.swing.JButton buttonDeleteSearch = new javax.swing.JButton();
-        javax.swing.JButton buttonUpdateAll = new javax.swing.JButton();
-        rightSide = new javax.swing.JTabbedPane();
-        javax.swing.JPanel tabMain = new javax.swing.JPanel();
-        javax.swing.JScrollPane scrollDescription = new javax.swing.JScrollPane();
-        description = new javax.swing.JEditorPane();
-        installButton = new javax.swing.JButton();
-        removeButton = new javax.swing.JButton();
-        addonTitle = new javax.swing.JLabel();
-        localVersion = new javax.swing.JLabel();
-        remoteVersion = new javax.swing.JLabel();
-        javax.swing.JLabel slash = new javax.swing.JLabel();
-        currentTags = new javax.swing.JLabel();
-        javax.swing.JPanel tabSettings = new javax.swing.JPanel();
-        javax.swing.JScrollPane scrollSettings = new javax.swing.JScrollPane();
-        uploadReason = new javax.swing.JTextArea();
-        uploadUrl = new javax.swing.JTextField();
-        javax.swing.JLabel uploadLabel = new javax.swing.JLabel();
-        uploadEnable = new javax.swing.JCheckBox();
-        uploadFile = new javax.swing.JTextField();
-        javax.swing.JLabel uploadFileLabel = new javax.swing.JLabel();
-        javax.swing.JMenuBar mainMenu = new javax.swing.JMenuBar();
-        javax.swing.JMenu menuFile = new javax.swing.JMenu();
-        javax.swing.JMenuItem menuAbout = new javax.swing.JMenuItem();
-        javax.swing.JMenuItem menuRestart = new javax.swing.JMenuItem();
-        javax.swing.JMenuItem menuQuit = new javax.swing.JMenuItem();
-        menuTags = new javax.swing.JMenu();
-        javax.swing.JMenu menuTools = new javax.swing.JMenu();
-        javax.swing.JMenuItem menuCreateBackup = new javax.swing.JMenuItem();
-        javax.swing.JMenuItem menuRestoreBackup = new javax.swing.JMenuItem();
-        javax.swing.JMenu menuSettings = new javax.swing.JMenu();
-        javax.swing.JMenu menuLanguage = new javax.swing.JMenu();
-        menuEnglish = new javax.swing.JRadioButtonMenuItem();
-        menuFrancais = new javax.swing.JRadioButtonMenuItem();
-        menuDeutsch = new javax.swing.JRadioButtonMenuItem();
-        menuTheme = new javax.swing.JMenu();
-        javax.swing.JMenu autoCloseMenu = new javax.swing.JMenu();
-        autoClose1 = new javax.swing.JRadioButtonMenuItem();
-        autoClose10 = new javax.swing.JRadioButtonMenuItem();
-        autoClose60 = new javax.swing.JRadioButtonMenuItem();
-        javax.swing.JMenu menuLinks = new javax.swing.JMenu();
-        javax.swing.JMenuItem menuGuilded = new javax.swing.JMenuItem();
-        javax.swing.JMenuItem menuBuyMeACoffee = new javax.swing.JMenuItem();
-        javax.swing.JMenuItem menuSource = new javax.swing.JMenuItem();
-        javax.swing.JMenuItem menuWebpage = new javax.swing.JMenuItem();
+        JSplitPane base = new JSplitPane();
+        JPanel leftSide = new JPanel();
+        inputSearch = new JTextField();
+        JScrollPane scroll = new JScrollPane();
+        addonListTable = new JTable();
+        JButton buttonDeleteSearch = new JButton();
+        JButton buttonUpdateAll = new JButton();
+        rightSide = new JTabbedPane();
+        JPanel tabMain = new JPanel();
+        JScrollPane scrollDescription = new JScrollPane();
+        description = new JEditorPane();
+        installButton = new JButton();
+        removeButton = new JButton();
+        addonTitle = new JLabel();
+        localVersion = new JLabel();
+        remoteVersion = new JLabel();
+        JLabel slash = new JLabel();
+        currentTags = new JLabel();
+        JPanel tabSettings = new JPanel();
+        JScrollPane scrollSettings = new JScrollPane();
+        uploadReason = new JTextArea();
+        uploadUrl = new JTextField();
+        JLabel uploadLabel = new JLabel();
+        uploadEnable = new JCheckBox();
+        uploadFile = new JTextField();
+        JLabel uploadFileLabel = new JLabel();
+        JMenuBar mainMenu = new JMenuBar();
+        JMenu menuFile = new JMenu();
+        JMenuItem menuAbout = new JMenuItem();
+        JMenuItem menuRestart = new JMenuItem();
+        JMenuItem menuQuit = new JMenuItem();
+        menuTags = new JMenu();
+        JMenu menuTools = new JMenu();
+        JMenuItem menuCreateBackup = new JMenuItem();
+        JMenuItem menuRestoreBackup = new JMenuItem();
+        JMenu menuSettings = new JMenu();
+        JMenu menuLanguage = new JMenu();
+        menuEnglish = new JRadioButtonMenuItem();
+        menuFrancais = new JRadioButtonMenuItem();
+        menuDeutsch = new JRadioButtonMenuItem();
+        menuTheme = new JMenu();
+        JMenu autoCloseMenu = new JMenu();
+        autoClose1 = new JRadioButtonMenuItem();
+        autoClose10 = new JRadioButtonMenuItem();
+        autoClose60 = new JRadioButtonMenuItem();
+        JMenu menuLinks = new JMenu();
+        JMenuItem menuGuilded = new JMenuItem();
+        JMenuItem menuBuyMeACoffee = new JMenuItem();
+        JMenuItem menuSource = new JMenuItem();
+        JMenuItem menuWebpage = new JMenuItem();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
         base.setDividerLocation(350);
         base.setToolTipText("");
-        base.setMinimumSize(new java.awt.Dimension(300, 200));
+        base.setMinimumSize(new Dimension(300, 200));
         base.setName(""); // NOI18N
 
-        inputSearch.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        inputSearch.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
                 inputSearchActionPerformed(evt);
             }
         });
-        inputSearch.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyReleased(java.awt.event.KeyEvent evt) {
+        inputSearch.addKeyListener(new KeyAdapter() {
+            public void keyReleased(KeyEvent evt) {
                 inputSearchKeyReleased(evt);
             }
         });
@@ -166,7 +194,7 @@ public class Window extends BaseFrame {
         scroll.setMaximumSize(null);
 
         addonListTable.setAutoCreateRowSorter(true);
-        addonListTable.setModel(new javax.swing.table.DefaultTableModel(
+        addonListTable.setModel(new DefaultTableModel(
             new Object [][] {
 
             },
@@ -175,7 +203,7 @@ public class Window extends BaseFrame {
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Integer.class, java.lang.Integer.class
+                String.class, String.class, String.class, String.class, Integer.class, Integer.class
             };
             boolean[] canEdit = new boolean [] {
                 false, false, false, false, false, false
@@ -192,54 +220,52 @@ public class Window extends BaseFrame {
         addonListTable.setColumnSelectionAllowed(true);
         addonListTable.setMaximumSize(null);
         addonListTable.setName(""); // NOI18N
-        addonListTable.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        addonListTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         scroll.setViewportView(addonListTable);
-        addonListTable.getColumnModel().getSelectionModel().setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        addonListTable.getColumnModel().getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
         buttonDeleteSearch.setText("X");
-        buttonDeleteSearch.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
+        buttonDeleteSearch.addMouseListener(new MouseAdapter() {
+            public void mouseClicked(MouseEvent evt) {
                 buttonDeleteSearchMouseClicked(evt);
             }
         });
 
         buttonUpdateAll.setText("Update All");
-        buttonUpdateAll.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
+        buttonUpdateAll.addMouseListener(new MouseAdapter() {
+            public void mouseClicked(MouseEvent evt) {
                 buttonUpdateAllMouseClicked(evt);
             }
         });
 
-        javax.swing.GroupLayout leftSideLayout = new javax.swing.GroupLayout(leftSide);
+        GroupLayout leftSideLayout = new GroupLayout(leftSide);
         leftSide.setLayout(leftSideLayout);
-        leftSideLayout.setHorizontalGroup(
-            leftSideLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+        leftSideLayout.setHorizontalGroup(leftSideLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
             .addGroup(leftSideLayout.createSequentialGroup()
-                .addGroup(leftSideLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(leftSideLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
                     .addGroup(leftSideLayout.createSequentialGroup()
-                        .addComponent(inputSearch, javax.swing.GroupLayout.DEFAULT_SIZE, 219, Short.MAX_VALUE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(inputSearch, GroupLayout.DEFAULT_SIZE, 219, Short.MAX_VALUE)
+                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(buttonDeleteSearch)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(buttonUpdateAll))
-                    .addComponent(scroll, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+                    .addComponent(scroll, GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
                 .addContainerGap())
         );
-        leftSideLayout.setVerticalGroup(
-            leftSideLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+        leftSideLayout.setVerticalGroup(leftSideLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
             .addGroup(leftSideLayout.createSequentialGroup()
-                .addGroup(leftSideLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(inputSearch, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(leftSideLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                    .addComponent(inputSearch, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                     .addComponent(buttonDeleteSearch)
                     .addComponent(buttonUpdateAll))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(scroll, javax.swing.GroupLayout.DEFAULT_SIZE, 393, Short.MAX_VALUE)
+                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(scroll, GroupLayout.DEFAULT_SIZE, 393, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
         base.setLeftComponent(leftSide);
 
-        scrollDescription.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        scrollDescription.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
         scrollDescription.setMaximumSize(null);
 
         description.setEditable(false);
@@ -247,20 +273,20 @@ public class Window extends BaseFrame {
         scrollDescription.setViewportView(description);
 
         installButton.setText("(Re)Install");
-        installButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        installButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
                 installButtonActionPerformed(evt);
             }
         });
 
         removeButton.setText("Remove");
-        removeButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        removeButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
                 removeButtonActionPerformed(evt);
             }
         });
 
-        addonTitle.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        addonTitle.setFont(new Font("Tahoma", 1, 11)); // NOI18N
 
         localVersion.setText("0.0.0");
         localVersion.setToolTipText("Local Version");
@@ -270,38 +296,36 @@ public class Window extends BaseFrame {
 
         slash.setText("/");
 
-        javax.swing.GroupLayout tabMainLayout = new javax.swing.GroupLayout(tabMain);
+        GroupLayout tabMainLayout = new GroupLayout(tabMain);
         tabMain.setLayout(tabMainLayout);
-        tabMainLayout.setHorizontalGroup(
-            tabMainLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+        tabMainLayout.setHorizontalGroup(tabMainLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
             .addGroup(tabMainLayout.createSequentialGroup()
                 .addComponent(localVersion)
                 .addGap(1, 1, 1)
                 .addComponent(slash)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(remoteVersion)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(currentTags, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addComponent(scrollDescription, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(currentTags, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addComponent(scrollDescription, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(tabMainLayout.createSequentialGroup()
                 .addComponent(installButton)
                 .addGap(42, 42, 42)
-                .addComponent(addonTitle, javax.swing.GroupLayout.DEFAULT_SIZE, 300, Short.MAX_VALUE)
+                .addComponent(addonTitle, GroupLayout.DEFAULT_SIZE, 300, Short.MAX_VALUE)
                 .addGap(36, 36, 36)
                 .addComponent(removeButton)
                 .addContainerGap())
         );
-        tabMainLayout.setVerticalGroup(
-            tabMainLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+        tabMainLayout.setVerticalGroup(tabMainLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
             .addGroup(tabMainLayout.createSequentialGroup()
-                .addGroup(tabMainLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(tabMainLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                     .addComponent(removeButton)
                     .addComponent(installButton)
                     .addComponent(addonTitle))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(scrollDescription, javax.swing.GroupLayout.PREFERRED_SIZE, 334, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(tabMainLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(scrollDescription, GroupLayout.PREFERRED_SIZE, 334, GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(tabMainLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                     .addComponent(localVersion)
                     .addComponent(remoteVersion)
                     .addComponent(slash)
@@ -322,8 +346,8 @@ public class Window extends BaseFrame {
         uploadLabel.setText("Upload URL");
 
         uploadEnable.setText("Allow Upload");
-        uploadEnable.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        uploadEnable.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
                 uploadEnableActionPerformed(evt);
             }
         });
@@ -333,47 +357,45 @@ public class Window extends BaseFrame {
 
         uploadFileLabel.setText("Upload File");
 
-        javax.swing.GroupLayout tabSettingsLayout = new javax.swing.GroupLayout(tabSettings);
+        GroupLayout tabSettingsLayout = new GroupLayout(tabSettings);
         tabSettings.setLayout(tabSettingsLayout);
-        tabSettingsLayout.setHorizontalGroup(
-            tabSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+        tabSettingsLayout.setHorizontalGroup(tabSettingsLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
             .addGroup(tabSettingsLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(tabSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(tabSettingsLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
                     .addGroup(tabSettingsLayout.createSequentialGroup()
                         .addComponent(uploadEnable)
                         .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(tabSettingsLayout.createSequentialGroup()
-                        .addComponent(uploadLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 256, Short.MAX_VALUE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(uploadUrl, javax.swing.GroupLayout.PREFERRED_SIZE, 265, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(uploadLabel, GroupLayout.DEFAULT_SIZE, 256, Short.MAX_VALUE)
+                        .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(uploadUrl, GroupLayout.PREFERRED_SIZE, 265, GroupLayout.PREFERRED_SIZE))
                     .addGroup(tabSettingsLayout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(uploadFile, javax.swing.GroupLayout.PREFERRED_SIZE, 265, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(scrollSettings, javax.swing.GroupLayout.Alignment.TRAILING)))
-            .addGroup(tabSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(uploadFile, GroupLayout.PREFERRED_SIZE, 265, GroupLayout.PREFERRED_SIZE))
+                    .addComponent(scrollSettings, GroupLayout.Alignment.TRAILING)))
+            .addGroup(tabSettingsLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
                 .addGroup(tabSettingsLayout.createSequentialGroup()
                     .addContainerGap()
-                    .addComponent(uploadFileLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 189, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(uploadFileLabel, GroupLayout.PREFERRED_SIZE, 189, GroupLayout.PREFERRED_SIZE)
                     .addContainerGap(344, Short.MAX_VALUE)))
         );
-        tabSettingsLayout.setVerticalGroup(
-            tabSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+        tabSettingsLayout.setVerticalGroup(tabSettingsLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
             .addGroup(tabSettingsLayout.createSequentialGroup()
-                .addComponent(scrollSettings, javax.swing.GroupLayout.PREFERRED_SIZE, 247, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(tabSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(uploadUrl, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(uploadLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(scrollSettings, GroupLayout.PREFERRED_SIZE, 247, GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(tabSettingsLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                    .addComponent(uploadUrl, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                    .addComponent(uploadLabel, GroupLayout.PREFERRED_SIZE, 20, GroupLayout.PREFERRED_SIZE))
                 .addGap(7, 7, 7)
-                .addComponent(uploadFile, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(uploadFile, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(uploadEnable)
                 .addContainerGap(64, Short.MAX_VALUE))
-            .addGroup(tabSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, tabSettingsLayout.createSequentialGroup()
+            .addGroup(tabSettingsLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                .addGroup(GroupLayout.Alignment.TRAILING, tabSettingsLayout.createSequentialGroup()
                     .addContainerGap(278, Short.MAX_VALUE)
-                    .addComponent(uploadFileLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(uploadFileLabel, GroupLayout.PREFERRED_SIZE, 24, GroupLayout.PREFERRED_SIZE)
                     .addGap(92, 92, 92)))
         );
 
@@ -385,24 +407,24 @@ public class Window extends BaseFrame {
 
         menuAbout.setText("About");
         menuAbout.setToolTipText("");
-        menuAbout.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        menuAbout.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
                 menuAboutActionPerformed(evt);
             }
         });
         menuFile.add(menuAbout);
 
         menuRestart.setText("Restart");
-        menuRestart.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        menuRestart.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
                 menuRestartActionPerformed(evt);
             }
         });
         menuFile.add(menuRestart);
 
         menuQuit.setText("Quit");
-        menuQuit.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        menuQuit.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
                 menuQuitActionPerformed(evt);
             }
         });
@@ -411,22 +433,22 @@ public class Window extends BaseFrame {
         mainMenu.add(menuFile);
 
         menuTags.setText("Tags");
-        menuTags.setMaximumSize(new java.awt.Dimension(40, 22));
+        menuTags.setMaximumSize(new Dimension(40, 22));
         mainMenu.add(menuTags);
 
         menuTools.setText("Tools");
 
         menuCreateBackup.setText("Create Backup");
-        menuCreateBackup.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        menuCreateBackup.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
                 menuCreateBackupActionPerformed(evt);
             }
         });
         menuTools.add(menuCreateBackup);
 
         menuRestoreBackup.setText("Restore Backup");
-        menuRestoreBackup.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        menuRestoreBackup.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
                 menuRestoreBackupActionPerformed(evt);
             }
         });
@@ -440,24 +462,24 @@ public class Window extends BaseFrame {
 
         menuEnglish.setSelected(true);
         menuEnglish.setText("English");
-        menuEnglish.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        menuEnglish.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
                 menuEnglishActionPerformed(evt);
             }
         });
         menuLanguage.add(menuEnglish);
 
         menuFrancais.setText("Francais");
-        menuFrancais.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        menuFrancais.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
                 menuFrancaisActionPerformed(evt);
             }
         });
         menuLanguage.add(menuFrancais);
 
         menuDeutsch.setText("Deutsch");
-        menuDeutsch.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        menuDeutsch.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
                 menuDeutschActionPerformed(evt);
             }
         });
@@ -472,8 +494,8 @@ public class Window extends BaseFrame {
 
         autoClose1.setSelected(true);
         autoClose1.setText("0 second");
-        autoClose1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        autoClose1.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
                 autoClose1ActionPerformed(evt);
             }
         });
@@ -481,8 +503,8 @@ public class Window extends BaseFrame {
 
         autoClose10.setSelected(true);
         autoClose10.setText("10 seconds");
-        autoClose10.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        autoClose10.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
                 autoClose10ActionPerformed(evt);
             }
         });
@@ -490,8 +512,8 @@ public class Window extends BaseFrame {
 
         autoClose60.setSelected(true);
         autoClose60.setText("60 seconds");
-        autoClose60.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        autoClose60.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
                 autoClose60ActionPerformed(evt);
             }
         });
@@ -504,32 +526,32 @@ public class Window extends BaseFrame {
         menuLinks.setText("Links");
 
         menuGuilded.setText("Guilded: Idrinth's Addons");
-        menuGuilded.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        menuGuilded.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
                 menuGuildedActionPerformed(evt);
             }
         });
         menuLinks.add(menuGuilded);
 
         menuBuyMeACoffee.setText("BuyMeACoffee");
-        menuBuyMeACoffee.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        menuBuyMeACoffee.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
                 menuBuyMeACoffeeActionPerformed(evt);
             }
         });
         menuLinks.add(menuBuyMeACoffee);
 
         menuSource.setText("GitHub:WARAddonClient");
-        menuSource.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        menuSource.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
                 menuSourceActionPerformed(evt);
             }
         });
         menuLinks.add(menuSource);
 
         menuWebpage.setText("Webpage");
-        menuWebpage.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        menuWebpage.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
                 menuWebpageActionPerformed(evt);
             }
         });
@@ -539,15 +561,13 @@ public class Window extends BaseFrame {
 
         setJMenuBar(mainMenu);
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+        GroupLayout layout = new GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(base, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        layout.setHorizontalGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+            .addComponent(base, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(base, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        layout.setVerticalGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+            .addComponent(base, GroupLayout.Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         pack();
@@ -558,7 +578,7 @@ public class Window extends BaseFrame {
      *
      * @param evt
      */
-    private void installButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_installButtonActionPerformed
+    private void installButtonActionPerformed(ActionEvent evt) {//GEN-FIRST:event_installButtonActionPerformed
         reporter.start("Installing " + activeAddon.getName(), () -> {
             this.setEnabled(true);
             this.updateList();
@@ -573,7 +593,7 @@ public class Window extends BaseFrame {
      *
      * @param evt
      */
-    private void inputSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_inputSearchActionPerformed
+    private void inputSearchActionPerformed(ActionEvent evt) {//GEN-FIRST:event_inputSearchActionPerformed
         newFilter();
     }//GEN-LAST:event_inputSearchActionPerformed
 
@@ -582,7 +602,7 @@ public class Window extends BaseFrame {
      *
      * @param evt
      */
-    private void inputSearchKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_inputSearchKeyReleased
+    private void inputSearchKeyReleased(KeyEvent evt) {//GEN-FIRST:event_inputSearchKeyReleased
         newFilter();
     }//GEN-LAST:event_inputSearchKeyReleased
 
@@ -591,7 +611,7 @@ public class Window extends BaseFrame {
      *
      * @param evt
      */
-    private void removeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeButtonActionPerformed
+    private void removeButtonActionPerformed(ActionEvent evt) {//GEN-FIRST:event_removeButtonActionPerformed
         reporter.start("Removing " + activeAddon.getName(), () -> {
             this.setEnabled(true);
             this.updateList();
@@ -605,7 +625,7 @@ public class Window extends BaseFrame {
      *
      * @param evt
      */
-    private void uploadEnableActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_uploadEnableActionPerformed
+    private void uploadEnableActionPerformed(ActionEvent evt) {//GEN-FIRST:event_uploadEnableActionPerformed
         config.setEnabled(activeAddon.getName(), uploadEnable.isSelected());
     }//GEN-LAST:event_uploadEnableActionPerformed
 
@@ -614,14 +634,14 @@ public class Window extends BaseFrame {
      *
      * @param evt
      */
-    private void menuEnglishActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuEnglishActionPerformed
+    private void menuEnglishActionPerformed(ActionEvent evt) {//GEN-FIRST:event_menuEnglishActionPerformed
         changeLanguageTo("en");
     }//GEN-LAST:event_menuEnglishActionPerformed
 
     /**
      * @param evt
      */
-    private void menuAboutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuAboutActionPerformed
+    private void menuAboutActionPerformed(ActionEvent evt) {//GEN-FIRST:event_menuAboutActionPerformed
         javax.swing.JOptionPane.showMessageDialog(this, "This software is provided for free by Björn Büttner.\n"
                 + "If you have ideas or bugs please add them to the issues at GitHub:WARAddonClient.\n"
                 + "If you want to buy me a coffee you can do so at Buy me a coffee.\n"
@@ -633,7 +653,7 @@ public class Window extends BaseFrame {
      *
      * @param evt
      */
-    private void menuDeutschActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuDeutschActionPerformed
+    private void menuDeutschActionPerformed(ActionEvent evt) {//GEN-FIRST:event_menuDeutschActionPerformed
         changeLanguageTo("de");
     }//GEN-LAST:event_menuDeutschActionPerformed
 
@@ -642,16 +662,16 @@ public class Window extends BaseFrame {
      *
      * @param evt
      */
-    private void menuFrancaisActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuFrancaisActionPerformed
+    private void menuFrancaisActionPerformed(ActionEvent evt) {//GEN-FIRST:event_menuFrancaisActionPerformed
         changeLanguageTo("fr");
     }//GEN-LAST:event_menuFrancaisActionPerformed
 
-    private void buttonDeleteSearchMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_buttonDeleteSearchMouseClicked
+    private void buttonDeleteSearchMouseClicked(MouseEvent evt) {//GEN-FIRST:event_buttonDeleteSearchMouseClicked
         inputSearch.setText("");
         inputSearchActionPerformed(new java.awt.event.ActionEvent(evt.getSource(), 1001, "reset"));
     }//GEN-LAST:event_buttonDeleteSearchMouseClicked
 
-    private void buttonUpdateAllMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_buttonUpdateAllMouseClicked
+    private void buttonUpdateAllMouseClicked(MouseEvent evt) {//GEN-FIRST:event_buttonUpdateAllMouseClicked
         reporter.start("Updating All", () -> {
             this.setEnabled(true);
             this.updateList();
@@ -660,11 +680,6 @@ public class Window extends BaseFrame {
             this.setEnabled(false);
             reporter.incrementMax(addonList.size());
             for (int i = 0; i < addonList.size(); i++) {
-                try {
-                    Thread.sleep(10);
-                } catch (InterruptedException ex) {
-                    Logger.getLogger(Window.class.getName()).log(Level.SEVERE, null, ex);
-                }
                 Addon addon = addonList.get(i);
                 if (addon.getStatus().equals("X")) {
                     addon.install(reporter);
@@ -675,7 +690,7 @@ public class Window extends BaseFrame {
         }).start();
     }//GEN-LAST:event_buttonUpdateAllMouseClicked
 
-    private void menuCreateBackupActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuCreateBackupActionPerformed
+    private void menuCreateBackupActionPerformed(ActionEvent evt) {//GEN-FIRST:event_menuCreateBackupActionPerformed
         try {
             backup.create();
             JOptionPane.showMessageDialog(this, "Saved your profile and addons in backups.");
@@ -685,7 +700,7 @@ public class Window extends BaseFrame {
         }
     }//GEN-LAST:event_menuCreateBackupActionPerformed
 
-    private void menuSourceActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuSourceActionPerformed
+    private void menuSourceActionPerformed(ActionEvent evt) {//GEN-FIRST:event_menuSourceActionPerformed
         try {
             Desktop.getDesktop().browse(new java.net.URI("https://github.com/Idrinth/WARAddonClient/"));
         } catch (URISyntaxException | IOException ex) {
@@ -693,7 +708,7 @@ public class Window extends BaseFrame {
         }
     }//GEN-LAST:event_menuSourceActionPerformed
 
-    private void menuBuyMeACoffeeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuBuyMeACoffeeActionPerformed
+    private void menuBuyMeACoffeeActionPerformed(ActionEvent evt) {//GEN-FIRST:event_menuBuyMeACoffeeActionPerformed
         try {
             Desktop.getDesktop().browse(new java.net.URI("https://buymeacoffee.com/idrinth"));
         } catch (URISyntaxException | IOException ex) {
@@ -701,7 +716,7 @@ public class Window extends BaseFrame {
         }
     }//GEN-LAST:event_menuBuyMeACoffeeActionPerformed
 
-    private void menuGuildedActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuGuildedActionPerformed
+    private void menuGuildedActionPerformed(ActionEvent evt) {//GEN-FIRST:event_menuGuildedActionPerformed
         try {
             Desktop.getDesktop().browse(new java.net.URI("https://guilded.gg/Idrinths-Addons/"));
         } catch (URISyntaxException | IOException ex) {
@@ -709,7 +724,7 @@ public class Window extends BaseFrame {
         }
     }//GEN-LAST:event_menuGuildedActionPerformed
 
-    private void menuRestoreBackupActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuRestoreBackupActionPerformed
+    private void menuRestoreBackupActionPerformed(ActionEvent evt) {//GEN-FIRST:event_menuRestoreBackupActionPerformed
         FileDialog dialog = new java.awt.FileDialog(this, "Select backup", java.awt.FileDialog.LOAD);
         dialog.setVisible(true);
         if (dialog.getFile() != null) {
@@ -727,12 +742,12 @@ public class Window extends BaseFrame {
         }
     }//GEN-LAST:event_menuRestoreBackupActionPerformed
 
-    private void menuQuitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuQuitActionPerformed
+    private void menuQuitActionPerformed(ActionEvent evt) {//GEN-FIRST:event_menuQuitActionPerformed
         this.dispose();
         Runtime.getRuntime().exit(0);
     }//GEN-LAST:event_menuQuitActionPerformed
 
-    private void menuRestartActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuRestartActionPerformed
+    private void menuRestartActionPerformed(ActionEvent evt) {//GEN-FIRST:event_menuRestartActionPerformed
         try {
             restarter.restart();
         } catch (IOException ex) {
@@ -741,7 +756,7 @@ public class Window extends BaseFrame {
         }
     }//GEN-LAST:event_menuRestartActionPerformed
 
-    private void menuWebpageActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuWebpageActionPerformed
+    private void menuWebpageActionPerformed(ActionEvent evt) {//GEN-FIRST:event_menuWebpageActionPerformed
         try {
             Desktop.getDesktop().browse(new java.net.URI("https://tools.idrinth.de/"));
         } catch (URISyntaxException | IOException ex) {
@@ -749,21 +764,21 @@ public class Window extends BaseFrame {
         }
     }//GEN-LAST:event_menuWebpageActionPerformed
 
-    private void autoClose1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_autoClose1ActionPerformed
+    private void autoClose1ActionPerformed(ActionEvent evt) {//GEN-FIRST:event_autoClose1ActionPerformed
         autoClose1.setSelected(true);
         autoClose10.setSelected(false);
         autoClose60.setSelected(false);
         config.setAutoClose(0);
     }//GEN-LAST:event_autoClose1ActionPerformed
 
-    private void autoClose10ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_autoClose10ActionPerformed
+    private void autoClose10ActionPerformed(ActionEvent evt) {//GEN-FIRST:event_autoClose10ActionPerformed
         autoClose1.setSelected(true);
         autoClose10.setSelected(false);
         autoClose60.setSelected(false);
         config.setAutoClose(10);
     }//GEN-LAST:event_autoClose10ActionPerformed
 
-    private void autoClose60ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_autoClose60ActionPerformed
+    private void autoClose60ActionPerformed(ActionEvent evt) {//GEN-FIRST:event_autoClose60ActionPerformed
         autoClose1.setSelected(true);
         autoClose10.setSelected(false);
         autoClose60.setSelected(false);
@@ -799,28 +814,28 @@ public class Window extends BaseFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JTable addonListTable;
-    private javax.swing.JLabel addonTitle;
-    private javax.swing.JRadioButtonMenuItem autoClose1;
-    private javax.swing.JRadioButtonMenuItem autoClose10;
-    private javax.swing.JRadioButtonMenuItem autoClose60;
-    private javax.swing.JLabel currentTags;
-    private javax.swing.JEditorPane description;
-    private javax.swing.JTextField inputSearch;
-    private javax.swing.JButton installButton;
-    private javax.swing.JLabel localVersion;
-    private javax.swing.JRadioButtonMenuItem menuDeutsch;
-    private javax.swing.JRadioButtonMenuItem menuEnglish;
-    private javax.swing.JRadioButtonMenuItem menuFrancais;
-    private javax.swing.JMenu menuTags;
-    private javax.swing.JMenu menuTheme;
-    private javax.swing.JLabel remoteVersion;
-    private javax.swing.JButton removeButton;
-    private javax.swing.JTabbedPane rightSide;
-    private javax.swing.JCheckBox uploadEnable;
-    private javax.swing.JTextField uploadFile;
-    private javax.swing.JTextArea uploadReason;
-    private javax.swing.JTextField uploadUrl;
+    private JTable addonListTable;
+    private JLabel addonTitle;
+    private JRadioButtonMenuItem autoClose1;
+    private JRadioButtonMenuItem autoClose10;
+    private JRadioButtonMenuItem autoClose60;
+    private JLabel currentTags;
+    private JEditorPane description;
+    private JTextField inputSearch;
+    private JButton installButton;
+    private JLabel localVersion;
+    private JRadioButtonMenuItem menuDeutsch;
+    private JRadioButtonMenuItem menuEnglish;
+    private JRadioButtonMenuItem menuFrancais;
+    private JMenu menuTags;
+    private JMenu menuTheme;
+    private JLabel remoteVersion;
+    private JButton removeButton;
+    private JTabbedPane rightSide;
+    private JCheckBox uploadEnable;
+    private JTextField uploadFile;
+    private JTextArea uploadReason;
+    private JTextField uploadUrl;
     // End of variables declaration//GEN-END:variables
 
     private class HyperlinkListenerImpl implements HyperlinkListener {
