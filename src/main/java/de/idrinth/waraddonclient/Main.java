@@ -10,6 +10,7 @@ public final class Main {
     public static void main(String[] args) {
         get(args).run();
     }
+
     private static BaseMain get(String[] args) {
         return args.length > 0 ? new CliMain(args) : new GuiMain();
     }
