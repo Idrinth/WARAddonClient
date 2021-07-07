@@ -1,16 +1,17 @@
 package de.idrinth.waraddonclient.gui;
 
 import de.idrinth.waraddonclient.service.Config;
-import de.idrinth.waraddonclient.service.Restarter;
-import de.idrinth.waraddonclient.service.logger.BaseLogger;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.File;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.GroupLayout;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JTextField;
 import javax.swing.LayoutStyle;
 import javax.swing.UIManager;
 import javax.swing.WindowConstants;
@@ -33,6 +34,7 @@ public class Settings extends BaseFrame implements MainWindow
         }
         theme.setSelectedItem(themeName);
         theme.setEnabled(true);
+        warPath.setText(config.getWARPath());
         autoClose.setSelectedItem(config.getAutoClose() + " seconds");
         switch(config.getLanguage()) {
             case "fr":
@@ -66,6 +68,9 @@ public class Settings extends BaseFrame implements MainWindow
         JLabel autoCloseLabel = new JLabel();
         theme = new JComboBox<>();
         JLabel autoCloseExplanation = new JLabel();
+        JLabel warPathLabel = new JLabel();
+        warPath = new JTextField();
+        JLabel warPathExplanation = new JLabel();
 
         setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
         addWindowListener(new WindowAdapter() {
@@ -107,27 +112,40 @@ public class Settings extends BaseFrame implements MainWindow
 
         autoCloseExplanation.setText("This defines how quickly the progress bar closes itself.");
 
+        warPathLabel.setText("WAR-Path");
+
+        warPath.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                warPathActionPerformed(evt);
+            }
+        });
+
+        warPathExplanation.setText("This is the Path to your WAR-exe, you shouldn't need to modify it");
+
         GroupLayout layout = new GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                    .addComponent(autoCloseLabel)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
                             .addComponent(languageLabel)
-                            .addComponent(themeLabel))
-                        .addGap(67, 67, 67)
+                            .addComponent(themeLabel)
+                            .addComponent(warPathLabel))
+                        .addGap(64, 64, 64)
                         .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING, false)
                             .addComponent(language, 0, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(autoClose, 0, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(theme, GroupLayout.Alignment.TRAILING, GroupLayout.PREFERRED_SIZE, 94, GroupLayout.PREFERRED_SIZE)))
-                    .addComponent(autoCloseLabel))
+                            .addComponent(theme, 0, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(warPath))))
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
                     .addComponent(themeExplanation)
                     .addComponent(languageExplanation)
-                    .addComponent(autoCloseExplanation))
+                    .addComponent(autoCloseExplanation)
+                    .addComponent(warPathExplanation))
                 .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
@@ -148,6 +166,11 @@ public class Settings extends BaseFrame implements MainWindow
                     .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                         .addComponent(autoClose, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                         .addComponent(autoCloseExplanation)))
+                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                    .addComponent(warPath, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                    .addComponent(warPathLabel)
+                    .addComponent(warPathExplanation))
                 .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -192,9 +215,19 @@ public class Settings extends BaseFrame implements MainWindow
         map.exchange(MainWindowMap.SETTINGS, MainWindowMap.START);
     }//GEN-LAST:event_formWindowClosing
 
+    private void warPathActionPerformed(ActionEvent evt) {//GEN-FIRST:event_warPathActionPerformed
+        String path = warPath.getText();
+        if (!new File(path + "/WAR.exe").exists()) {
+            JOptionPane.showMessageDialog(this, "Can't find WAR.exe at the given path, please retry.");
+            return;
+        }
+        config.setWARPath(path);
+    }//GEN-LAST:event_warPathActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private JComboBox<String> autoClose;
     private JComboBox<String> language;
     private JComboBox<String> theme;
+    private JTextField warPath;
     // End of variables declaration//GEN-END:variables
 }

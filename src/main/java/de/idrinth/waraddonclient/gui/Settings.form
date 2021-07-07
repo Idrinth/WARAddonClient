@@ -26,28 +26,31 @@
   <Layout>
     <DimensionLayout dim="0">
       <Group type="103" groupAlignment="0" attributes="0">
-          <Group type="102" alignment="0" attributes="0">
+          <Group type="102" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
+                  <Component id="autoCloseLabel" alignment="0" min="-2" max="-2" attributes="0"/>
                   <Group type="102" alignment="0" attributes="0">
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Component id="languageLabel" alignment="0" min="-2" max="-2" attributes="0"/>
                           <Component id="themeLabel" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Component id="warPathLabel" alignment="0" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <EmptySpace min="-2" pref="67" max="-2" attributes="0"/>
+                      <EmptySpace min="-2" pref="64" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" max="-2" attributes="0">
                           <Component id="language" max="32767" attributes="0"/>
                           <Component id="autoClose" max="32767" attributes="0"/>
-                          <Component id="theme" alignment="1" min="-2" pref="94" max="-2" attributes="0"/>
+                          <Component id="theme" alignment="0" max="32767" attributes="0"/>
+                          <Component id="warPath" max="32767" attributes="0"/>
                       </Group>
                   </Group>
-                  <Component id="autoCloseLabel" alignment="0" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace type="separate" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
                   <Component id="themeExplanation" min="-2" max="-2" attributes="0"/>
                   <Component id="languageExplanation" min="-2" max="-2" attributes="0"/>
                   <Component id="autoCloseExplanation" min="-2" max="-2" attributes="0"/>
+                  <Component id="warPathExplanation" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace max="32767" attributes="0"/>
           </Group>
@@ -75,6 +78,12 @@
                       <Component id="autoClose" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="autoCloseExplanation" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
+              </Group>
+              <EmptySpace max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="3" attributes="0">
+                  <Component id="warPath" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="warPathLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="warPathExplanation" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace max="32767" attributes="0"/>
           </Group>
@@ -178,6 +187,29 @@
     <Component class="javax.swing.JLabel" name="autoCloseExplanation">
       <Properties>
         <Property name="text" type="java.lang.String" value="This defines how quickly the progress bar closes itself."/>
+      </Properties>
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_VariableLocal" type="java.lang.Boolean" value="true"/>
+        <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="0"/>
+      </AuxValues>
+    </Component>
+    <Component class="javax.swing.JLabel" name="warPathLabel">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="WAR-Path"/>
+      </Properties>
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_VariableLocal" type="java.lang.Boolean" value="true"/>
+        <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="0"/>
+      </AuxValues>
+    </Component>
+    <Component class="javax.swing.JTextField" name="warPath">
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="warPathActionPerformed"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JLabel" name="warPathExplanation">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="This is the Path to your WAR-exe, you shouldn&apos;t need to modify it"/>
       </Properties>
       <AuxValues>
         <AuxValue name="JavaCodeGenerator_VariableLocal" type="java.lang.Boolean" value="true"/>
