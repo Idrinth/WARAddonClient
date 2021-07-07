@@ -55,6 +55,7 @@ public class Backups extends BaseFrame implements MainWindow
                 ((DefaultTableModel) this.restoreTable.getModel()).addRow(row);
             }
         }
+        setTitle("Backups");
     }
 
     /**
