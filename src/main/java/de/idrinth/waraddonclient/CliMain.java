@@ -56,7 +56,8 @@ public class CliMain extends BaseMain {
                 logger.info("Set location to "+config.getWARPath());
             }
             file.checkPosition();
-            CmdAddonList addonList = new CmdAddonList(client, logger, new XmlParser(), config, new Progress());
+            Progress progress = new Progress();
+            CmdAddonList addonList = new CmdAddonList(client, logger, new XmlParser(), config, progress);
             addonList.run();
             if (cli.hasOption("update-all")) {
                 addonList.update();
@@ -73,16 +74,15 @@ public class CliMain extends BaseMain {
                 logger.info("Removed " + cli.getOptionValue("remove"));
                 return;
             }
+            Backup bk = new Backup(config);
             if (cli.hasOption("backup")) {
-                Backup bk = new Backup(config);
-                bk.create();
+                bk.create(progress);
                 logger.info("Created a backup");
                 return;
             }
             if (cli.hasOption("restore")) {
-                Backup bk = new Backup(config);
                 File restore = new File(cli.getOptionValue("restore"));
-                bk.restore(restore);
+                bk.restore(restore, progress);
                 logger.info("Restored from file " + restore.getAbsolutePath());
                 return;
             }

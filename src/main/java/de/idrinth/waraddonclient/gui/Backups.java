@@ -18,7 +18,8 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.WindowConstants;
 
-public class Backups extends BaseFrame implements MainWindow {
+public class Backups extends BaseFrame implements MainWindow
+{
     private final BaseLogger logger;
 
     private final Backup backup;
@@ -92,35 +93,49 @@ public class Backups extends BaseFrame implements MainWindow {
     }// </editor-fold>//GEN-END:initComponents
 
     private void menuCreateBackupActionPerformed(ActionEvent evt) {//GEN-FIRST:event_menuCreateBackupActionPerformed
-        try {
-            backup.create();
-            JOptionPane.showMessageDialog(this, "Saved your profile and addons in backups.");
-        } catch (ZipException ex) {
-            logger.error(ex);
-            JOptionPane.showMessageDialog(this, "Failed to save your profile and addons.");
-        }
+        reporter.start("Create Backup", () -> {
+            this.setEnabled(true);
+        });
+        this.setEnabled(false);
+        new Thread(() -> {
+            try {
+                backup.create(reporter);
+                JOptionPane.showMessageDialog(this, "Saved your profile and addons in backups.");
+            } catch (ZipException ex) {
+                logger.error(ex);
+                JOptionPane.showMessageDialog(this, "Failed to save your profile and addons.");
+            }
+            reporter.stop();
+        }).start();
     }//GEN-LAST:event_menuCreateBackupActionPerformed
 
     private void menuRestoreBackupActionPerformed(ActionEvent evt) {//GEN-FIRST:event_menuRestoreBackupActionPerformed
         FileDialog dialog = new java.awt.FileDialog(this, "Select backup", java.awt.FileDialog.LOAD);
         dialog.setVisible(true);
         if (dialog.getFile() != null) {
-            if (!dialog.getFile().endsWith(".zip")) {
-                JOptionPane.showMessageDialog(this, "Backup has to be a zip-File.");
-                return;
-            }
-            try {
-                backup.restore(new java.io.File(dialog.getDirectory() + "/" + dialog.getFile()));
-                JOptionPane.showMessageDialog(this, "Backup restored.");
-            } catch (IOException ex) {
-                logger.error(ex);
-                JOptionPane.showMessageDialog(this, "Couldn't restore Backup.");
-            }
+            reporter.start("Restore Backup", () -> {
+                this.setEnabled(true);
+            });
+            this.setEnabled(false);
+            new Thread(() -> {
+                if (!dialog.getFile().endsWith(".zip")) {
+                    JOptionPane.showMessageDialog(this, "Backup has to be a zip-File.");
+                    return;
+                }
+                try {
+                    backup.restore(new java.io.File(dialog.getDirectory() + "/" + dialog.getFile()), reporter);
+                    JOptionPane.showMessageDialog(this, "Backup restored.");
+                } catch (IOException ex) {
+                    logger.error(ex);
+                    JOptionPane.showMessageDialog(this, "Couldn't restore Backup.");
+                }
+                reporter.stop();
+            }).start();
         }
     }//GEN-LAST:event_menuRestoreBackupActionPerformed
 
     private void formWindowClosing(WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
-        map.exchange(MainWindowMap.ADDONS, MainWindowMap.START);
+        map.exchange(MainWindowMap.BACKUPS, MainWindowMap.START);
     }//GEN-LAST:event_formWindowClosing
     // Variables declaration - do not modify//GEN-BEGIN:variables
     // End of variables declaration//GEN-END:variables
