@@ -11,12 +11,20 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.File;
 import javax.swing.GroupLayout;
-import javax.swing.JMenu;
+import javax.swing.JButton;
+import javax.swing.JLabel;
 import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
+import javax.swing.JTable;
+import javax.swing.JTextField;
+import javax.swing.LayoutStyle;
 import javax.swing.WindowConstants;
+import javax.swing.table.DefaultTableModel;
 
 public class Backups extends BaseFrame implements MainWindow
 {
@@ -27,6 +35,8 @@ public class Backups extends BaseFrame implements MainWindow
     private final ProgressReporter reporter;
     
     private final MainWindowMap map;
+    
+    private final Config config;
 
     public Backups(MainWindowMap map, BaseLogger logger, Config config, Backup backup, ProgressReporter reporter) {
         super(config);
@@ -34,7 +44,17 @@ public class Backups extends BaseFrame implements MainWindow
         this.logger = logger;
         this.backup = backup;
         this.reporter = reporter;
+        this.config = config;
         initComponents();
+        this.backupFolder.setText(config.getWARPath() + "/backups");
+        for (File file : new File(config.getWARPath() + "/backups").listFiles()) {
+            if (file.getName().endsWith(".zip")) {
+                String[] row = new String[2];
+                row[0] = file.getName();
+                row[1] = String.valueOf(file.lastModified());
+                ((DefaultTableModel) this.restoreTable.getModel()).addRow(row);
+            }
+        }
     }
 
     /**
@@ -46,10 +66,16 @@ public class Backups extends BaseFrame implements MainWindow
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        JTabbedPane tabbedPane = new JTabbedPane();
+        JPanel restorePane = new JPanel();
+        JScrollPane tablePane = new JScrollPane();
+        restoreTable = new JTable();
+        JButton restoreButton = new JButton();
+        JPanel createPane = new JPanel();
+        JLabel backupFolderLabel = new JLabel();
+        backupFolder = new JTextField();
+        JButton backupCreateButton = new JButton();
         JMenuBar mainMenu = new JMenuBar();
-        JMenu menuTools = new JMenu();
-        JMenuItem menuCreateBackup = new JMenuItem();
-        JMenuItem menuRestoreBackup = new JMenuItem();
 
         setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
         addWindowListener(new WindowAdapter() {
@@ -58,41 +84,109 @@ public class Backups extends BaseFrame implements MainWindow
             }
         });
 
-        menuTools.setText("Tools");
+        restoreTable.setModel(new DefaultTableModel(
+            new Object [][] {
 
-        menuCreateBackup.setText("Create Backup");
-        menuCreateBackup.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent evt) {
-                menuCreateBackupActionPerformed(evt);
+            },
+            new String [] {
+                "Filename", "Last Modified"
+            }
+        ) {
+            Class[] types = new Class [] {
+                String.class, String.class
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
             }
         });
-        menuTools.add(menuCreateBackup);
+        tablePane.setViewportView(restoreTable);
 
-        menuRestoreBackup.setText("Restore Backup");
-        menuRestoreBackup.addActionListener(new ActionListener() {
+        restoreButton.setText("Restore Backup");
+        restoreButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
-                menuRestoreBackupActionPerformed(evt);
+                restoreButtonActionPerformed(evt);
             }
         });
-        menuTools.add(menuRestoreBackup);
 
-        mainMenu.add(menuTools);
+        GroupLayout restorePaneLayout = new GroupLayout(restorePane);
+        restorePane.setLayout(restorePaneLayout);
+        restorePaneLayout.setHorizontalGroup(restorePaneLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+            .addGroup(restorePaneLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(tablePane, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(restoreButton)
+                .addContainerGap(319, Short.MAX_VALUE))
+        );
+        restorePaneLayout.setVerticalGroup(restorePaneLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+            .addGroup(restorePaneLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(restorePaneLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                    .addComponent(restoreButton)
+                    .addComponent(tablePane, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        tabbedPane.addTab("Restore", restorePane);
+
+        backupFolderLabel.setText("Backup-Folder:");
+
+        backupFolder.setEditable(false);
+        backupFolder.setText("jTextField1");
+
+        backupCreateButton.setText("Create Backup");
+        backupCreateButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                backupCreateButtonActionPerformed(evt);
+            }
+        });
+
+        GroupLayout createPaneLayout = new GroupLayout(createPane);
+        createPane.setLayout(createPaneLayout);
+        createPaneLayout.setHorizontalGroup(createPaneLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+            .addGroup(createPaneLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(createPaneLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                    .addGroup(createPaneLayout.createSequentialGroup()
+                        .addComponent(backupFolderLabel)
+                        .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(backupFolder, GroupLayout.PREFERRED_SIZE, 367, GroupLayout.PREFERRED_SIZE))
+                    .addComponent(backupCreateButton))
+                .addContainerGap(429, Short.MAX_VALUE))
+        );
+        createPaneLayout.setVerticalGroup(createPaneLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+            .addGroup(createPaneLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(createPaneLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                    .addComponent(backupFolderLabel)
+                    .addComponent(backupFolder, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addComponent(backupCreateButton)
+                .addContainerGap(393, Short.MAX_VALUE))
+        );
+
+        tabbedPane.addTab("Create", createPane);
 
         setJMenuBar(mainMenu);
 
         GroupLayout layout = new GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-            .addGap(0, 894, Short.MAX_VALUE)
+            .addComponent(tabbedPane)
         );
         layout.setVerticalGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-            .addGap(0, 453, Short.MAX_VALUE)
+            .addComponent(tabbedPane)
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void menuCreateBackupActionPerformed(ActionEvent evt) {//GEN-FIRST:event_menuCreateBackupActionPerformed
+    private void formWindowClosing(WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
+        map.exchange(MainWindowMap.BACKUPS, MainWindowMap.START);
+    }//GEN-LAST:event_formWindowClosing
+
+    private void backupCreateButtonActionPerformed(ActionEvent evt) {//GEN-FIRST:event_backupCreateButtonActionPerformed
         reporter.start("Create Backup", () -> {
             this.setEnabled(true);
         });
@@ -107,36 +201,42 @@ public class Backups extends BaseFrame implements MainWindow
             }
             reporter.stop();
         }).start();
-    }//GEN-LAST:event_menuCreateBackupActionPerformed
+    }//GEN-LAST:event_backupCreateButtonActionPerformed
 
-    private void menuRestoreBackupActionPerformed(ActionEvent evt) {//GEN-FIRST:event_menuRestoreBackupActionPerformed
-        FileDialog dialog = new java.awt.FileDialog(this, "Select backup", java.awt.FileDialog.LOAD);
-        dialog.setVisible(true);
-        if (dialog.getFile() != null) {
-            reporter.start("Restore Backup", () -> {
-                this.setEnabled(true);
-            });
-            this.setEnabled(false);
-            new Thread(() -> {
-                if (!dialog.getFile().endsWith(".zip")) {
-                    JOptionPane.showMessageDialog(this, "Backup has to be a zip-File.");
-                    return;
-                }
-                try {
-                    backup.restore(new java.io.File(dialog.getDirectory() + "/" + dialog.getFile()), reporter);
-                    JOptionPane.showMessageDialog(this, "Backup restored.");
-                } catch (IOException ex) {
-                    logger.error(ex);
-                    JOptionPane.showMessageDialog(this, "Couldn't restore Backup.");
-                }
-                reporter.stop();
-            }).start();
+    private void restoreButtonActionPerformed(ActionEvent evt) {//GEN-FIRST:event_restoreButtonActionPerformed
+        File backupFile;
+        if (restoreTable.getSelectedRow() != -1) {
+            backupFile = new File(config.getWARPath() + "/backups/" + restoreTable.getModel().getValueAt(restoreTable.getSelectedRow(), 1));
+        } else {
+            FileDialog dialog = new java.awt.FileDialog(this, "Select backup", java.awt.FileDialog.LOAD);
+            dialog.setVisible(true);
+            if (dialog.getFile() != null) {
+                return;
+            }
+            if (!dialog.getFile().endsWith(".zip")) {
+                JOptionPane.showMessageDialog(this, "Backup has to be a zip-File.");
+                return;
+            }
+            backupFile = new File(dialog.getDirectory() + "/" + dialog.getFile());
         }
-    }//GEN-LAST:event_menuRestoreBackupActionPerformed
+        reporter.start("Restore Backup", () -> {
+            this.setEnabled(true);
+        });
+        this.setEnabled(false);
+        new Thread(() -> {
+            try {
+                backup.restore(backupFile, reporter);
+                JOptionPane.showMessageDialog(this, "Backup restored.");
+            } catch (IOException ex) {
+                logger.error(ex);
+                JOptionPane.showMessageDialog(this, "Couldn't restore Backup.");
+            }
+            reporter.stop();
+        }).start();
+    }//GEN-LAST:event_restoreButtonActionPerformed
 
-    private void formWindowClosing(WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
-        map.exchange(MainWindowMap.BACKUPS, MainWindowMap.START);
-    }//GEN-LAST:event_formWindowClosing
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private JTextField backupFolder;
+    private JTable restoreTable;
     // End of variables declaration//GEN-END:variables
 }
