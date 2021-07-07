@@ -45,7 +45,7 @@ public class GuiMain extends BaseMain {
            FrameRestorer restorer = new FrameRestorer(config);
            MainWindowMap map = new MainWindowMap();
            map.put(MainWindowMap.ADDONS, new Addons(map, addonList, logger, schedule, config, progress));
-           map.put(MainWindowMap.SETTINGS, new Settings(map, config, restarter, logger));
+           map.put(MainWindowMap.SETTINGS, new Settings(map, config));
            map.put(MainWindowMap.START, new Start(map, logger, config, restarter, client));
            map.put(MainWindowMap.BACKUPS, new Backups(map, logger, config, new Backup(config), progress));
            for (MainWindow window : map.values()) {

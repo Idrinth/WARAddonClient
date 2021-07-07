@@ -21,22 +21,18 @@ public class Settings extends BaseFrame implements MainWindow
     
     private final MainWindowMap map;
     
-    private final Restarter restarter;
-    
-    private final BaseLogger logger;
-
-    public Settings(MainWindowMap map, Config config, Restarter restarter, BaseLogger logger) {
+    public Settings(MainWindowMap map, Config config) {
         super(config);
         this.map = map;
         this.config = config;
-        this.restarter = restarter;
-        this.logger = logger;
         initComponents();
         setTitle("Settings");
+        String themeName = config.getTheme();
         for (UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
             theme.addItem(info.getName());
         }
-        theme.setSelectedItem(config.getTheme());
+        theme.setSelectedItem(themeName);
+        theme.setEnabled(true);
         autoClose.setSelectedItem(config.getAutoClose() + " seconds");
         switch(config.getLanguage()) {
             case "fr":
@@ -50,7 +46,6 @@ public class Settings extends BaseFrame implements MainWindow
                 language.setSelectedIndex(0);
                 break;
         }
-        
     }
 
     /**

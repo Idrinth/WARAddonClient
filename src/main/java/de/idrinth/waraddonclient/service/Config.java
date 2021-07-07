@@ -62,7 +62,7 @@ public class Config {
 
     public Config() throws IOException, URISyntaxException {
         //check to look for old conf
-        if (getWARPath().equals(".")) {
+        if (prefs.get(KEY_THEME, "missing").equals("missing")) {
             Preferences oldPref = Preferences.userRoot().node(Config.class.getCanonicalName());
             prefs.put(KEY_THEME, oldPref.get(KEY_THEME, getTheme()));
             prefs.put(KEY_WAR_PATH, oldPref.get(KEY_WAR_PATH, getWARPath()));
