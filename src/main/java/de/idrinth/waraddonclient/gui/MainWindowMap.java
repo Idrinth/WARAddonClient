@@ -13,12 +13,7 @@ public class MainWindowMap extends HashMap<String, MainWindow> {
             MainWindow old = this.get(from);
             MainWindow nw = this.get(to);
             nw.setVisible(true);
-            nw.setEnabled(true);
-            if (START.equals(from)) {
-                old.setEnabled(false);
-            } else {
-                old.setVisible(false);
-            }
+            old.setVisible(false);
             nw.setLocation(old.getLocation());
             nw.setSize(old.getSize());
         });
