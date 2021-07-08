@@ -3,6 +3,7 @@ package de.idrinth.waraddonclient.gui;
 import de.idrinth.waraddonclient.service.Config;
 import de.idrinth.waraddonclient.service.Backup;
 import de.idrinth.waraddonclient.service.ProgressReporter;
+import de.idrinth.waraddonclient.service.Shedule;
 import java.io.IOException;
 import net.lingala.zip4j.exception.ZipException;
 import de.idrinth.waraddonclient.service.logger.BaseLogger;
@@ -12,6 +13,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Date;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -37,8 +40,10 @@ public class Backups extends BaseFrame implements MainWindow
     private final MainWindowMap map;
     
     private final Config config;
+    
+    private final ArrayList<File> contained = new ArrayList<>();
 
-    public Backups(MainWindowMap map, BaseLogger logger, Config config, Backup backup, ProgressReporter reporter) {
+    public Backups(MainWindowMap map, BaseLogger logger, Config config, Backup backup, ProgressReporter reporter, Shedule scheduler) {
         super(config);
         this.map = map;
         this.logger = logger;
@@ -47,15 +52,34 @@ public class Backups extends BaseFrame implements MainWindow
         this.config = config;
         initComponents();
         this.backupFolder.setText(config.getWARPath() + "/backups");
-        for (File file : new File(config.getWARPath() + "/backups").listFiles()) {
-            if (file.getName().endsWith(".zip")) {
-                String[] row = new String[2];
-                row[0] = file.getName();
-                row[1] = String.valueOf(file.lastModified());
-                ((DefaultTableModel) this.restoreTable.getModel()).addRow(row);
+        setTitle("Backups");
+        loadFromFolder();
+        scheduler.register(2, () -> loadFromFolder());
+    }
+    private void loadFromFolder()
+    {
+        File folder = new File(config.getWARPath() + "/backups");
+        if (!folder.isDirectory()) {
+            for (int i=this.restoreTable.getModel().getRowCount();i > 0; i--) {
+                ((DefaultTableModel) this.restoreTable.getModel()).removeRow(i - 1);
+            }
+            return;
+        }
+        for (File file : contained) {
+            if (!file.exists()) {
+                ((DefaultTableModel) this.restoreTable.getModel()).removeRow(contained.indexOf(file));
+                contained.remove(file);
             }
         }
-        setTitle("Backups");
+        for (File file : folder.listFiles()) {
+            if (file.getName().endsWith(".zip") && !contained.contains(file)) {
+                String[] row = new String[2];
+                row[0] = file.getName();
+                row[1] = new Date(file.lastModified()).toString();
+                ((DefaultTableModel) this.restoreTable.getModel()).addRow(row);
+                contained.add(file);
+            }
+        }
     }
 
     /**

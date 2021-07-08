@@ -1,5 +1,6 @@
 package de.idrinth.waraddonclient.gui;
 
+import de.idrinth.waraddonclient.Utils;
 import de.idrinth.waraddonclient.service.Config;
 import de.idrinth.waraddonclient.service.Request;
 import java.io.IOException;
@@ -34,7 +35,11 @@ public class Start extends BaseFrame implements MainWindow
         this.logger = logger;
         initComponents();
         setTitle("Start");
-        welcome.setText("<html><h1>Welcome to the Warhammer Online Addon Client!</h1><p>You are running version <b>"+config.getVersion()+"</b>.</p><p>The current Version is <b>"+client.getVersion()+"</b>.</p><br/><p>Choose the tool to use below!</p>");
+        welcome.setText("<html><h1>Welcome to the Warhammer Online Addon Client!</h1><p>You are running version <b>"+config.getVersion()+"</b>.</p><br/><p>Choose the tool to use below!</p>");
+        new Thread(() -> {
+            Utils.sleep(1000, logger);//This fixes a weird bug
+            welcome.setText("<html><h1>Welcome to the Warhammer Online Addon Client!</h1><p>You are running version <b>"+config.getVersion()+"</b>.</p><p>The current Version is <b>"+client.getVersion()+"</b>.</p><br/><p>Choose the tool to use below!</p>");
+        }).start();
     }
 
     /**
@@ -88,9 +93,8 @@ public class Start extends BaseFrame implements MainWindow
         welcome.setEditable(false);
         welcome.setContentType("text/html"); // NOI18N
         welcomePane.setViewportView(welcome);
-        welcome.getAccessibleContext().setAccessibleDescription("text/html");
 
-        menuFile.setText("File");
+        menuFile.setText("Main");
 
         menuAbout.setText("About");
         menuAbout.setToolTipText("");
@@ -137,7 +141,7 @@ public class Start extends BaseFrame implements MainWindow
         });
         menuLinks.add(menuBuyMeACoffee);
 
-        menuSource.setText("GitHub:WARAddonClient");
+        menuSource.setText("GitHub: WARAddonClient");
         menuSource.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
                 menuSourceActionPerformed(evt);
@@ -145,7 +149,7 @@ public class Start extends BaseFrame implements MainWindow
         });
         menuLinks.add(menuSource);
 
-        menuWebpage.setText("Webpage");
+        menuWebpage.setText("Web-Version: Idrinth's Tools");
         menuWebpage.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
                 menuWebpageActionPerformed(evt);

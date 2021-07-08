@@ -12,7 +12,6 @@ import javax.json.Json;
 import javax.json.JsonArray;
 import javax.json.JsonObject;
 import javax.json.JsonReader;
-
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
 
@@ -92,19 +91,20 @@ public class Request {
         }
     }
 
-    public String getVersion() {
-        String version = "";
+    public String getVersion()
+    {
         try {
             HttpGet request = new HttpGet("https://api.github.com/repos/Idrinth/WARAddonClient/releases/latest");
             HttpResponse response = executionHandler(request);
-            JsonReader reader = Json.createReader(response.getEntity().getContent());
-            JsonObject data = reader.readObject();
-            reader.close();
-            version = data.getString("tag_name");
+            JsonObject data;
+            try (JsonReader reader = Json.createReader(response.getEntity().getContent())) {
+                data = reader.readObject();
+            }
+            String version = data.getString("tag_name");
             client.close();
-        } catch (java.io.IOException|java.lang.IllegalStateException exception) {
+            return version;
+        } catch (IOException exception) {
             return "unknown";
         }
-        return version;
     }
 }

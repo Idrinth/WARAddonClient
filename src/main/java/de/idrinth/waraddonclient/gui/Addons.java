@@ -2,21 +2,16 @@ package de.idrinth.waraddonclient.gui;
 
 import darrylbu.util.MenuScroller;
 import de.idrinth.waraddonclient.service.Config;
-import de.idrinth.waraddonclient.service.Backup;
 import de.idrinth.waraddonclient.model.addon.Addon;
 import de.idrinth.waraddonclient.model.GuiAddonList;
 import de.idrinth.waraddonclient.model.addon.ActualAddon;
 import de.idrinth.waraddonclient.model.addon.NoAddon;
 import de.idrinth.waraddonclient.service.ProgressReporter;
-import java.io.IOException;
-import java.net.URISyntaxException;
-import net.lingala.zip4j.exception.ZipException;
 import javax.swing.table.TableRowSorter;
 import de.idrinth.waraddonclient.service.logger.BaseLogger;
 import de.idrinth.waraddonclient.service.Shedule;
 import java.awt.Desktop;
 import java.awt.Dimension;
-import java.awt.FileDialog;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -33,8 +28,6 @@ import javax.swing.JEditorPane;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
@@ -456,8 +449,12 @@ public class Addons extends BaseFrame implements MainWindow {
      * updates addon list
      */
     private void updateList() {
-        for (int position = 0; position < addonListTable.getRowCount(); position++) {
+        for (int position = addonListTable.getRowCount() -1 ; position >= 0 ; position--) {
             Addon addon = addonList.get(addonListTable.convertRowIndexToModel(position));
+            if (addon.getInstalled().equals("-") && addon.getStatus().equals("?")) {
+                ((DefaultTableModel) addonListTable.getModel()).removeRow(position);
+                continue;
+            }
             addonListTable.setValueAt(addon.getStatus(), position, 0);
             addonListTable.setValueAt(addon.getName(), position, 1);
             addonListTable.setValueAt(addon.getVersion(), position, 2);
@@ -521,6 +518,9 @@ public class Addons extends BaseFrame implements MainWindow {
          * Updates the ui to show the current addon's data
          */
         public void updateUi() {
+            if (activeAddon == null) {
+                return;
+            }
             description.setText(activeAddon.getDescription(config.getLanguage()));
             if (ActualAddon.class.isInstance(activeAddon)) {
                 new Thread(((ActualAddon) activeAddon).loadDescription(description, config.getLanguage())).start();

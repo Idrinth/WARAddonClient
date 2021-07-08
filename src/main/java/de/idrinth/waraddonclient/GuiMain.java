@@ -47,7 +47,7 @@ public class GuiMain extends BaseMain {
            map.put(MainWindowMap.ADDONS, new Addons(map, addonList, logger, schedule, config, progress));
            map.put(MainWindowMap.SETTINGS, new Settings(map, config));
            map.put(MainWindowMap.START, new Start(map, logger, config, restarter, client));
-           map.put(MainWindowMap.BACKUPS, new Backups(map, logger, config, new Backup(config), progress));
+           map.put(MainWindowMap.BACKUPS, new Backups(map, logger, config, new Backup(config), progress, schedule));
            for (MainWindow window : map.values()) {
                restorer.restore(window);
            }

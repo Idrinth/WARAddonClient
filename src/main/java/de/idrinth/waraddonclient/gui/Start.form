@@ -10,7 +10,7 @@
       <SubComponents>
         <Menu class="javax.swing.JMenu" name="menuFile">
           <Properties>
-            <Property name="text" type="java.lang.String" value="File"/>
+            <Property name="text" type="java.lang.String" value="Main"/>
           </Properties>
           <AuxValues>
             <AuxValue name="JavaCodeGenerator_VariableLocal" type="java.lang.Boolean" value="true"/>
@@ -91,7 +91,7 @@
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="menuSource">
               <Properties>
-                <Property name="text" type="java.lang.String" value="GitHub:WARAddonClient"/>
+                <Property name="text" type="java.lang.String" value="GitHub: WARAddonClient"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="menuSourceActionPerformed"/>
@@ -103,7 +103,7 @@
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="menuWebpage">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Webpage"/>
+                <Property name="text" type="java.lang.String" value="Web-Version: Idrinth&apos;s Tools"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="menuWebpageActionPerformed"/>
@@ -219,9 +219,6 @@
             <Property name="editable" type="boolean" value="false"/>
             <Property name="contentType" type="java.lang.String" value="text/html" noResource="true"/>
           </Properties>
-          <AccessibilityProperties>
-            <Property name="AccessibleContext.accessibleDescription" type="java.lang.String" value="text/html"/>
-          </AccessibilityProperties>
         </Component>
       </SubComponents>
     </Container>
