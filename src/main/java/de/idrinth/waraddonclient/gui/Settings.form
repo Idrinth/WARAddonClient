@@ -35,6 +35,7 @@
                           <Component id="languageLabel" alignment="0" min="-2" max="-2" attributes="0"/>
                           <Component id="themeLabel" alignment="0" min="-2" max="-2" attributes="0"/>
                           <Component id="warPathLabel" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Component id="autoBackupLabel" alignment="0" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace min="-2" pref="64" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" max="-2" attributes="0">
@@ -42,6 +43,7 @@
                           <Component id="autoClose" max="32767" attributes="0"/>
                           <Component id="theme" alignment="0" max="32767" attributes="0"/>
                           <Component id="warPath" max="32767" attributes="0"/>
+                          <Component id="autoBackup" max="32767" attributes="0"/>
                       </Group>
                   </Group>
               </Group>
@@ -51,6 +53,7 @@
                   <Component id="languageExplanation" min="-2" max="-2" attributes="0"/>
                   <Component id="autoCloseExplanation" min="-2" max="-2" attributes="0"/>
                   <Component id="warPathExplanation" min="-2" max="-2" attributes="0"/>
+                  <Component id="autoBackupExplanation" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace max="32767" attributes="0"/>
           </Group>
@@ -79,13 +82,19 @@
                       <Component id="autoCloseExplanation" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
               </Group>
-              <EmptySpace max="-2" attributes="0"/>
+              <EmptySpace type="unrelated" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
                   <Component id="warPath" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="warPathLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="warPathExplanation" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
-              <EmptySpace max="32767" attributes="0"/>
+              <EmptySpace min="-2" pref="8" max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="3" attributes="0">
+                  <Component id="autoBackup" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="autoBackupLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="autoBackupExplanation" alignment="3" min="-2" max="-2" attributes="0"/>
+              </Group>
+              <EmptySpace max="-2" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -210,6 +219,42 @@
     <Component class="javax.swing.JLabel" name="warPathExplanation">
       <Properties>
         <Property name="text" type="java.lang.String" value="This is the Path to your WAR-exe, you shouldn&apos;t need to modify it"/>
+      </Properties>
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_VariableLocal" type="java.lang.Boolean" value="true"/>
+        <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="0"/>
+      </AuxValues>
+    </Component>
+    <Component class="javax.swing.JLabel" name="autoBackupLabel">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Auto-Backup"/>
+      </Properties>
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_VariableLocal" type="java.lang.Boolean" value="true"/>
+        <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="0"/>
+      </AuxValues>
+    </Component>
+    <Component class="javax.swing.JComboBox" name="autoBackup">
+      <Properties>
+        <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
+          <StringArray count="3">
+            <StringItem index="0" value="Always"/>
+            <StringItem index="1" value="Never"/>
+            <StringItem index="2" value="Ask"/>
+          </StringArray>
+        </Property>
+        <Property name="selectedIndex" type="int" value="2"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="autoBackupActionPerformed"/>
+      </Events>
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
+      </AuxValues>
+    </Component>
+    <Component class="javax.swing.JLabel" name="autoBackupExplanation">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="This defines Auto Backup on Update All."/>
       </Properties>
       <AuxValues>
         <AuxValue name="JavaCodeGenerator_VariableLocal" type="java.lang.Boolean" value="true"/>

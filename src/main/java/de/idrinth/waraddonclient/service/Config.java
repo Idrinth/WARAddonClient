@@ -51,6 +51,8 @@ public class Config {
     private static final String BASE_URL = "https://tools.idrinth.de/";
 
     private static final String VERSION_FILE = "/self.idrinth";
+    
+    private static final String AUTO_BACKUP_ON_UPDATE_ALL = "auto-update.on.update-all";
 
     private final Preferences prefs =  Preferences.userNodeForPackage(Main.class);
 
@@ -199,7 +201,16 @@ public class Config {
     public File getJarDir() {
         return jarDir;
     }
+
     public String getVersionFile() {
         return VERSION_FILE;
+    }
+
+    public int getAutoBackupOnUpdateAll() {
+        return prefs.getInt(AUTO_BACKUP_ON_UPDATE_ALL, 2);
+    }
+
+    public void setAutoBackupOnUpdateAll(int choice) {
+        prefs.putInt(AUTO_BACKUP_ON_UPDATE_ALL, choice);
     }
 }

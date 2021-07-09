@@ -39,15 +39,16 @@ public class GuiMain extends BaseMain {
        themes.applyTheme(logger, config);
        GuiAddonList addonList = new GuiAddonList(client, logger, new XmlParser(), config);
        FileWatcher watcher = new FileWatcher(addonList, logger, config);
+       Backup backup = new Backup(config);
        schedule.register(30, watcher);
        java.awt.EventQueue.invokeLater(() -> {
            Progress progress = new Progress(config);
            FrameRestorer restorer = new FrameRestorer(config);
            MainWindowMap map = new MainWindowMap();
-           map.put(MainWindowMap.ADDONS, new Addons(map, addonList, logger, schedule, config, progress));
+           map.put(MainWindowMap.ADDONS, new Addons(map, addonList, logger, schedule, config, progress, backup));
            map.put(MainWindowMap.SETTINGS, new Settings(map, config));
            map.put(MainWindowMap.START, new Start(map, logger, config, restarter, client));
-           map.put(MainWindowMap.BACKUPS, new Backups(map, logger, config, new Backup(config), progress, schedule));
+           map.put(MainWindowMap.BACKUPS, new Backups(map, logger, config, backup, progress, schedule));
            for (MainWindow window : map.values()) {
                restorer.restore(window);
            }

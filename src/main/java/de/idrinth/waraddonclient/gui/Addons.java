@@ -6,6 +6,7 @@ import de.idrinth.waraddonclient.model.addon.Addon;
 import de.idrinth.waraddonclient.model.GuiAddonList;
 import de.idrinth.waraddonclient.model.addon.ActualAddon;
 import de.idrinth.waraddonclient.model.addon.NoAddon;
+import de.idrinth.waraddonclient.service.Backup;
 import de.idrinth.waraddonclient.service.ProgressReporter;
 import javax.swing.table.TableRowSorter;
 import de.idrinth.waraddonclient.service.logger.BaseLogger;
@@ -21,6 +22,8 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -28,6 +31,7 @@ import javax.swing.JEditorPane;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
@@ -44,6 +48,7 @@ import javax.swing.event.HyperlinkListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
+import net.lingala.zip4j.exception.ZipException;
 
 public class Addons extends BaseFrame implements MainWindow {
 
@@ -58,14 +63,17 @@ public class Addons extends BaseFrame implements MainWindow {
     private final ProgressReporter reporter;
     
     private final MainWindowMap map;
+    
+    private final Backup backup;
 
-    public Addons(MainWindowMap map, GuiAddonList addonList, BaseLogger logger, Shedule schedule, Config config, ProgressReporter reporter) {
+    public Addons(MainWindowMap map, GuiAddonList addonList, BaseLogger logger, Shedule schedule, Config config, ProgressReporter reporter, Backup backup) {
         super(config);
         this.map = map;
         this.addonList = addonList;
         this.logger = logger;
         this.config = config;
         this.reporter = reporter;
+        this.backup = backup;
         initComponents();
         finishGuiBuilding(schedule);
     }
@@ -393,13 +401,32 @@ public class Addons extends BaseFrame implements MainWindow {
     }//GEN-LAST:event_buttonDeleteSearchMouseClicked
 
     private void buttonUpdateAllMouseClicked(MouseEvent evt) {//GEN-FIRST:event_buttonUpdateAllMouseClicked
-        reporter.start("Updating All", () -> {
+        Integer choice = config.getAutoBackupOnUpdateAll();
+        if (choice == 2) {//cancel or unset
+            choice = JOptionPane.showConfirmDialog(this, "Do you want to make a backup first?");
+        }
+        if (choice == 2) {//cancel or unset
+            return;
+        }
+        reporter.start(choice == 0 ? "Backup & Update All" : "Updating All", () -> {
             this.setEnabled(true);
             this.updateList();
         });
-        new Thread(() -> {
+        Executor exe = Executors.newSingleThreadExecutor();
+        exe.execute(() -> {
             this.setEnabled(false);
             reporter.incrementMax(addonList.size());
+        });
+        if (choice == 0) {//yes          
+            exe.execute(() -> {
+                try {
+                    backup.create(reporter);
+                } catch (ZipException ex) {
+                    logger.error(ex);
+                }
+            });
+        }
+        exe.execute(() -> {
             for (int i = 0; i < addonList.size(); i++) {
                 Addon addon = addonList.get(i);
                 if (addon.getStatus().equals("X")) {
@@ -408,7 +435,7 @@ public class Addons extends BaseFrame implements MainWindow {
                 reporter.incrementCurrent();
             }
             reporter.stop();
-        }).start();
+        });
     }//GEN-LAST:event_buttonUpdateAllMouseClicked
 
     /**

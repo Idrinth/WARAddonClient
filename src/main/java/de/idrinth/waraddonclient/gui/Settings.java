@@ -71,6 +71,9 @@ public class Settings extends BaseFrame implements MainWindow
         JLabel warPathLabel = new JLabel();
         warPath = new JTextField();
         JLabel warPathExplanation = new JLabel();
+        JLabel autoBackupLabel = new JLabel();
+        autoBackup = new JComboBox<>();
+        JLabel autoBackupExplanation = new JLabel();
 
         setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
         addWindowListener(new WindowAdapter() {
@@ -122,6 +125,18 @@ public class Settings extends BaseFrame implements MainWindow
 
         warPathExplanation.setText("This is the Path to your WAR-exe, you shouldn't need to modify it");
 
+        autoBackupLabel.setText("Auto-Backup");
+
+        autoBackup.setModel(new DefaultComboBoxModel<>(new String[] { "Always", "Never", "Ask" }));
+        autoBackup.setSelectedIndex(2);
+        autoBackup.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                autoBackupActionPerformed(evt);
+            }
+        });
+
+        autoBackupExplanation.setText("This defines Auto Backup on Update All.");
+
         GroupLayout layout = new GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
@@ -133,19 +148,22 @@ public class Settings extends BaseFrame implements MainWindow
                         .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
                             .addComponent(languageLabel)
                             .addComponent(themeLabel)
-                            .addComponent(warPathLabel))
+                            .addComponent(warPathLabel)
+                            .addComponent(autoBackupLabel))
                         .addGap(64, 64, 64)
                         .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING, false)
                             .addComponent(language, 0, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(autoClose, 0, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(theme, 0, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(warPath))))
+                            .addComponent(warPath)
+                            .addComponent(autoBackup, 0, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
                     .addComponent(themeExplanation)
                     .addComponent(languageExplanation)
                     .addComponent(autoCloseExplanation)
-                    .addComponent(warPathExplanation))
+                    .addComponent(warPathExplanation)
+                    .addComponent(autoBackupExplanation))
                 .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
@@ -166,12 +184,17 @@ public class Settings extends BaseFrame implements MainWindow
                     .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                         .addComponent(autoClose, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                         .addComponent(autoCloseExplanation)))
-                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                     .addComponent(warPath, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                     .addComponent(warPathLabel)
                     .addComponent(warPathExplanation))
-                .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(8, 8, 8)
+                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                    .addComponent(autoBackup, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                    .addComponent(autoBackupLabel)
+                    .addComponent(autoBackupExplanation))
+                .addContainerGap())
         );
 
         pack();
@@ -224,7 +247,12 @@ public class Settings extends BaseFrame implements MainWindow
         config.setWARPath(path);
     }//GEN-LAST:event_warPathActionPerformed
 
+    private void autoBackupActionPerformed(ActionEvent evt) {//GEN-FIRST:event_autoBackupActionPerformed
+        config.setAutoBackupOnUpdateAll(autoBackup.getSelectedIndex());
+    }//GEN-LAST:event_autoBackupActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private JComboBox<String> autoBackup;
     private JComboBox<String> autoClose;
     private JComboBox<String> language;
     private JComboBox<String> theme;
