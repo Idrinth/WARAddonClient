@@ -229,11 +229,11 @@ public class UnknownAddon implements Addon {
 
     @Override
     public int getEndorsements() {
-        return -1;
+        return 0;
     }
 
     @Override
     public int getDownloads() {
-        return -1;
+        return 0;
     }
 }
