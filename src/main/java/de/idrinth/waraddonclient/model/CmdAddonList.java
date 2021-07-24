@@ -57,9 +57,7 @@ public class CmdAddonList extends AddonList {
 
     public void update () {
         reporter.start("Updating All", () -> {});
-        rows.stream().filter(addon -> (addon.getStatus().equals("X"))).forEachOrdered(addon -> {
-            addon.install(reporter);
-        });
+        rows.stream().filter(addon -> (addon.getStatus().equals("X"))).forEachOrdered(addon -> addon.install(reporter));
         reporter.stop();
     }
     

@@ -15,15 +15,17 @@ import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.IOException;
+import java.io.Serializable;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicReference;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -48,32 +50,31 @@ import javax.swing.event.HyperlinkListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
-import net.lingala.zip4j.exception.ZipException;
 
-public class Addons extends BaseFrame implements MainWindow {
+public class Addons extends BaseFrame implements MainWindow, Serializable {
 
-    private Addon activeAddon = new NoAddon();
-    
-    private final GuiAddonList addonList;
+    private static Addon activeAddon = new NoAddon();
 
-    private final BaseLogger logger;
-    
-    private final Config config;
-    
-    private final ProgressReporter reporter;
+    private final AtomicReference<GuiAddonList> addonList = new AtomicReference<>();
+
+    private final AtomicReference<BaseLogger> logger = new AtomicReference<>();
+
+    private final AtomicReference<Config> config = new AtomicReference<>();
+
+    private final AtomicReference<ProgressReporter> reporter = new AtomicReference<>();
     
     private final MainWindowMap map;
-    
-    private final Backup backup;
+
+    private final AtomicReference<Backup> backup = new AtomicReference<>();
 
     public Addons(MainWindowMap map, GuiAddonList addonList, BaseLogger logger, Shedule schedule, Config config, ProgressReporter reporter, Backup backup) {
         super(config);
         this.map = map;
-        this.addonList = addonList;
-        this.logger = logger;
-        this.config = config;
-        this.reporter = reporter;
-        this.backup = backup;
+        this.addonList.set(addonList);
+        this.logger.set(logger);
+        this.config.set(config);
+        this.reporter.set(reporter);
+        this.backup.set(backup);
         initComponents();
         finishGuiBuilding(schedule);
     }
@@ -81,20 +82,20 @@ public class Addons extends BaseFrame implements MainWindow {
     private void finishGuiBuilding(Shedule schedule) {
         addonListTable.getSelectionModel().addListSelectionListener(new TableListener());
         addonListTable.setRowSorter(new TableRowSorter<>(addonListTable.getModel()));
-        addonList.setModel((DefaultTableModel) addonListTable.getModel());
+        addonList.get().setModel((DefaultTableModel) addonListTable.getModel());
         description.addHyperlinkListener(new HyperlinkListenerImpl());
-        addonList.setMenu(menuTags, (java.awt.event.ActionEvent evt) -> newFilter());
-        schedule.register(300, addonList);
+        addonList.get().setMenu(menuTags, (java.awt.event.ActionEvent evt) -> newFilter());
+        schedule.register(300, addonList.get());
         MenuScroller.setScrollerFor(menuTags);
         (new TableListener()).updateUi();
     }
 
     private void newFilter() {
         try {
-            TextCategory rf = new TextCategory(inputSearch.getText(), addonList);
+            TextCategory rf = new TextCategory(inputSearch.getText(), this.addonList.get());
             ((TableRowSorter) addonListTable.getRowSorter()).setRowFilter(rf);
         } catch (java.util.regex.PatternSyntaxException exception) {
-            logger.error(exception);
+            logger.get().error(exception);
         }
     }
 
@@ -135,6 +136,7 @@ public class Addons extends BaseFrame implements MainWindow {
 
         setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
         addWindowListener(new WindowAdapter() {
+            @Override
             public void windowClosing(WindowEvent evt) {
                 formWindowClosing(evt);
             }
@@ -145,12 +147,9 @@ public class Addons extends BaseFrame implements MainWindow {
         base.setMinimumSize(new Dimension(300, 200));
         base.setName(""); // NOI18N
 
-        inputSearch.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent evt) {
-                inputSearchActionPerformed(evt);
-            }
-        });
+        inputSearch.addActionListener(this::inputSearchActionPerformed);
         inputSearch.addKeyListener(new KeyAdapter() {
+            @Override
             public void keyReleased(KeyEvent evt) {
                 inputSearchKeyReleased(evt);
             }
@@ -174,10 +173,12 @@ public class Addons extends BaseFrame implements MainWindow {
                 false, false, false, false, false, false
             };
 
+            @Override
             public Class getColumnClass(int columnIndex) {
                 return types [columnIndex];
             }
 
+            @Override
             public boolean isCellEditable(int rowIndex, int columnIndex) {
                 return canEdit [columnIndex];
             }
@@ -191,6 +192,7 @@ public class Addons extends BaseFrame implements MainWindow {
 
         buttonDeleteSearch.setText("X");
         buttonDeleteSearch.addMouseListener(new MouseAdapter() {
+            @Override
             public void mouseClicked(MouseEvent evt) {
                 buttonDeleteSearchMouseClicked(evt);
             }
@@ -198,6 +200,7 @@ public class Addons extends BaseFrame implements MainWindow {
 
         buttonUpdateAll.setText("Update All");
         buttonUpdateAll.addMouseListener(new MouseAdapter() {
+            @Override
             public void mouseClicked(MouseEvent evt) {
                 buttonUpdateAllMouseClicked(evt);
             }
@@ -238,18 +241,10 @@ public class Addons extends BaseFrame implements MainWindow {
         scrollDescription.setViewportView(description);
 
         installButton.setText("(Re)Install");
-        installButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent evt) {
-                installButtonActionPerformed(evt);
-            }
-        });
+        installButton.addActionListener(this::installButtonActionPerformed);
 
         removeButton.setText("Remove");
-        removeButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent evt) {
-                removeButtonActionPerformed(evt);
-            }
-        });
+        removeButton.addActionListener(this::removeButtonActionPerformed);
 
         addonTitle.setFont(new Font("Tahoma", 1, 11)); // NOI18N
 
@@ -294,11 +289,7 @@ public class Addons extends BaseFrame implements MainWindow {
         uploadLabel.setText("Upload URL");
 
         uploadEnable.setText("Allow Upload");
-        uploadEnable.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent evt) {
-                uploadEnableActionPerformed(evt);
-            }
-        });
+        uploadEnable.addActionListener(this::uploadEnableActionPerformed);
 
         uploadFile.setEditable(false);
         uploadFile.setToolTipText("");
@@ -392,7 +383,7 @@ public class Addons extends BaseFrame implements MainWindow {
      * @param evt
      */
     private void uploadEnableActionPerformed(ActionEvent evt) {//GEN-FIRST:event_uploadEnableActionPerformed
-        config.setEnabled(activeAddon.getName(), uploadEnable.isSelected());
+        config.get().setEnabled(activeAddon.getName(), uploadEnable.isSelected());
     }//GEN-LAST:event_uploadEnableActionPerformed
 
     private void buttonDeleteSearchMouseClicked(MouseEvent evt) {//GEN-FIRST:event_buttonDeleteSearchMouseClicked
@@ -401,40 +392,40 @@ public class Addons extends BaseFrame implements MainWindow {
     }//GEN-LAST:event_buttonDeleteSearchMouseClicked
 
     private void buttonUpdateAllMouseClicked(MouseEvent evt) {//GEN-FIRST:event_buttonUpdateAllMouseClicked
-        Integer choice = config.getAutoBackupOnUpdateAll();
+        Integer choice = config.get().getAutoBackupOnUpdateAll();
         if (choice == 2) {//cancel or unset
             choice = JOptionPane.showConfirmDialog(this, "Do you want to make a backup first?");
         }
         if (choice == 2) {//cancel or unset
             return;
         }
-        reporter.start(choice == 0 ? "Backup & Update All" : "Updating All", () -> {
+        reporter.get().start(choice == 0 ? "Backup & Update All" : "Updating All", () -> {
             this.setEnabled(true);
             this.updateList();
         });
         Executor exe = Executors.newSingleThreadExecutor();
         exe.execute(() -> {
             this.setEnabled(false);
-            reporter.incrementMax(addonList.size());
+            reporter.get().incrementMax(addonList.get().size());
         });
         if (choice == 0) {//yes          
             exe.execute(() -> {
                 try {
-                    backup.create(reporter);
-                } catch (ZipException ex) {
-                    logger.error(ex);
+                    backup.get().create(reporter.get());
+                } catch (IOException ex) {
+                    logger.get().error(ex);
                 }
             });
         }
         exe.execute(() -> {
-            for (int i = 0; i < addonList.size(); i++) {
-                Addon addon = addonList.get(i);
+            for (int i = 0; i < addonList.get().size(); i++) {
+                Addon addon = addonList.get().get(i);
                 if (addon.getStatus().equals("X")) {
-                    addon.install(reporter);
+                    addon.install(reporter.get());
                 }
-                reporter.incrementCurrent();
+                reporter.get().incrementCurrent();
             }
-            reporter.stop();
+            reporter.get().stop();
         });
     }//GEN-LAST:event_buttonUpdateAllMouseClicked
 
@@ -444,13 +435,13 @@ public class Addons extends BaseFrame implements MainWindow {
      * @param evt
      */
     private void removeButtonActionPerformed(ActionEvent evt) {//GEN-FIRST:event_removeButtonActionPerformed
-        reporter.start("Removing " + activeAddon.getName(), () -> {
+        reporter.get().start("Removing " + activeAddon.getName(), () -> {
             this.setEnabled(true);
             this.updateList();
         });
         this.setEnabled(false);
-        activeAddon.uninstall(reporter);
-        reporter.stop();
+        activeAddon.uninstall(reporter.get());
+        reporter.get().stop();
     }//GEN-LAST:event_removeButtonActionPerformed
 
     /**
@@ -459,13 +450,13 @@ public class Addons extends BaseFrame implements MainWindow {
      * @param evt
      */
     private void installButtonActionPerformed(ActionEvent evt) {//GEN-FIRST:event_installButtonActionPerformed
-        reporter.start("Installing " + activeAddon.getName(), () -> {
+        reporter.get().start("Installing " + activeAddon.getName(), () -> {
             this.setEnabled(true);
             this.updateList();
         });
         this.setEnabled(false);
-        activeAddon.install(reporter);
-        reporter.stop();
+        activeAddon.install(reporter.get());
+        reporter.get().stop();
     }//GEN-LAST:event_installButtonActionPerformed
 
     private void formWindowClosing(WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
@@ -477,7 +468,7 @@ public class Addons extends BaseFrame implements MainWindow {
      */
     private void updateList() {
         for (int position = addonListTable.getRowCount() -1 ; position >= 0 ; position--) {
-            Addon addon = addonList.get(addonListTable.convertRowIndexToModel(position));
+            Addon addon = addonList.get().get(addonListTable.convertRowIndexToModel(position));
             if (addon.getInstalled().equals("-") && addon.getStatus().equals("?")) {
                 ((DefaultTableModel) addonListTable.getModel()).removeRow(position);
                 continue;
@@ -515,7 +506,7 @@ public class Addons extends BaseFrame implements MainWindow {
                 try {
                     Desktop.getDesktop().browse(event.getURL().toURI());
                 } catch (java.net.URISyntaxException | java.io.IOException exception) {
-                    logger.error(exception);
+                    logger.get().error(exception);
                 }
             }
 
@@ -529,10 +520,10 @@ public class Addons extends BaseFrame implements MainWindow {
             try {
                 int row = addonListTable.getSelectedRow();
                 if (row != -1) {
-                    activeAddon = addonList.get(addonListTable.convertRowIndexToModel(row));
+                    activeAddon = addonList.get().get(addonListTable.convertRowIndexToModel(row));
                 }
             } catch (java.lang.ArrayIndexOutOfBoundsException exception) {
-                logger.error(exception);
+                logger.get().error(exception);
                 return;
             }
             if (activeAddon == null) {
@@ -548,9 +539,9 @@ public class Addons extends BaseFrame implements MainWindow {
             if (activeAddon == null) {
                 return;
             }
-            description.setText(activeAddon.getDescription(config.getLanguage()));
-            if (ActualAddon.class.isInstance(activeAddon)) {
-                new Thread(((ActualAddon) activeAddon).loadDescription(description, config.getLanguage())).start();
+            description.setText(activeAddon.getDescription(config.get().getLanguage()));
+            if (activeAddon instanceof ActualAddon) {
+                new Thread(((ActualAddon) activeAddon).loadDescription(description, config.get().getLanguage())).start();
             }
             addonTitle.setText(activeAddon.getName());
             installButton.setEnabled(true);
@@ -561,7 +552,7 @@ public class Addons extends BaseFrame implements MainWindow {
             uploadReason.setText(activeAddon.getReason());
             uploadUrl.setText(activeAddon.getUrl());
             uploadFile.setText(activeAddon.getFile());
-            uploadEnable.setSelected(config.isEnabled(activeAddon.getName()));
+            uploadEnable.setSelected(config.get().isEnabled(activeAddon.getName()));
             String taglist = "Tagged: ";
             taglist = activeAddon.getTags().stream().map(tagname -> tagname + ", ").reduce(taglist, String::concat);
             currentTags.setText(taglist.substring(0, taglist.length() - 2));

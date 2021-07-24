@@ -9,7 +9,7 @@ import de.idrinth.waraddonclient.service.logger.BaseLogger;
 import de.idrinth.waraddonclient.service.Restarter;
 import java.awt.Desktop;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.util.concurrent.atomic.AtomicReference;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JEditorPane;
@@ -22,17 +22,17 @@ import javax.swing.WindowConstants;
 
 public class Start extends BaseFrame implements MainWindow
 {
-    private final BaseLogger logger;
-    
-    private final Restarter restarter;
+    private final AtomicReference<BaseLogger> logger = new AtomicReference<>();
+
+    private final AtomicReference<Restarter> restarter = new AtomicReference<>();
 
     private final MainWindowMap map;
 
     public Start(MainWindowMap map, BaseLogger logger, Config config, Restarter restarter, Request client) {
         super(config);
         this.map = map;
-        this.restarter = restarter;
-        this.logger = logger;
+        this.restarter.set(restarter);
+        this.logger.set(logger);
         initComponents();
         setTitle("Start");
         welcome.setText("<html><h1>Welcome to the Warhammer Online Addon Client!</h1><p>You are running version <b>"+config.getVersion()+"</b>.</p><br/><p>Choose the tool to use below!</p>");
@@ -70,25 +70,13 @@ public class Start extends BaseFrame implements MainWindow
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
         addons.setText("Addon Management");
-        addons.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent evt) {
-                addonsActionPerformed(evt);
-            }
-        });
+        addons.addActionListener(this::addonsActionPerformed);
 
         settings.setText("Settings");
-        settings.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent evt) {
-                settingsActionPerformed(evt);
-            }
-        });
+        settings.addActionListener(this::settingsActionPerformed);
 
         backups.setText("Backups");
-        backups.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent evt) {
-                backupsActionPerformed(evt);
-            }
-        });
+        backups.addActionListener(this::backupsActionPerformed);
 
         welcome.setEditable(false);
         welcome.setContentType("text/html"); // NOI18N
@@ -98,27 +86,15 @@ public class Start extends BaseFrame implements MainWindow
 
         menuAbout.setText("About");
         menuAbout.setToolTipText("");
-        menuAbout.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent evt) {
-                menuAboutActionPerformed(evt);
-            }
-        });
+        menuAbout.addActionListener(this::menuAboutActionPerformed);
         menuFile.add(menuAbout);
 
         menuRestart.setText("Restart");
-        menuRestart.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent evt) {
-                menuRestartActionPerformed(evt);
-            }
-        });
+        menuRestart.addActionListener(this::menuRestartActionPerformed);
         menuFile.add(menuRestart);
 
         menuQuit.setText("Quit");
-        menuQuit.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent evt) {
-                menuQuitActionPerformed(evt);
-            }
-        });
+        menuQuit.addActionListener(this::menuQuitActionPerformed);
         menuFile.add(menuQuit);
 
         mainMenu.add(menuFile);
@@ -126,35 +102,19 @@ public class Start extends BaseFrame implements MainWindow
         menuLinks.setText("Links");
 
         menuGuilded.setText("Guilded: Idrinth's Addons");
-        menuGuilded.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent evt) {
-                menuGuildedActionPerformed(evt);
-            }
-        });
+        menuGuilded.addActionListener(this::menuGuildedActionPerformed);
         menuLinks.add(menuGuilded);
 
         menuBuyMeACoffee.setText("BuyMeACoffee");
-        menuBuyMeACoffee.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent evt) {
-                menuBuyMeACoffeeActionPerformed(evt);
-            }
-        });
+        menuBuyMeACoffee.addActionListener(this::menuBuyMeACoffeeActionPerformed);
         menuLinks.add(menuBuyMeACoffee);
 
         menuSource.setText("GitHub: WARAddonClient");
-        menuSource.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent evt) {
-                menuSourceActionPerformed(evt);
-            }
-        });
+        menuSource.addActionListener(this::menuSourceActionPerformed);
         menuLinks.add(menuSource);
 
         menuWebpage.setText("Web-Version: Idrinth's Tools");
-        menuWebpage.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent evt) {
-                menuWebpageActionPerformed(evt);
-            }
-        });
+        menuWebpage.addActionListener(this::menuWebpageActionPerformed);
         menuLinks.add(menuWebpage);
 
         mainMenu.add(menuLinks);
@@ -202,7 +162,7 @@ public class Start extends BaseFrame implements MainWindow
         try {
             Desktop.getDesktop().browse(new java.net.URI("https://github.com/Idrinth/WARAddonClient/"));
         } catch (URISyntaxException | IOException ex) {
-            logger.error(ex);
+            logger.get().error(ex);
         }
     }//GEN-LAST:event_menuSourceActionPerformed
 
@@ -210,7 +170,7 @@ public class Start extends BaseFrame implements MainWindow
         try {
             Desktop.getDesktop().browse(new java.net.URI("https://buymeacoffee.com/idrinth"));
         } catch (URISyntaxException | IOException ex) {
-            logger.error(ex);
+            logger.get().error(ex);
         }
     }//GEN-LAST:event_menuBuyMeACoffeeActionPerformed
 
@@ -218,7 +178,7 @@ public class Start extends BaseFrame implements MainWindow
         try {
             Desktop.getDesktop().browse(new java.net.URI("https://guilded.gg/Idrinths-Addons/"));
         } catch (URISyntaxException | IOException ex) {
-            logger.error(ex);
+            logger.get().error(ex);
         }
     }//GEN-LAST:event_menuGuildedActionPerformed
 
@@ -229,9 +189,9 @@ public class Start extends BaseFrame implements MainWindow
 
     private void menuRestartActionPerformed(ActionEvent evt) {//GEN-FIRST:event_menuRestartActionPerformed
         try {
-            restarter.restart();
+            restarter.get().restart();
         } catch (IOException ex) {
-            logger.error(ex);
+            logger.get().error(ex);
         }
     }//GEN-LAST:event_menuRestartActionPerformed
 
@@ -239,7 +199,7 @@ public class Start extends BaseFrame implements MainWindow
         try {
             Desktop.getDesktop().browse(new java.net.URI("https://tools.idrinth.de/"));
         } catch (URISyntaxException | IOException ex) {
-            logger.error(ex);
+            logger.get().error(ex);
         }
     }//GEN-LAST:event_menuWebpageActionPerformed
 

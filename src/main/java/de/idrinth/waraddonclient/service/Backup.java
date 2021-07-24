@@ -12,7 +12,7 @@ public class Backup {
         this.config = config;
     }
 
-    public void create(ProgressReporter reporter) throws ZipException {
+    public void create(ProgressReporter reporter) throws IOException {
         reporter.incrementMax(3);
         String warDir = config.getWARPath();
         java.io.File folder = new java.io.File(warDir+"/backups");
@@ -22,10 +22,11 @@ public class Backup {
         reporter.incrementCurrent();
         java.time.LocalDateTime now = java.time.LocalDateTime.now();
         File file = new java.io.File(warDir+"/backups/"+ now.format(DateTimeFormatter.ofPattern("yyyy-MM-dd-HH-mm")) +".zip");
-        net.lingala.zip4j.ZipFile zip = new net.lingala.zip4j.ZipFile(file);
-        zip.addFolder(new java.io.File(warDir+"/user"));
-        reporter.incrementCurrent();
-        zip.addFolder(new java.io.File(warDir+"/Interface"));
+        try (net.lingala.zip4j.ZipFile zip = new net.lingala.zip4j.ZipFile(file)) {
+            zip.addFolder(new File(warDir + "/user"));
+            reporter.incrementCurrent();
+            zip.addFolder(new File(warDir + "/Interface"));
+        }
         reporter.incrementCurrent();
     }
 
@@ -33,13 +34,14 @@ public class Backup {
         reporter.incrementMax(3);
         create(reporter);
         String warDir = config.getWARPath();
-        net.lingala.zip4j.ZipFile zip = new net.lingala.zip4j.ZipFile(backup);
-        reporter.incrementCurrent();
-        Utils.emptyFolder(new java.io.File(warDir+"/Interface"));
-        reporter.incrementCurrent();
-        Utils.emptyFolder(new java.io.File(warDir+"/user"));
-        reporter.incrementCurrent();
-        zip.extractAll(warDir);
+        try (net.lingala.zip4j.ZipFile zip = new net.lingala.zip4j.ZipFile(backup)) {
+            reporter.incrementCurrent();
+            Utils.emptyFolder(new File(warDir + "/Interface"));
+            reporter.incrementCurrent();
+            Utils.emptyFolder(new File(warDir + "/user"));
+            reporter.incrementCurrent();
+            zip.extractAll(warDir);
+        }
         reporter.incrementCurrent();
     }
 }

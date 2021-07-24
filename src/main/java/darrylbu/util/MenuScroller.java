@@ -36,7 +36,6 @@ import javax.swing.event.PopupMenuListener;
  */
 public class MenuScroller {
 
-  //private JMenu menu;
   private JPopupMenu menu;
   private Component[] menuItems;
   private MenuScrollItem upItem;
@@ -431,8 +430,8 @@ public class MenuScroller {
    * @exception  Throwable if an error occurs.
    * @see MenuScroller#dispose()
    */
-  @Override
-  public void finalize() throws Throwable {
+  @Deprecated
+  protected void finalize() throws Throwable {
     dispose();
   }
 
@@ -551,7 +550,7 @@ public class MenuScroller {
     }
   }
 
-  private static enum MenuIcon implements Icon {
+  private enum MenuIcon implements Icon {
 
     UP(9, 1, 9),
     DOWN(1, 9, 1);
