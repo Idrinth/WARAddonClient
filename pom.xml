@@ -74,7 +74,7 @@
         <dependency>
             <groupId>org.freeplane.bulenkov</groupId>
             <artifactId>darcula</artifactId>
-            <version>2018.2</version>
+            <version>2021.7</version>
         </dependency>
         <dependency>
             <groupId>com.jtattoo</groupId>
