@@ -15,6 +15,7 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.Executor;
 import javax.json.JsonArray;
@@ -29,7 +30,7 @@ import org.xml.sax.SAXException;
 
 public class ActualAddon implements Addon {
 
-    private HashMap<String, String> descriptions = new HashMap<>();
+    private Map<String, String> descriptions = new HashMap<>();
     
     private boolean hasSettings = false;
 
@@ -159,7 +160,7 @@ public class ActualAddon implements Addon {
      */
     private String getStringFromObject(String key, JsonObject data) {
         if (key != null && data != null && data.containsKey(key) && !data.isNull(key)) {
-            return java.util.regex.Pattern.compile("^\"|\"$").matcher(data.get(key).toString()).replaceAll("");
+            return java.util.regex.Pattern.compile("(^\")|(\"$)").matcher(data.get(key).toString()).replaceAll("");
         }
         return "";
     }
@@ -217,7 +218,7 @@ public class ActualAddon implements Addon {
      *
      * @return java.util.HashMap
      */
-    public HashMap<String, String> getDescriptions() {
+    public Map<String, String> getDescriptions() {
         return descriptions;
     }
 
@@ -339,9 +340,10 @@ public class ActualAddon implements Addon {
 
         private void install() throws IOException {
             File zip = getZip();
-            ZipFile zipFile = new ZipFile(zip);
-            zipFile.extractAll(config.getAddonFolder());
-            writeMetaDataFile(zipFile);
+            try (ZipFile zipFile = new ZipFile(zip)) {
+                zipFile.extractAll(config.getAddonFolder());
+                writeMetaDataFile(zipFile);
+            }
             FileUtils.deleteQuietly(zip);
             installed=version;
         }
@@ -353,19 +355,19 @@ public class ActualAddon implements Addon {
             zipFile.extractAll(tmp.getAbsolutePath());
             StringBuilder sb = new StringBuilder();
             ArrayList<String> folders = new ArrayList<>();
-            for (File folder : Objects.requireNonNull(tmp.listFiles())) {
+            for (File thisFolder : Objects.requireNonNull(tmp.listFiles())) {
                 sb.append("<folder>");
-                sb.append(folder.getName());
+                sb.append(thisFolder.getName());
                 sb.append("</folder>");
-                folders.add(folder.getName());
+                folders.add(thisFolder.getName());
             }
             Utils.deleteFolder(tmp);
             File target = find(name);
             folders.add(target.getName());
             target.mkdirs();
-            for (String folder : folders) {
+            for (String thisFolder : folders) {
                 FileUtils.writeStringToFile(
-                    new File(config.getAddonFolder() + folder + config.getVersionFile()),
+                    new File(config.getAddonFolder() + thisFolder + config.getVersionFile()),
                     "<?xml version=\"1.0\" encoding=\"UTF-8\"?><UiMod>"
                     + "<name>" + name + "</name>"
                     + "<version>" + version + "</version>"

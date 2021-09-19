@@ -5,7 +5,6 @@ import de.idrinth.waraddonclient.service.Backup;
 import de.idrinth.waraddonclient.service.ProgressReporter;
 import de.idrinth.waraddonclient.service.Shedule;
 import java.io.IOException;
-import net.lingala.zip4j.exception.ZipException;
 import de.idrinth.waraddonclient.service.logger.BaseLogger;
 import java.awt.FileDialog;
 import java.awt.event.ActionEvent;
@@ -15,6 +14,7 @@ import java.awt.event.WindowEvent;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.concurrent.atomic.AtomicReference;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -31,34 +31,34 @@ import javax.swing.table.DefaultTableModel;
 
 public class Backups extends BaseFrame implements MainWindow
 {
-    private final BaseLogger logger;
+    private final AtomicReference<BaseLogger> logger = new AtomicReference<>();
 
-    private final Backup backup;
-    
-    private final ProgressReporter reporter;
+    private final AtomicReference<Backup> backup = new AtomicReference<>();
+
+    private final AtomicReference<ProgressReporter> reporter = new AtomicReference<>();
     
     private final MainWindowMap map;
-    
-    private final Config config;
+
+    private final AtomicReference<Config> config = new AtomicReference<>();
     
     private final ArrayList<File> contained = new ArrayList<>();
 
     public Backups(MainWindowMap map, BaseLogger logger, Config config, Backup backup, ProgressReporter reporter, Shedule scheduler) {
         super(config);
         this.map = map;
-        this.logger = logger;
-        this.backup = backup;
-        this.reporter = reporter;
-        this.config = config;
+        this.logger.set(logger);
+        this.backup.set(backup);
+        this.reporter.set(reporter);
+        this.config.set(config);
         initComponents();
         this.backupFolder.setText(config.getWARPath() + "/backups");
         setTitle("Backups");
         loadFromFolder();
-        scheduler.register(2, () -> loadFromFolder());
+        scheduler.register(2, this::loadFromFolder);
     }
     private void loadFromFolder()
     {
-        File folder = new File(config.getWARPath() + "/backups");
+        File folder = new File(config.get().getWARPath() + "/backups");
         if (!folder.isDirectory()) {
             for (int i=this.restoreTable.getModel().getRowCount();i > 0; i--) {
                 ((DefaultTableModel) this.restoreTable.getModel()).removeRow(i - 1);
@@ -104,6 +104,7 @@ public class Backups extends BaseFrame implements MainWindow
 
         setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
         addWindowListener(new WindowAdapter() {
+            @Override
             public void windowClosing(WindowEvent evt) {
                 formWindowClosing(evt);
             }
@@ -128,11 +129,7 @@ public class Backups extends BaseFrame implements MainWindow
         tablePane.setViewportView(restoreTable);
 
         restoreButton.setText("Restore Backup");
-        restoreButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent evt) {
-                restoreButtonActionPerformed(evt);
-            }
-        });
+        restoreButton.addActionListener(this::restoreButtonActionPerformed);
 
         GroupLayout restorePaneLayout = new GroupLayout(restorePane);
         restorePane.setLayout(restorePaneLayout);
@@ -161,11 +158,7 @@ public class Backups extends BaseFrame implements MainWindow
         backupFolder.setText("jTextField1");
 
         backupCreateButton.setText("Create Backup");
-        backupCreateButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent evt) {
-                backupCreateButtonActionPerformed(evt);
-            }
-        });
+        backupCreateButton.addActionListener(this::backupCreateButtonActionPerformed);
 
         GroupLayout createPaneLayout = new GroupLayout(createPane);
         createPane.setLayout(createPaneLayout);
@@ -212,26 +205,24 @@ public class Backups extends BaseFrame implements MainWindow
     }//GEN-LAST:event_formWindowClosing
 
     private void backupCreateButtonActionPerformed(ActionEvent evt) {//GEN-FIRST:event_backupCreateButtonActionPerformed
-        reporter.start("Create Backup", () -> {
-            this.setEnabled(true);
-        });
+        reporter.get().start("Create Backup", () -> this.setEnabled(true));
         this.setEnabled(false);
         new Thread(() -> {
             try {
-                backup.create(reporter);
+                backup.get().create(reporter.get());
                 JOptionPane.showMessageDialog(this, "Saved your profile and addons in backups.");
-            } catch (ZipException ex) {
-                logger.error(ex);
+            } catch (IOException ex) {
+                logger.get().error(ex);
                 JOptionPane.showMessageDialog(this, "Failed to save your profile and addons.");
             }
-            reporter.stop();
+            reporter.get().stop();
         }).start();
     }//GEN-LAST:event_backupCreateButtonActionPerformed
 
     private void restoreButtonActionPerformed(ActionEvent evt) {//GEN-FIRST:event_restoreButtonActionPerformed
         File backupFile;
         if (restoreTable.getSelectedRow() != -1) {
-            backupFile = new File(config.getWARPath() + "/backups/" + restoreTable.getModel().getValueAt(restoreTable.getSelectedRow(), 1));
+            backupFile = new File(config.get().getWARPath() + "/backups/" + restoreTable.getModel().getValueAt(restoreTable.getSelectedRow(), 1));
         } else {
             FileDialog dialog = new java.awt.FileDialog(this, "Select backup", java.awt.FileDialog.LOAD);
             dialog.setVisible(true);
@@ -244,19 +235,17 @@ public class Backups extends BaseFrame implements MainWindow
             }
             backupFile = new File(dialog.getDirectory() + "/" + dialog.getFile());
         }
-        reporter.start("Restore Backup", () -> {
-            this.setEnabled(true);
-        });
+        reporter.get().start("Restore Backup", () -> this.setEnabled(true));
         this.setEnabled(false);
         new Thread(() -> {
             try {
-                backup.restore(backupFile, reporter);
+                backup.get().restore(backupFile, reporter.get());
                 JOptionPane.showMessageDialog(this, "Backup restored.");
             } catch (IOException ex) {
-                logger.error(ex);
+                logger.get().error(ex);
                 JOptionPane.showMessageDialog(this, "Couldn't restore Backup.");
             }
-            reporter.stop();
+            reporter.get().stop();
         }).start();
     }//GEN-LAST:event_restoreButtonActionPerformed
 
