@@ -27,12 +27,20 @@ abstract class BaseMain {
     public void run() {
         try {
             Config config = new Config();
-            add(new FileLogger(config.getLogFile()));
+            getLog(config);
             Request client = new Request(new TrustManager(multiLogger), multiLogger, config);
             FileSystem file = new FileSystem(config);
             this.main(multiLogger, config, client, file);
         } catch (ParserConfigurationException|FileSystem.FileSystemException|IOException|CertificateException|KeyManagementException|KeyStoreException|NoSuchAlgorithmException|URISyntaxException ex) {
             multiLogger.error(ex);
+        }
+    }
+
+    public void getLog(Config cfg) throws IOException {
+        try {
+            add(new FileLogger(cfg.getLogFile()));
+        } catch (IOException ex) {
+            throw new IOException("Error with logging in " + cfg.getLogFile() + ": " + ex);
         }
     }
 }
