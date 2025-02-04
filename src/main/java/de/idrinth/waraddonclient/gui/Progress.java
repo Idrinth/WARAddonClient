@@ -86,21 +86,23 @@ public class Progress extends BaseFrame implements ProgressReporter {
     }// </editor-fold>//GEN-END:initComponents
 
     private void closeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_closeButtonActionPerformed
+        close();
+    }//GEN-LAST:event_closeButtonActionPerformed
+    private void close() {
+        EventQueue.invokeLater(() -> this.setVisible(false));
         if (callback != null) {
-            EventQueue.invokeLater(() -> this.setVisible(false));
             callback.run();
             callback = null;
         }
-    }//GEN-LAST:event_closeButtonActionPerformed
-
+    }
     private void finish()
     {
-        stopped = false;
+        stopped = true;
         EventQueue.invokeLater(() -> closeButton.setEnabled(true));
         if (future != null) {
             future.cancel(true);
         }
-        future = scheduler.schedule(() -> closeButtonActionPerformed(null), config.getAutoClose(), SECONDS);
+        EventQueue.invokeLater(this::close);
     }
 
     @Override
@@ -109,7 +111,7 @@ public class Progress extends BaseFrame implements ProgressReporter {
         java.awt.EventQueue.invokeLater(() -> {
             progressBar.setValue(current);
             progressBar.setToolTipText(current + "/" + max);
-            if (current == max && stopped) {
+            if (current == max && !stopped) {
                 finish();
             }
         });

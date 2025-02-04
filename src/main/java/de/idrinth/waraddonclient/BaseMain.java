@@ -1,7 +1,6 @@
 package de.idrinth.waraddonclient;
 
 import de.idrinth.waraddonclient.service.Config;
-import de.idrinth.waraddonclient.model.TrustManager;
 import de.idrinth.waraddonclient.service.logger.BaseLogger;
 import de.idrinth.waraddonclient.service.logger.FileLogger;
 import de.idrinth.waraddonclient.service.FileSystem;
@@ -12,7 +11,6 @@ import java.net.URISyntaxException;
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
-import java.security.cert.CertificateException;
 import javax.xml.parsers.ParserConfigurationException;
 
 abstract class BaseMain {
@@ -28,10 +26,10 @@ abstract class BaseMain {
         try {
             Config config = new Config();
             getLog(config);
-            Request client = new Request(new TrustManager(multiLogger), multiLogger, config);
+            Request client = new Request(multiLogger, config);
             FileSystem file = new FileSystem(config);
             this.main(multiLogger, config, client, file);
-        } catch (ParserConfigurationException|FileSystem.FileSystemException|IOException|CertificateException|KeyManagementException|KeyStoreException|NoSuchAlgorithmException|URISyntaxException ex) {
+        } catch (ParserConfigurationException|FileSystem.FileSystemException|IOException|KeyManagementException|KeyStoreException|NoSuchAlgorithmException|URISyntaxException ex) {
             multiLogger.error(ex);
         }
     }

@@ -1,10 +1,12 @@
 package de.idrinth.waraddonclient.service;
 
+import de.idrinth.waraddonclient.model.BasicResponse;
 import de.idrinth.waraddonclient.service.logger.BaseLogger;
 import de.idrinth.waraddonclient.Utils;
+
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.IOException;
-import de.idrinth.waraddonclient.model.TrustManager;
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
@@ -12,33 +14,34 @@ import javax.json.Json;
 import javax.json.JsonArray;
 import javax.json.JsonObject;
 import javax.json.JsonReader;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpGet;
+import org.apache.hc.client5.http.classic.methods.HttpGet;
+import org.apache.hc.client5.http.classic.methods.HttpPost;
+import org.apache.hc.client5.http.classic.methods.HttpUriRequestBase;
+import org.apache.hc.client5.http.config.RequestConfig;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
+import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
+import org.apache.hc.core5.http.ContentType;
+import org.apache.hc.core5.http.io.entity.FileEntity;
 
 public class Request {
 
     private volatile boolean requestActive;
 
-    private org.apache.http.impl.client.CloseableHttpClient client;
-
-    private final javax.net.ssl.SSLContext sslContext;
+    private CloseableHttpClient client;
 
     private final BaseLogger logger;
     
     private final Config config;
 
-    public Request(TrustManager manager, BaseLogger logger, Config config) throws NoSuchAlgorithmException, KeyStoreException, KeyManagementException {
+    public Request(BaseLogger logger, Config config) throws NoSuchAlgorithmException, KeyStoreException, KeyManagementException {
         this.logger = logger;
         this.config = config;
-        sslContext = org.apache.http.ssl.SSLContextBuilder.create().loadTrustMaterial(
-                manager.getKeyStore(),
-                manager
-        ).build();
     }
 
     public javax.json.JsonArray getAddonList() throws IOException {
-        HttpResponse response = executionHandler(new HttpGet(config.getURL() + "addon-api2/"));
-        JsonReader reader = Json.createReader(response.getEntity().getContent());
+        BasicResponse response = executionHandler(new HttpGet(config.getURL() + "addon-api2/"));
+        JsonReader reader = Json.createReader(response.content);
         JsonArray data = reader.readArray();
         reader.close();
         client.close();
@@ -46,47 +49,45 @@ public class Request {
     }
 
     public JsonObject getAddon(String slug) throws IOException {
-        HttpResponse response = executionHandler(new HttpGet(config.getURL() + "addon-api2/"+slug+"/"));
-        JsonReader reader = Json.createReader(response.getEntity().getContent());
+        BasicResponse response = executionHandler(new HttpGet(config.getURL() + "addon-api2/"+slug+"/"));
+        JsonReader reader = Json.createReader(response.content);
         JsonObject data = reader.readObject();
         reader.close();
         client.close();
         return data;
     }
 
-    public java.io.InputStream getAddonDownload(String url) throws IOException {
-        org.apache.http.HttpResponse response = executionHandler(new org.apache.http.client.methods.HttpGet(config.getURL() + "addons/" + url));
-        return response.getEntity().getContent();
+    public java.io.InputStream getAddonDownload(String url) throws Exception {
+        BasicResponse response = executionHandler(new HttpGet(config.getURL() + "addons/" + url));
+        return new BufferedInputStream(response.content);
     }
 
-    private synchronized org.apache.http.HttpResponse executionHandler(org.apache.http.client.methods.HttpRequestBase uri) throws IOException {
-        uri.setConfig(org.apache.http.client.config.RequestConfig.DEFAULT);
+    private synchronized BasicResponse executionHandler(HttpUriRequestBase uri) throws IOException {
+        uri.setConfig(RequestConfig.DEFAULT);
         uri.setHeader("User-Agent", "IdrinthsWARAddonClient/" + config.getVersion());
         uri.setHeader("Cache-Control", "no-cache");
         while (requestActive) {
             Utils.sleep(150, logger);
         }
         requestActive = true;
-        client = org.apache.http.impl.client.HttpClientBuilder.create()
+        client = HttpClientBuilder.create()
                 .useSystemProperties()
-                .setSSLContext(sslContext)
                 .build();
-        org.apache.http.HttpResponse response = client.execute(uri);
-        if (response.getStatusLine().getStatusCode() < 200 || response.getStatusLine().getStatusCode() > 299) {
+        CloseableHttpResponse response = client.execute(uri);
+        if (response.getCode() < 200 || response.getCode() > 299) {
             requestActive = false;
-            throw new java.net.ConnectException(response.getStatusLine().getReasonPhrase());
+            throw new java.net.ConnectException(response.getReasonPhrase());
         }
         requestActive = false;
-        return response;
+        return new BasicResponse(response.getCode(), response.getReasonPhrase(), response.getEntity().getContent(), response.containsHeader("Content-Encoding"));
     }
 
     public void upload(String url, File file) {
-        org.apache.http.client.methods.HttpPost request = new org.apache.http.client.methods.HttpPost(url);
-        request.setEntity(new org.apache.http.entity.FileEntity(file));
-        try {
-            executionHandler(request);
+        HttpPost request = new HttpPost(url);
+        request.setEntity(new FileEntity(file, ContentType.APPLICATION_OCTET_STREAM));
+        try(BasicResponse res = executionHandler(request)) {
             client.close();
-        } catch (IOException exception) {
+        } catch (Exception exception) {
             logger.error(exception);
         }
     }
@@ -95,12 +96,15 @@ public class Request {
     {
         try {
             HttpGet request = new HttpGet("https://api.github.com/repos/Idrinth/WARAddonClient/releases/latest");
-            HttpResponse response = executionHandler(request);
+            BasicResponse response = executionHandler(request);
             JsonObject data;
-            try (JsonReader reader = Json.createReader(response.getEntity().getContent())) {
+            try (JsonReader reader = Json.createReader(response.content)) {
                 data = reader.readObject();
             }
-            String version = data.getString("tag_name");
+            String version = "unknown";
+            if (data != null) {
+                version = data.getString("tag_name");
+            }
             client.close();
             return version;
         } catch (IOException exception) {

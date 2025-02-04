@@ -211,7 +211,7 @@ public class Backups extends BaseFrame implements MainWindow
             try {
                 backup.get().create(reporter.get());
                 JOptionPane.showMessageDialog(this, "Saved your profile and addons in backups.");
-            } catch (IOException ex) {
+            } catch (IOException|InterruptedException ex) {
                 logger.get().error(ex);
                 JOptionPane.showMessageDialog(this, "Failed to save your profile and addons.");
             }
@@ -222,11 +222,11 @@ public class Backups extends BaseFrame implements MainWindow
     private void restoreButtonActionPerformed(ActionEvent evt) {//GEN-FIRST:event_restoreButtonActionPerformed
         File backupFile;
         if (restoreTable.getSelectedRow() != -1) {
-            backupFile = new File(config.get().getWARPath() + "/backups/" + restoreTable.getModel().getValueAt(restoreTable.getSelectedRow(), 1));
+            backupFile = new File(config.get().getWARPath() + "/backups/" + restoreTable.getModel().getValueAt(restoreTable.getSelectedRow(), 0));
         } else {
             FileDialog dialog = new java.awt.FileDialog(this, "Select backup", java.awt.FileDialog.LOAD);
             dialog.setVisible(true);
-            if (dialog.getFile() != null) {
+            if (dialog.getFile() == null) {
                 return;
             }
             if (!dialog.getFile().endsWith(".zip")) {
@@ -241,7 +241,7 @@ public class Backups extends BaseFrame implements MainWindow
             try {
                 backup.get().restore(backupFile, reporter.get());
                 JOptionPane.showMessageDialog(this, "Backup restored.");
-            } catch (IOException ex) {
+            } catch (IOException|InterruptedException ex) {
                 logger.get().error(ex);
                 JOptionPane.showMessageDialog(this, "Couldn't restore Backup.");
             }

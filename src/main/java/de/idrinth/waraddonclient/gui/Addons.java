@@ -412,7 +412,7 @@ public class Addons extends BaseFrame implements MainWindow, Serializable {
             exe.execute(() -> {
                 try {
                     backup.get().create(reporter.get());
-                } catch (IOException ex) {
+                } catch (IOException|InterruptedException ex) {
                     logger.get().error(ex);
                 }
             });

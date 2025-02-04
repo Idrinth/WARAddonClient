@@ -42,8 +42,6 @@ public class Config {
 
     private static final String LOG_FILE = "waraddonclient.log";
 
-    private static final String LINUX_LOG_FILE = "/var/log/waraddonclient.log";
-
     private static final String ADDON_FOLDER = "/Interface/AddOns/";
 
     private static final String LOGS = "/logs/";
@@ -83,11 +81,7 @@ public class Config {
         }
         version = IOUtils.toString(Objects.requireNonNull(Config.class.getResourceAsStream("/version")), StandardCharsets.UTF_8);
         jarDir = new File(Main.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath()).getParentFile();
-        if (System.getProperty("os.name").startsWith("Windows")) {
-            logFile = new File(jarDir.getAbsolutePath(), LOG_FILE);
-        } else {
-            logFile = new File(LINUX_LOG_FILE);
-        }
+        logFile = new File(jarDir.getAbsolutePath(), LOG_FILE);
     }
 
     public void setWARPath(String path) {
@@ -115,7 +109,7 @@ public class Config {
     }
 
     public int getAutoClose() {
-        return prefs.getInt(KEY_AUTO_CLOSE, 60);
+        return prefs.getInt(KEY_AUTO_CLOSE, 10);
     }
 
     public void setAutoClose(int autoClose) {

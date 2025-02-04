@@ -86,7 +86,7 @@ public class CliMain extends BaseMain {
                 logger.info("Restored from file " + restore.getAbsolutePath());
                 return;
             }
-        } catch(ParseException | IOException ex) {
+        } catch(ParseException | IOException | InterruptedException ex) {
             logger.error(ex);
         }
         HelpFormatter formatter = new HelpFormatter();

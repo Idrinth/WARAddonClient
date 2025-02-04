@@ -66,7 +66,7 @@ public class ActualAddon implements Addon {
     
     private boolean loadedDescription = false;
     
-    private Executor runner;
+    private final Executor runner;
 
     public ActualAddon(javax.json.JsonObject addon, Request client, BaseLogger logger, XmlParser parser, Config config, Executor runner) throws InvalidArgumentException {
         if (addon == null) {
@@ -183,8 +183,8 @@ public class ActualAddon implements Addon {
 
     public String getDescription(String language) {
         String description = "<p><strong>There is currently no Description for " + name + ".</strong></p>"
-                + "<p>You can help by adding one at <a href=\"http://tools.idrinth.de/addons/" + slug
-                + "/\">http://tools.idrinth.de/addons/" + slug + "/</a>.</p>"
+                + "<p>You can help by adding one at <a href=\"https://tools.idrinth.de/addons/" + slug
+                + "/\">https://tools.idrinth.de/addons/" + slug + "/</a>.</p>"
                 + "<p>"+ defaultDescription +"</p>";
         if (descriptions.containsKey(language) && !descriptions.get(language).isEmpty()) {
             description = descriptions.get(language);
@@ -252,12 +252,12 @@ public class ActualAddon implements Addon {
             return " ";
         }
         try {
-            Version remote = Version.valueOf(getVersion());
-            Version local = Version.valueOf(getInstalled());
+            Version remote = Version.parse(getVersion());
+            Version local = Version.parse(getInstalled());
             if (remote.equals(local)) {
                 return "✓";
             }
-            if (remote.lessThan(local)) {
+            if (remote.isLowerThan(local)) {
                 return "?";
             }
         } catch (com.github.zafarkhaja.semver.ParseException e) {
@@ -295,7 +295,7 @@ public class ActualAddon implements Addon {
             if (redeploy) {
                 try {
                     install();
-                } catch (IOException ex) {
+                } catch (Exception ex) {
                     logger.error(ex);
                 }
                 reporter.incrementCurrent();
@@ -323,14 +323,14 @@ public class ActualAddon implements Addon {
                 for (int i=0;i<list.getLength();i++) {
                     Utils.deleteFolder(new File(config.getAddonFolder() + list.item(i).getTextContent()));
                 }
-            } catch (IOException | SAXException e) {
+            } catch (Exception e) {
                 logger.warn(e);
             }
             Utils.deleteFolder(addonFolder);
             installed="-";
         }
 
-        private File getZip() throws IOException {
+        private File getZip() throws Exception {
             File zip = new File(System.getProperty("java.io.tmpdir") + "/" + slug + ".zip");
             try (InputStream stream = client.getAddonDownload(slug + "/download/" + version.replace(".", "-") + "/")) {
                 FileUtils.copyInputStreamToFile(stream, zip);
@@ -338,7 +338,7 @@ public class ActualAddon implements Addon {
             return zip;
         }
 
-        private void install() throws IOException {
+        private void install() throws Exception {
             File zip = getZip();
             try (ZipFile zipFile = new ZipFile(zip)) {
                 zipFile.extractAll(config.getAddonFolder());
